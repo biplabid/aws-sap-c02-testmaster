@@ -3,3 +3,10 @@ Thumbs.db
 *.log
 node_modules/
 .vscode/
+dist/
+dist2/
+dist3/
+dist4/
+dist5/
+dist6/
+dist7/

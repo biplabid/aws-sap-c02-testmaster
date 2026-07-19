@@ -1,0 +1,52 @@
+{
+  "name": "aws-sap-c02-testmaster",
+  "version": "1.0.0",
+  "description": "AWS SAP-C02 TestMaster - desktop practice exam app for the AWS Certified Solutions Architect Professional exam",
+  "author": "Biplab Das",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win"
+  },
+  "devDependencies": {
+    "electron": "^31.3.1",
+    "electron-builder": "^24.13.3"
+  },
+  "dependencies": {
+    "serve-handler": "^6.1.5"
+  },
+  "build": {
+    "appId": "com.biplabdas.awssapc02testmaster",
+    "productName": "AWS SAP-C02 TestMaster",
+    "asar": true,
+    "files": [
+      "index.html",
+      "css/**/*",
+      "js/**/*",
+      "data/**/*",
+      "assets/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
+      ],
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "AWS SAP-C02 TestMaster"
+    }
+  }
+}
