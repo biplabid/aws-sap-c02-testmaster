@@ -45,6 +45,7 @@ input {
 
 .app-shell {
   min-height: 100vh;
+  color: var(--text);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 240px),
     var(--surface-muted);
@@ -105,7 +106,7 @@ input {
 }
 
 .top-nav a,
-.side-nav a {
+.side-nav > a {
   border-radius: var(--radius);
   transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
 }
@@ -169,11 +170,40 @@ input {
 .side-nav {
   position: sticky;
   top: 68px;
+  display: flex;
+  flex-direction: column;
   align-self: start;
   height: calc(100vh - 68px);
   padding: 24px 16px;
   background: var(--surface);
   border-right: 1px solid var(--border);
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 14px 10px 4px;
+  border-top: 1px solid var(--border);
+}
+
+.sidebar-footer p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.sidebar-footer p + p {
+  margin-top: 2px;
+}
+
+.sidebar-footer a {
+  color: var(--aws-blue);
+  font-weight: 700;
+}
+
+.sidebar-footer a:hover {
+  text-decoration: underline;
 }
 
 .side-title {
@@ -185,7 +215,7 @@ input {
   text-transform: uppercase;
 }
 
-.side-nav a {
+.side-nav > a {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -195,8 +225,8 @@ input {
   font-weight: 700;
 }
 
-.side-nav a:hover,
-.side-nav a.active {
+.side-nav > a:hover,
+.side-nav > a.active {
   color: var(--aws-blue);
   background: #f1f8ff;
 }

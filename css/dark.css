@@ -12,10 +12,14 @@
   background: var(--surface-muted);
 }
 
-[data-theme="dark"] .side-nav a:hover,
-[data-theme="dark"] .side-nav a.active {
+[data-theme="dark"] .side-nav > a:hover,
+[data-theme="dark"] .side-nav > a.active {
   color: #8cc7ff;
   background: rgba(9, 114, 211, 0.16);
+}
+
+[data-theme="dark"] .sidebar-footer a {
+  color: #8cc7ff;
 }
 
 [data-theme="dark"] .toolbar button,
