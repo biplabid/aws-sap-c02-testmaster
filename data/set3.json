@@ -1,0 +1,2947 @@
+[
+  {
+    "id": 1,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "A financial enterprise is designing a multi-account AWS environment using AWS Control Tower. They need to ensure that Amazon EC2 instances can only be launched in the eu-central-1 and eu-west-1 regions across all member accounts. The governance team requires a centralized, preventive control that cannot be bypassed by account administrators. As a Solutions Architect Professional, how should you implement this?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an IAM permissions boundary that denies ec2:RunInstances outside the specified regions. Attach this to all users and roles in the member accounts."
+      },
+      {
+        "id": "B",
+        "text": "Create a Service Control Policy (SCP) that explicitly denies any requested AWS region other than eu-central-1 and eu-west-1 for the EC2 service. Attach the SCP to the organization's root or applicable OUs."
+      },
+      {
+        "id": "C",
+        "text": "Implement AWS Config rules in the master account to monitor ec2:RunInstances and use an AWS Systems Manager Automation document to terminate non-compliant instances."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS CloudTrail to monitor EC2 launches and trigger an AWS Lambda function via EventBridge to terminate instances launched in unauthorized regions."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 2,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A global media company is connecting its on-premises data center to AWS using AWS Direct Connect. The company has a 10 Gbps DX connection and a backup Site-to-Site VPN over the internet. The on-premises router uses BGP. The company wants to ensure that traffic flowing from AWS to the on-premises data center prefers the Direct Connect connection, and only falls back to the VPN if the DX connection fails. What is the MOST reliable way to configure the routing?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Advertise a more specific BGP prefix (longer subnet mask) over the Direct Connect connection and a less specific BGP prefix over the VPN connection."
+      },
+      {
+        "id": "B",
+        "text": "Configure the AWS Transit Gateway to set a higher local preference for the VPN connection."
+      },
+      {
+        "id": "C",
+        "text": "Advertise the exact same routes over both connections and rely on AS_PATH prepending on the Direct Connect connection."
+      },
+      {
+        "id": "D",
+        "text": "Configure static routes in the VPC route table pointing to the Direct Connect gateway and enable route propagation for the VPN."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 3,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "An online retail company is scaling its microservices architecture. The current setup consists of several Amazon ECS services running on AWS Fargate behind an Application Load Balancer (ALB). During flash sales, the traffic spikes unpredictably, causing backend services to get overwhelmed and drop requests before Fargate tasks can scale out. The company wants to decouple the architecture to buffer requests and ensure no orders are lost. Which solution requires the LEAST operational overhead?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Replace the ALB with an Amazon API Gateway configured with an Amazon SQS standard queue integration. Configure the ECS services to poll the SQS queue for orders."
+      },
+      {
+        "id": "B",
+        "text": "Migrate the ECS containers to Amazon EC2 and use Spot Instances with step scaling policies."
+      },
+      {
+        "id": "C",
+        "text": "Place an Amazon Kinesis Data Stream between the ALB and the ECS services."
+      },
+      {
+        "id": "D",
+        "text": "Implement Amazon ElastiCache for Redis in front of the ECS services to cache incoming orders."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 4,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "A healthcare startup is building a data lake on Amazon S3. They have multiple AWS accounts for different departments (HR, Finance, Analytics). The central data lake is located in a dedicated Data account. The startup wants to enforce fine-grained access control (column-level and row-level) on the S3 datasets for users querying the data via Amazon Athena in their respective departmental accounts. What is the MOST scalable way to achieve this?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create complex S3 bucket policies in the Data account that map IAM roles to specific S3 prefixes."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS Lake Formation to centrally define column-level and row-level permissions, and grant access to cross-account IAM principals."
+      },
+      {
+        "id": "C",
+        "text": "Create multiple copies of the data in S3 using AWS Glue ETL, masking the columns, and share the masked buckets with the respective accounts."
+      },
+      {
+        "id": "D",
+        "text": "Use Amazon Macie to detect sensitive data and automatically redact it in Athena query results."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 5,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "A company is running a mission-critical relational database on Amazon Aurora PostgreSQL. Their Disaster Recovery (DR) requirements mandate a Recovery Point Objective (RPO) of 1 second and a Recovery Time Objective (RTO) of less than 1 minute in a secondary AWS Region. Which solution meets these requirements?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use Aurora Global Database. In the event of a regional failure, manually promote the secondary region to become the primary."
+      },
+      {
+        "id": "B",
+        "text": "Take automated hourly snapshots of the Aurora cluster and configure cross-region snapshot copy."
+      },
+      {
+        "id": "C",
+        "text": "Configure AWS Database Migration Service (DMS) with Change Data Capture (CDC) to replicate data to an RDS PostgreSQL instance in the secondary region."
+      },
+      {
+        "id": "D",
+        "text": "Set up an Aurora Read Replica in the secondary region. Use Amazon Route 53 to failover traffic automatically."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 6,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "An enterprise is planning to migrate 150 TB of legacy archival data from an on-premises SAN to Amazon S3. They currently have a 50 Mbps internet connection which is heavily utilized by existing production workloads. The migration needs to be completed within 2 weeks. Which migration strategy should the Solutions Architect recommend?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use AWS DataSync over the existing internet connection to migrate the data."
+      },
+      {
+        "id": "B",
+        "text": "Order an AWS Snowmobile and transfer the data to it."
+      },
+      {
+        "id": "C",
+        "text": "Order multiple AWS Snowball Edge Storage Optimized devices, transfer the data locally, and ship them back to AWS."
+      },
+      {
+        "id": "D",
+        "text": "Set up an AWS Storage Gateway File Gateway and copy the files to the mounted share."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 7,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A SaaS provider has a multi-tenant web application running on Amazon EC2 instances behind an Application Load Balancer (ALB). The provider wants to strictly block access to the application from a list of dynamically updated malicious IP addresses provided by a third-party threat intelligence service. What is the MOST automated and scalable way to implement this?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an AWS Lambda function that triggers hourly, fetches the IPs, and updates the Security Group attached to the EC2 instances."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS WAF associated with the ALB. Implement an AWS Lambda function that retrieves the threat intelligence feed and updates an AWS WAF IP set."
+      },
+      {
+        "id": "C",
+        "text": "Configure Amazon GuardDuty to automatically ingest the third-party feed and drop malicious traffic at the VPC level."
+      },
+      {
+        "id": "D",
+        "text": "Create a Network ACL and use an AWS Systems Manager Automation document to constantly update the rules."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 8,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "A startup provides a highly popular mobile game. The backend consists of AWS API Gateway, AWS Lambda, and Amazon DynamoDB. Following a successful marketing campaign, user traffic skyrocketed, resulting in \"ProvisionedThroughputExceededException\" errors from DynamoDB. The access patterns are extremely read-heavy and repeatedly query the same leaderboard data. Which solution will resolve the errors with the LEAST application code change and LOWEST cost?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Change the DynamoDB table from Provisioned to On-Demand capacity mode."
+      },
+      {
+        "id": "B",
+        "text": "Implement Amazon ElastiCache for Redis and rewrite the Lambda functions to check the cache before querying DynamoDB."
+      },
+      {
+        "id": "C",
+        "text": "Enable Amazon DynamoDB Accelerator (DAX) and update the Lambda functions to use the DAX client."
+      },
+      {
+        "id": "D",
+        "text": "Create a DynamoDB Global Secondary Index (GSI) optimized for read operations."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 9,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "A global streaming service delivers video content to users worldwide using Amazon CloudFront. The origin is an Application Load Balancer (ALB) pointing to Amazon EC2 instances. To protect the origin from direct access over the public internet, the engineering team wants to ensure the ALB only accepts traffic originating from CloudFront. What is the MOST secure and reliable method to enforce this?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Configure the ALB Security Group to only allow ingress from the AWS managed prefix list for CloudFront."
+      },
+      {
+        "id": "B",
+        "text": "Configure CloudFront to add a custom HTTP header with a secret string. Configure an AWS WAF rule on the ALB to block requests missing this header."
+      },
+      {
+        "id": "C",
+        "text": "Enable AWS Shield Advanced on the ALB and configure it to strictly whitelist CloudFront edge locations."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS PrivateLink to create a private endpoint between CloudFront and the ALB."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 10,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "A company has thousands of Amazon EC2 instances across hundreds of AWS accounts managed by AWS Organizations. The Security team wants to centrally manage and automatically remediate missing critical security patches across all EC2 instances using AWS Systems Manager. They want to minimize administrative overhead. Which approach should they take?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a Systems Manager Automation document in each member account via CloudFormation StackSets, and schedule it using EventBridge."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS Systems Manager Quick Setup across the entire AWS Organization to deploy Host Management and configure a centralized Patch Policy."
+      },
+      {
+        "id": "C",
+        "text": "Use AWS Config rules to detect missing patches and trigger a centralized AWS Lambda function in the master account to apply patches."
+      },
+      {
+        "id": "D",
+        "text": "Create an AWS Lambda function in the central security account that iterates over all member accounts using STS AssumeRole to run SSM Run Command."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 11,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "An ed-tech startup has a data lake on Amazon S3 currently storing 50 TB of user-generated videos. The data is heavily accessed for the first 30 days for reporting, after which it is rarely accessed but must be retained for 5 years for compliance. The company wants to optimize storage costs without introducing retrieval latency during the reporting period. Which solution is MOST cost-effective?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Transition the data to S3 Standard-Infrequent Access (S3 Standard-IA) immediately, then to S3 Glacier Deep Archive after 5 years."
+      },
+      {
+        "id": "B",
+        "text": "Use an S3 Lifecycle policy to transition objects to S3 Standard-IA after 30 days, and then to S3 Glacier Deep Archive after 1 year."
+      },
+      {
+        "id": "C",
+        "text": "Store all data directly in S3 Intelligent-Tiering and rely on automatic cost optimization."
+      },
+      {
+        "id": "D",
+        "text": "Move data to Amazon EFS after 30 days and then use AWS Backup to archive it."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 12,
+    "type": "multiple",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A fintech enterprise runs a highly seasonal CRM application on Amazon ECS using AWS Fargate. During their peak season, CPU utilization jumps rapidly, but the ECS Service Auto Scaling is too slow to react, resulting in increased latency. Which combination of actions should the Solutions Architect take to improve scaling responsiveness? (Select two)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Change the scaling policy from target tracking to step scaling with aggressive scale-out thresholds."
+      },
+      {
+        "id": "B",
+        "text": "Implement Predictive Scaling to scale out ahead of historical traffic spikes."
+      },
+      {
+        "id": "C",
+        "text": "Switch the compute provider from AWS Fargate to Amazon EC2 and over-provision instances."
+      },
+      {
+        "id": "D",
+        "text": "Decrease the health check grace period on the Application Load Balancer."
+      },
+      {
+        "id": "E",
+        "text": "Use AWS Lambda instead of ECS for faster cold starts."
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 13,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "A telecommunications company operates a hybrid environment connecting their on-premises network to AWS via AWS Direct Connect. They have an on-premises DNS server resolving dc.internal and an AWS Route 53 Private Hosted Zone resolving vpc.internal inside their VPC. They need bi-directional DNS resolution between the environments. What is the MOST resilient and AWS-native solution?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Deploy two Amazon EC2 instances running BIND DNS forwarders in multiple Availability Zones."
+      },
+      {
+        "id": "B",
+        "text": "Create a Route 53 Resolver Inbound Endpoint and an Outbound Endpoint. Configure forwarding rules for dc.internal pointing to the on-premises DNS servers."
+      },
+      {
+        "id": "C",
+        "text": "Configure a DHCP Options Set in the VPC to point directly to the on-premises DNS servers."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Managed Microsoft AD to replicate DNS zones between on-premises and AWS."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 14,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "An online gaming studio stores user profile data in an Amazon DynamoDB table. Whenever a user updates their customer transaction logs, a downstream marketing application needs to process the change immediately to trigger personalized emails. The solution must be highly available and require minimal custom code. How should this be implemented?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a cron job on an EC2 instance that queries the DynamoDB table every minute for recently updated profiles."
+      },
+      {
+        "id": "B",
+        "text": "Enable DynamoDB Streams and configure it to trigger an AWS Lambda function which processes the payload and sends it to the marketing application."
+      },
+      {
+        "id": "C",
+        "text": "Configure an Amazon EventBridge rule that listens for CloudTrail DynamoDB UpdateItem API calls and triggers the marketing application."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Database Migration Service (DMS) to continuously replicate DynamoDB changes to the marketing application's RDS database."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 15,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "An ed-tech startup provides a real-time CRM API that is accessed by clients globally. The API runs on Amazon EC2 instances behind Application Load Balancers (ALBs) in three different AWS Regions (us-east-1, eu-west-1, ap-northeast-1). Users in distant locations are reporting high latency. The company requires a solution that minimizes internet routing variability and provides static entry points. What is the BEST solution?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an Amazon CloudFront distribution and set the ALBs as multiple origins using origin groups for failover."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS Global Accelerator, create an accelerator, and add the three regional ALBs as endpoint groups."
+      },
+      {
+        "id": "C",
+        "text": "Configure Amazon Route 53 Latency Based Routing with health checks to route clients to the nearest ALB."
+      },
+      {
+        "id": "D",
+        "text": "Deploy AWS Transit Gateway to interconnect the three regions and route internet traffic through it."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 16,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "The CISO of A healthcare conglomerate wants to consolidate security findings across 150 AWS accounts. Currently, Amazon GuardDuty, AWS Security Hub, and Amazon Macie are enabled independently in each account. The CISO wants a single pane of glass in a dedicated 'Security' account and needs to automatically remediate specific high-severity GuardDuty findings. Which approach is MOST appropriate?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use AWS Organizations to designate the Security account as the delegated administrator for GuardDuty, Security Hub, and Macie. Use EventBridge in the Security account to trigger Lambda remediations."
+      },
+      {
+        "id": "B",
+        "text": "Create a cross-account IAM role. Deploy a Lambda function in the master account that polls the APIs of all member accounts every 5 minutes and aggregates the findings."
+      },
+      {
+        "id": "C",
+        "text": "Configure CloudTrail in all accounts to deliver logs to an S3 bucket in the Security account. Use Amazon Athena to query for security findings."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Config aggregators to pull GuardDuty findings into the Security account and apply AWS Config managed rules for remediation."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 17,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "An online gaming studio runs a predictable, steady-state baseline of e-commerce workloads on Amazon EC2 across multiple instance families and multiple AWS Regions. They also heavily utilize AWS Fargate for microservices. The CTO wants to maximize cost savings for this steady-state usage while retaining the flexibility to switch instance families and regions without modifying the pricing contract. What should they purchase?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Standard Reserved Instances (RIs) for EC2."
+      },
+      {
+        "id": "B",
+        "text": "Convertible Reserved Instances (RIs) for EC2."
+      },
+      {
+        "id": "C",
+        "text": "Compute Savings Plans."
+      },
+      {
+        "id": "D",
+        "text": "EC2 Instance Savings Plans."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 18,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A logistics provider is launching a new clickstream data analytics portal. Traffic is highly unpredictable; it often goes days with zero traffic, followed by sudden bursts of hundreds of concurrent users accessing complex queries. The backend is currently standard Amazon RDS MySQL, which is proving too expensive during idle times and too slow to scale during bursts. Which database solution resolves these issues?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Migrate to Amazon DynamoDB and use On-Demand capacity."
+      },
+      {
+        "id": "B",
+        "text": "Migrate to Amazon Aurora Serverless v2."
+      },
+      {
+        "id": "C",
+        "text": "Implement RDS Read Replicas and use an Auto Scaling group to manage them."
+      },
+      {
+        "id": "D",
+        "text": "Place Amazon ElastiCache in front of the existing RDS MySQL database."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 19,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A logistics provider is planning a massive data center evacuation comprising 8000 VMs running various applications. The cloud team lacks documentation on application dependencies, networking communication paths, and resource utilization. They need to map out move-groups for the migration. Which AWS service should they deploy on-premises to gather this data?",
+    "options": [
+      {
+        "id": "A",
+        "text": "AWS Migration Hub with AWS Application Discovery Service."
+      },
+      {
+        "id": "B",
+        "text": "AWS Systems Manager Inventory."
+      },
+      {
+        "id": "C",
+        "text": "AWS DataSync."
+      },
+      {
+        "id": "D",
+        "text": "Amazon CloudWatch Agent."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 20,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A multinational retailer processes sensor telemetry data uploaded to an S3 bucket. The processing involves multiple steps: format validation, virus scanning, machine learning inference via Amazon SageMaker, and updating an RDS database. The previous system used a chain of Lambda functions calling each other synchronously, leading to timeouts and difficult error handling. How should the architecture be refactored?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use Amazon SQS to link each Lambda function sequentially."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS Step Functions to orchestrate the Lambda functions and SageMaker jobs."
+      },
+      {
+        "id": "C",
+        "text": "Use Amazon SNS to fan out the request to all Lambda functions simultaneously."
+      },
+      {
+        "id": "D",
+        "text": "Deploy the workflow on an Amazon EC2 instance using a cron scheduler."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 21,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "A healthcare conglomerate has a data lake on Amazon S3 currently storing 200 TB of clickstream data. The data is heavily accessed for the first 60 days for reporting, after which it is rarely accessed but must be retained for 5 years for compliance. The company wants to optimize storage costs without introducing retrieval latency during the reporting period. Which solution is MOST cost-effective?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Transition the data to S3 Standard-Infrequent Access (S3 Standard-IA) immediately, then to S3 Glacier Deep Archive after 5 years."
+      },
+      {
+        "id": "B",
+        "text": "Use an S3 Lifecycle policy to transition objects to S3 Standard-IA after 60 days, and then to S3 Glacier Deep Archive after 1 year."
+      },
+      {
+        "id": "C",
+        "text": "Store all data directly in S3 Intelligent-Tiering and rely on automatic cost optimization."
+      },
+      {
+        "id": "D",
+        "text": "Move data to Amazon EFS after 60 days and then use AWS Backup to archive it."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 22,
+    "type": "multiple",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "An ed-tech startup runs a highly seasonal CRM application on Amazon ECS using AWS Fargate. During their peak season, CPU utilization jumps rapidly, but the ECS Service Auto Scaling is too slow to react, resulting in increased latency. Which combination of actions should the Solutions Architect take to improve scaling responsiveness? (Select two)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Change the scaling policy from target tracking to step scaling with aggressive scale-out thresholds."
+      },
+      {
+        "id": "B",
+        "text": "Implement Predictive Scaling to scale out ahead of historical traffic spikes."
+      },
+      {
+        "id": "C",
+        "text": "Switch the compute provider from AWS Fargate to Amazon EC2 and over-provision instances."
+      },
+      {
+        "id": "D",
+        "text": "Decrease the health check grace period on the Application Load Balancer."
+      },
+      {
+        "id": "E",
+        "text": "Use AWS Lambda instead of ECS for faster cold starts."
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 23,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "An online gaming studio operates a hybrid environment connecting their on-premises network to AWS via AWS Direct Connect. They have an on-premises DNS server resolving dc.internal and an AWS Route 53 Private Hosted Zone resolving internal.aws.corp inside their VPC. They need bi-directional DNS resolution between the environments. What is the MOST resilient and AWS-native solution?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Deploy two Amazon EC2 instances running BIND DNS forwarders in multiple Availability Zones."
+      },
+      {
+        "id": "B",
+        "text": "Create a Route 53 Resolver Inbound Endpoint and an Outbound Endpoint. Configure forwarding rules for dc.internal pointing to the on-premises DNS servers."
+      },
+      {
+        "id": "C",
+        "text": "Configure a DHCP Options Set in the VPC to point directly to the on-premises DNS servers."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Managed Microsoft AD to replicate DNS zones between on-premises and AWS."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 24,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A digital media agency stores user profile data in an Amazon DynamoDB table. Whenever a user updates their sensor telemetry data, a downstream marketing application needs to process the change immediately to trigger personalized emails. The solution must be highly available and require minimal custom code. How should this be implemented?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a cron job on an EC2 instance that queries the DynamoDB table every minute for recently updated profiles."
+      },
+      {
+        "id": "B",
+        "text": "Enable DynamoDB Streams and configure it to trigger an AWS Lambda function which processes the payload and sends it to the marketing application."
+      },
+      {
+        "id": "C",
+        "text": "Configure an Amazon EventBridge rule that listens for CloudTrail DynamoDB UpdateItem API calls and triggers the marketing application."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Database Migration Service (DMS) to continuously replicate DynamoDB changes to the marketing application's RDS database."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 25,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "An ed-tech startup provides a real-time inventory management API that is accessed by clients globally. The API runs on Amazon EC2 instances behind Application Load Balancers (ALBs) in three different AWS Regions (us-east-1, eu-west-1, ap-northeast-1). Users in distant locations are reporting high latency. The company requires a solution that minimizes internet routing variability and provides static entry points. What is the BEST solution?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an Amazon CloudFront distribution and set the ALBs as multiple origins using origin groups for failover."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS Global Accelerator, create an accelerator, and add the three regional ALBs as endpoint groups."
+      },
+      {
+        "id": "C",
+        "text": "Configure Amazon Route 53 Latency Based Routing with health checks to route clients to the nearest ALB."
+      },
+      {
+        "id": "D",
+        "text": "Deploy AWS Transit Gateway to interconnect the three regions and route internet traffic through it."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 26,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "The CISO of A multinational retailer wants to consolidate security findings across 300 AWS accounts. Currently, Amazon GuardDuty, AWS Security Hub, and Amazon Macie are enabled independently in each account. The CISO wants a single pane of glass in a dedicated 'Security' account and needs to automatically remediate specific high-severity GuardDuty findings. Which approach is MOST appropriate?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use AWS Organizations to designate the Security account as the delegated administrator for GuardDuty, Security Hub, and Macie. Use EventBridge in the Security account to trigger Lambda remediations."
+      },
+      {
+        "id": "B",
+        "text": "Create a cross-account IAM role. Deploy a Lambda function in the master account that polls the APIs of all member accounts every 5 minutes and aggregates the findings."
+      },
+      {
+        "id": "C",
+        "text": "Configure CloudTrail in all accounts to deliver logs to an S3 bucket in the Security account. Use Amazon Athena to query for security findings."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Config aggregators to pull GuardDuty findings into the Security account and apply AWS Config managed rules for remediation."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 27,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "A logistics provider runs a predictable, steady-state baseline of e-commerce workloads on Amazon EC2 across multiple instance families and multiple AWS Regions. They also heavily utilize AWS Fargate for microservices. The CTO wants to maximize cost savings for this steady-state usage while retaining the flexibility to switch instance families and regions without modifying the pricing contract. What should they purchase?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Standard Reserved Instances (RIs) for EC2."
+      },
+      {
+        "id": "B",
+        "text": "Convertible Reserved Instances (RIs) for EC2."
+      },
+      {
+        "id": "C",
+        "text": "Compute Savings Plans."
+      },
+      {
+        "id": "D",
+        "text": "EC2 Instance Savings Plans."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 28,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A fintech enterprise is launching a new clickstream data analytics portal. Traffic is highly unpredictable; it often goes days with zero traffic, followed by sudden bursts of hundreds of concurrent users accessing complex queries. The backend is currently standard Amazon RDS MySQL, which is proving too expensive during idle times and too slow to scale during bursts. Which database solution resolves these issues?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Migrate to Amazon DynamoDB and use On-Demand capacity."
+      },
+      {
+        "id": "B",
+        "text": "Migrate to Amazon Aurora Serverless v2."
+      },
+      {
+        "id": "C",
+        "text": "Implement RDS Read Replicas and use an Auto Scaling group to manage them."
+      },
+      {
+        "id": "D",
+        "text": "Place Amazon ElastiCache in front of the existing RDS MySQL database."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 29,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "An online gaming studio is planning a massive data center evacuation comprising 8000 VMs running various applications. The cloud team lacks documentation on application dependencies, networking communication paths, and resource utilization. They need to map out move-groups for the migration. Which AWS service should they deploy on-premises to gather this data?",
+    "options": [
+      {
+        "id": "A",
+        "text": "AWS Migration Hub with AWS Application Discovery Service."
+      },
+      {
+        "id": "B",
+        "text": "AWS Systems Manager Inventory."
+      },
+      {
+        "id": "C",
+        "text": "AWS DataSync."
+      },
+      {
+        "id": "D",
+        "text": "Amazon CloudWatch Agent."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 30,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A telecommunications company processes sensor telemetry data uploaded to an S3 bucket. The processing involves multiple steps: format validation, virus scanning, machine learning inference via Amazon SageMaker, and updating an RDS database. The previous system used a chain of Lambda functions calling each other synchronously, leading to timeouts and difficult error handling. How should the architecture be refactored?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use Amazon SQS to link each Lambda function sequentially."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS Step Functions to orchestrate the Lambda functions and SageMaker jobs."
+      },
+      {
+        "id": "C",
+        "text": "Use Amazon SNS to fan out the request to all Lambda functions simultaneously."
+      },
+      {
+        "id": "D",
+        "text": "Deploy the workflow on an Amazon EC2 instance using a cron scheduler."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 31,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "A fintech enterprise has a data lake on Amazon S3 currently storing 50 TB of customer transaction logs. The data is heavily accessed for the first 60 days for reporting, after which it is rarely accessed but must be retained for 10 years for compliance. The company wants to optimize storage costs without introducing retrieval latency during the reporting period. Which solution is MOST cost-effective?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Transition the data to S3 Standard-Infrequent Access (S3 Standard-IA) immediately, then to S3 Glacier Deep Archive after 10 years."
+      },
+      {
+        "id": "B",
+        "text": "Use an S3 Lifecycle policy to transition objects to S3 Standard-IA after 60 days, and then to S3 Glacier Deep Archive after 1 year."
+      },
+      {
+        "id": "C",
+        "text": "Store all data directly in S3 Intelligent-Tiering and rely on automatic cost optimization."
+      },
+      {
+        "id": "D",
+        "text": "Move data to Amazon EFS after 60 days and then use AWS Backup to archive it."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 32,
+    "type": "multiple",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A telecommunications company runs a highly seasonal API gateway application on Amazon ECS using AWS Fargate. During their peak season, CPU utilization jumps rapidly, but the ECS Service Auto Scaling is too slow to react, resulting in increased latency. Which combination of actions should the Solutions Architect take to improve scaling responsiveness? (Select two)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Change the scaling policy from target tracking to step scaling with aggressive scale-out thresholds."
+      },
+      {
+        "id": "B",
+        "text": "Implement Predictive Scaling to scale out ahead of historical traffic spikes."
+      },
+      {
+        "id": "C",
+        "text": "Switch the compute provider from AWS Fargate to Amazon EC2 and over-provision instances."
+      },
+      {
+        "id": "D",
+        "text": "Decrease the health check grace period on the Application Load Balancer."
+      },
+      {
+        "id": "E",
+        "text": "Use AWS Lambda instead of ECS for faster cold starts."
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 33,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "A fintech enterprise operates a hybrid environment connecting their on-premises network to AWS via AWS Direct Connect. They have an on-premises DNS server resolving hq.local and an AWS Route 53 Private Hosted Zone resolving aws.app.internal inside their VPC. They need bi-directional DNS resolution between the environments. What is the MOST resilient and AWS-native solution?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Deploy two Amazon EC2 instances running BIND DNS forwarders in multiple Availability Zones."
+      },
+      {
+        "id": "B",
+        "text": "Create a Route 53 Resolver Inbound Endpoint and an Outbound Endpoint. Configure forwarding rules for hq.local pointing to the on-premises DNS servers."
+      },
+      {
+        "id": "C",
+        "text": "Configure a DHCP Options Set in the VPC to point directly to the on-premises DNS servers."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Managed Microsoft AD to replicate DNS zones between on-premises and AWS."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 34,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A fintech enterprise stores user profile data in an Amazon DynamoDB table. Whenever a user updates their financial reports, a downstream marketing application needs to process the change immediately to trigger personalized emails. The solution must be highly available and require minimal custom code. How should this be implemented?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a cron job on an EC2 instance that queries the DynamoDB table every minute for recently updated profiles."
+      },
+      {
+        "id": "B",
+        "text": "Enable DynamoDB Streams and configure it to trigger an AWS Lambda function which processes the payload and sends it to the marketing application."
+      },
+      {
+        "id": "C",
+        "text": "Configure an Amazon EventBridge rule that listens for CloudTrail DynamoDB UpdateItem API calls and triggers the marketing application."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Database Migration Service (DMS) to continuously replicate DynamoDB changes to the marketing application's RDS database."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 35,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A multinational retailer provides a real-time CRM API that is accessed by clients globally. The API runs on Amazon EC2 instances behind Application Load Balancers (ALBs) in three different AWS Regions (us-east-1, eu-west-1, ap-northeast-1). Users in distant locations are reporting high latency. The company requires a solution that minimizes internet routing variability and provides static entry points. What is the BEST solution?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an Amazon CloudFront distribution and set the ALBs as multiple origins using origin groups for failover."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS Global Accelerator, create an accelerator, and add the three regional ALBs as endpoint groups."
+      },
+      {
+        "id": "C",
+        "text": "Configure Amazon Route 53 Latency Based Routing with health checks to route clients to the nearest ALB."
+      },
+      {
+        "id": "D",
+        "text": "Deploy AWS Transit Gateway to interconnect the three regions and route internet traffic through it."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 36,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "The CISO of A telecommunications company wants to consolidate security findings across 500 AWS accounts. Currently, Amazon GuardDuty, AWS Security Hub, and Amazon Macie are enabled independently in each account. The CISO wants a single pane of glass in a dedicated 'Security' account and needs to automatically remediate specific high-severity GuardDuty findings. Which approach is MOST appropriate?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use AWS Organizations to designate the Security account as the delegated administrator for GuardDuty, Security Hub, and Macie. Use EventBridge in the Security account to trigger Lambda remediations."
+      },
+      {
+        "id": "B",
+        "text": "Create a cross-account IAM role. Deploy a Lambda function in the master account that polls the APIs of all member accounts every 5 minutes and aggregates the findings."
+      },
+      {
+        "id": "C",
+        "text": "Configure CloudTrail in all accounts to deliver logs to an S3 bucket in the Security account. Use Amazon Athena to query for security findings."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Config aggregators to pull GuardDuty findings into the Security account and apply AWS Config managed rules for remediation."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 37,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "An ed-tech startup runs a predictable, steady-state baseline of CRM workloads on Amazon EC2 across multiple instance families and multiple AWS Regions. They also heavily utilize AWS Fargate for microservices. The CTO wants to maximize cost savings for this steady-state usage while retaining the flexibility to switch instance families and regions without modifying the pricing contract. What should they purchase?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Standard Reserved Instances (RIs) for EC2."
+      },
+      {
+        "id": "B",
+        "text": "Convertible Reserved Instances (RIs) for EC2."
+      },
+      {
+        "id": "C",
+        "text": "Compute Savings Plans."
+      },
+      {
+        "id": "D",
+        "text": "EC2 Instance Savings Plans."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 38,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A healthcare conglomerate is launching a new sensor telemetry data analytics portal. Traffic is highly unpredictable; it often goes days with zero traffic, followed by sudden bursts of hundreds of concurrent users accessing complex queries. The backend is currently standard Amazon RDS MySQL, which is proving too expensive during idle times and too slow to scale during bursts. Which database solution resolves these issues?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Migrate to Amazon DynamoDB and use On-Demand capacity."
+      },
+      {
+        "id": "B",
+        "text": "Migrate to Amazon Aurora Serverless v2."
+      },
+      {
+        "id": "C",
+        "text": "Implement RDS Read Replicas and use an Auto Scaling group to manage them."
+      },
+      {
+        "id": "D",
+        "text": "Place Amazon ElastiCache in front of the existing RDS MySQL database."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 39,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A fintech enterprise is planning a massive data center evacuation comprising 1200 VMs running various applications. The cloud team lacks documentation on application dependencies, networking communication paths, and resource utilization. They need to map out move-groups for the migration. Which AWS service should they deploy on-premises to gather this data?",
+    "options": [
+      {
+        "id": "A",
+        "text": "AWS Migration Hub with AWS Application Discovery Service."
+      },
+      {
+        "id": "B",
+        "text": "AWS Systems Manager Inventory."
+      },
+      {
+        "id": "C",
+        "text": "AWS DataSync."
+      },
+      {
+        "id": "D",
+        "text": "Amazon CloudWatch Agent."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 40,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "An ed-tech startup processes user-generated videos uploaded to an S3 bucket. The processing involves multiple steps: format validation, virus scanning, machine learning inference via Amazon SageMaker, and updating an RDS database. The previous system used a chain of Lambda functions calling each other synchronously, leading to timeouts and difficult error handling. How should the architecture be refactored?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use Amazon SQS to link each Lambda function sequentially."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS Step Functions to orchestrate the Lambda functions and SageMaker jobs."
+      },
+      {
+        "id": "C",
+        "text": "Use Amazon SNS to fan out the request to all Lambda functions simultaneously."
+      },
+      {
+        "id": "D",
+        "text": "Deploy the workflow on an Amazon EC2 instance using a cron scheduler."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 41,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "A multinational retailer has a data lake on Amazon S3 currently storing 500 TB of customer transaction logs. The data is heavily accessed for the first 30 days for reporting, after which it is rarely accessed but must be retained for 10 years for compliance. The company wants to optimize storage costs without introducing retrieval latency during the reporting period. Which solution is MOST cost-effective?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Transition the data to S3 Standard-Infrequent Access (S3 Standard-IA) immediately, then to S3 Glacier Deep Archive after 10 years."
+      },
+      {
+        "id": "B",
+        "text": "Use an S3 Lifecycle policy to transition objects to S3 Standard-IA after 30 days, and then to S3 Glacier Deep Archive after 1 year."
+      },
+      {
+        "id": "C",
+        "text": "Store all data directly in S3 Intelligent-Tiering and rely on automatic cost optimization."
+      },
+      {
+        "id": "D",
+        "text": "Move data to Amazon EFS after 30 days and then use AWS Backup to archive it."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 42,
+    "type": "multiple",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "An online gaming studio runs a highly seasonal machine learning application on Amazon ECS using AWS Fargate. During their peak season, CPU utilization jumps rapidly, but the ECS Service Auto Scaling is too slow to react, resulting in increased latency. Which combination of actions should the Solutions Architect take to improve scaling responsiveness? (Select two)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Change the scaling policy from target tracking to step scaling with aggressive scale-out thresholds."
+      },
+      {
+        "id": "B",
+        "text": "Implement Predictive Scaling to scale out ahead of historical traffic spikes."
+      },
+      {
+        "id": "C",
+        "text": "Switch the compute provider from AWS Fargate to Amazon EC2 and over-provision instances."
+      },
+      {
+        "id": "D",
+        "text": "Decrease the health check grace period on the Application Load Balancer."
+      },
+      {
+        "id": "E",
+        "text": "Use AWS Lambda instead of ECS for faster cold starts."
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 43,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "A fintech enterprise operates a hybrid environment connecting their on-premises network to AWS via AWS Direct Connect. They have an on-premises DNS server resolving hq.local and an AWS Route 53 Private Hosted Zone resolving cloud.local inside their VPC. They need bi-directional DNS resolution between the environments. What is the MOST resilient and AWS-native solution?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Deploy two Amazon EC2 instances running BIND DNS forwarders in multiple Availability Zones."
+      },
+      {
+        "id": "B",
+        "text": "Create a Route 53 Resolver Inbound Endpoint and an Outbound Endpoint. Configure forwarding rules for hq.local pointing to the on-premises DNS servers."
+      },
+      {
+        "id": "C",
+        "text": "Configure a DHCP Options Set in the VPC to point directly to the on-premises DNS servers."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Managed Microsoft AD to replicate DNS zones between on-premises and AWS."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 44,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "An ed-tech startup stores user profile data in an Amazon DynamoDB table. Whenever a user updates their sensor telemetry data, a downstream marketing application needs to process the change immediately to trigger personalized emails. The solution must be highly available and require minimal custom code. How should this be implemented?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a cron job on an EC2 instance that queries the DynamoDB table every minute for recently updated profiles."
+      },
+      {
+        "id": "B",
+        "text": "Enable DynamoDB Streams and configure it to trigger an AWS Lambda function which processes the payload and sends it to the marketing application."
+      },
+      {
+        "id": "C",
+        "text": "Configure an Amazon EventBridge rule that listens for CloudTrail DynamoDB UpdateItem API calls and triggers the marketing application."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Database Migration Service (DMS) to continuously replicate DynamoDB changes to the marketing application's RDS database."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 45,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A digital media agency provides a real-time inventory management API that is accessed by clients globally. The API runs on Amazon EC2 instances behind Application Load Balancers (ALBs) in three different AWS Regions (us-east-1, eu-west-1, ap-northeast-1). Users in distant locations are reporting high latency. The company requires a solution that minimizes internet routing variability and provides static entry points. What is the BEST solution?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an Amazon CloudFront distribution and set the ALBs as multiple origins using origin groups for failover."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS Global Accelerator, create an accelerator, and add the three regional ALBs as endpoint groups."
+      },
+      {
+        "id": "C",
+        "text": "Configure Amazon Route 53 Latency Based Routing with health checks to route clients to the nearest ALB."
+      },
+      {
+        "id": "D",
+        "text": "Deploy AWS Transit Gateway to interconnect the three regions and route internet traffic through it."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 46,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "The CISO of A healthcare conglomerate wants to consolidate security findings across 300 AWS accounts. Currently, Amazon GuardDuty, AWS Security Hub, and Amazon Macie are enabled independently in each account. The CISO wants a single pane of glass in a dedicated 'Security' account and needs to automatically remediate specific high-severity GuardDuty findings. Which approach is MOST appropriate?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use AWS Organizations to designate the Security account as the delegated administrator for GuardDuty, Security Hub, and Macie. Use EventBridge in the Security account to trigger Lambda remediations."
+      },
+      {
+        "id": "B",
+        "text": "Create a cross-account IAM role. Deploy a Lambda function in the master account that polls the APIs of all member accounts every 5 minutes and aggregates the findings."
+      },
+      {
+        "id": "C",
+        "text": "Configure CloudTrail in all accounts to deliver logs to an S3 bucket in the Security account. Use Amazon Athena to query for security findings."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Config aggregators to pull GuardDuty findings into the Security account and apply AWS Config managed rules for remediation."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 47,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "A multinational retailer runs a predictable, steady-state baseline of inventory management workloads on Amazon EC2 across multiple instance families and multiple AWS Regions. They also heavily utilize AWS Fargate for microservices. The CTO wants to maximize cost savings for this steady-state usage while retaining the flexibility to switch instance families and regions without modifying the pricing contract. What should they purchase?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Standard Reserved Instances (RIs) for EC2."
+      },
+      {
+        "id": "B",
+        "text": "Convertible Reserved Instances (RIs) for EC2."
+      },
+      {
+        "id": "C",
+        "text": "Compute Savings Plans."
+      },
+      {
+        "id": "D",
+        "text": "EC2 Instance Savings Plans."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 48,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A healthcare conglomerate is launching a new customer transaction logs analytics portal. Traffic is highly unpredictable; it often goes days with zero traffic, followed by sudden bursts of hundreds of concurrent users accessing complex queries. The backend is currently standard Amazon RDS MySQL, which is proving too expensive during idle times and too slow to scale during bursts. Which database solution resolves these issues?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Migrate to Amazon DynamoDB and use On-Demand capacity."
+      },
+      {
+        "id": "B",
+        "text": "Migrate to Amazon Aurora Serverless v2."
+      },
+      {
+        "id": "C",
+        "text": "Implement RDS Read Replicas and use an Auto Scaling group to manage them."
+      },
+      {
+        "id": "D",
+        "text": "Place Amazon ElastiCache in front of the existing RDS MySQL database."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 49,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "An online gaming studio is planning a massive data center evacuation comprising 3000 VMs running various applications. The cloud team lacks documentation on application dependencies, networking communication paths, and resource utilization. They need to map out move-groups for the migration. Which AWS service should they deploy on-premises to gather this data?",
+    "options": [
+      {
+        "id": "A",
+        "text": "AWS Migration Hub with AWS Application Discovery Service."
+      },
+      {
+        "id": "B",
+        "text": "AWS Systems Manager Inventory."
+      },
+      {
+        "id": "C",
+        "text": "AWS DataSync."
+      },
+      {
+        "id": "D",
+        "text": "Amazon CloudWatch Agent."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 50,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "An ed-tech startup processes user-generated videos uploaded to an S3 bucket. The processing involves multiple steps: format validation, virus scanning, machine learning inference via Amazon SageMaker, and updating an RDS database. The previous system used a chain of Lambda functions calling each other synchronously, leading to timeouts and difficult error handling. How should the architecture be refactored?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use Amazon SQS to link each Lambda function sequentially."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS Step Functions to orchestrate the Lambda functions and SageMaker jobs."
+      },
+      {
+        "id": "C",
+        "text": "Use Amazon SNS to fan out the request to all Lambda functions simultaneously."
+      },
+      {
+        "id": "D",
+        "text": "Deploy the workflow on an Amazon EC2 instance using a cron scheduler."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 51,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "A fintech enterprise has a data lake on Amazon S3 currently storing 1 PB of customer transaction logs. The data is heavily accessed for the first 90 days for reporting, after which it is rarely accessed but must be retained for 10 years for compliance. The company wants to optimize storage costs without introducing retrieval latency during the reporting period. Which solution is MOST cost-effective?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Transition the data to S3 Standard-Infrequent Access (S3 Standard-IA) immediately, then to S3 Glacier Deep Archive after 10 years."
+      },
+      {
+        "id": "B",
+        "text": "Use an S3 Lifecycle policy to transition objects to S3 Standard-IA after 90 days, and then to S3 Glacier Deep Archive after 1 year."
+      },
+      {
+        "id": "C",
+        "text": "Store all data directly in S3 Intelligent-Tiering and rely on automatic cost optimization."
+      },
+      {
+        "id": "D",
+        "text": "Move data to Amazon EFS after 90 days and then use AWS Backup to archive it."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 52,
+    "type": "multiple",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "An online gaming studio runs a highly seasonal API gateway application on Amazon ECS using AWS Fargate. During their peak season, CPU utilization jumps rapidly, but the ECS Service Auto Scaling is too slow to react, resulting in increased latency. Which combination of actions should the Solutions Architect take to improve scaling responsiveness? (Select two)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Change the scaling policy from target tracking to step scaling with aggressive scale-out thresholds."
+      },
+      {
+        "id": "B",
+        "text": "Implement Predictive Scaling to scale out ahead of historical traffic spikes."
+      },
+      {
+        "id": "C",
+        "text": "Switch the compute provider from AWS Fargate to Amazon EC2 and over-provision instances."
+      },
+      {
+        "id": "D",
+        "text": "Decrease the health check grace period on the Application Load Balancer."
+      },
+      {
+        "id": "E",
+        "text": "Use AWS Lambda instead of ECS for faster cold starts."
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 53,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "A healthcare conglomerate operates a hybrid environment connecting their on-premises network to AWS via AWS Direct Connect. They have an on-premises DNS server resolving hq.local and an AWS Route 53 Private Hosted Zone resolving vpc.internal inside their VPC. They need bi-directional DNS resolution between the environments. What is the MOST resilient and AWS-native solution?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Deploy two Amazon EC2 instances running BIND DNS forwarders in multiple Availability Zones."
+      },
+      {
+        "id": "B",
+        "text": "Create a Route 53 Resolver Inbound Endpoint and an Outbound Endpoint. Configure forwarding rules for hq.local pointing to the on-premises DNS servers."
+      },
+      {
+        "id": "C",
+        "text": "Configure a DHCP Options Set in the VPC to point directly to the on-premises DNS servers."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Managed Microsoft AD to replicate DNS zones between on-premises and AWS."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 54,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A digital media agency stores user profile data in an Amazon DynamoDB table. Whenever a user updates their financial reports, a downstream marketing application needs to process the change immediately to trigger personalized emails. The solution must be highly available and require minimal custom code. How should this be implemented?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a cron job on an EC2 instance that queries the DynamoDB table every minute for recently updated profiles."
+      },
+      {
+        "id": "B",
+        "text": "Enable DynamoDB Streams and configure it to trigger an AWS Lambda function which processes the payload and sends it to the marketing application."
+      },
+      {
+        "id": "C",
+        "text": "Configure an Amazon EventBridge rule that listens for CloudTrail DynamoDB UpdateItem API calls and triggers the marketing application."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Database Migration Service (DMS) to continuously replicate DynamoDB changes to the marketing application's RDS database."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 55,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A telecommunications company provides a real-time CRM API that is accessed by clients globally. The API runs on Amazon EC2 instances behind Application Load Balancers (ALBs) in three different AWS Regions (us-east-1, eu-west-1, ap-northeast-1). Users in distant locations are reporting high latency. The company requires a solution that minimizes internet routing variability and provides static entry points. What is the BEST solution?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an Amazon CloudFront distribution and set the ALBs as multiple origins using origin groups for failover."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS Global Accelerator, create an accelerator, and add the three regional ALBs as endpoint groups."
+      },
+      {
+        "id": "C",
+        "text": "Configure Amazon Route 53 Latency Based Routing with health checks to route clients to the nearest ALB."
+      },
+      {
+        "id": "D",
+        "text": "Deploy AWS Transit Gateway to interconnect the three regions and route internet traffic through it."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 56,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "The CISO of A healthcare conglomerate wants to consolidate security findings across 500 AWS accounts. Currently, Amazon GuardDuty, AWS Security Hub, and Amazon Macie are enabled independently in each account. The CISO wants a single pane of glass in a dedicated 'Security' account and needs to automatically remediate specific high-severity GuardDuty findings. Which approach is MOST appropriate?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use AWS Organizations to designate the Security account as the delegated administrator for GuardDuty, Security Hub, and Macie. Use EventBridge in the Security account to trigger Lambda remediations."
+      },
+      {
+        "id": "B",
+        "text": "Create a cross-account IAM role. Deploy a Lambda function in the master account that polls the APIs of all member accounts every 5 minutes and aggregates the findings."
+      },
+      {
+        "id": "C",
+        "text": "Configure CloudTrail in all accounts to deliver logs to an S3 bucket in the Security account. Use Amazon Athena to query for security findings."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Config aggregators to pull GuardDuty findings into the Security account and apply AWS Config managed rules for remediation."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 57,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "A healthcare conglomerate runs a predictable, steady-state baseline of inventory management workloads on Amazon EC2 across multiple instance families and multiple AWS Regions. They also heavily utilize AWS Fargate for microservices. The CTO wants to maximize cost savings for this steady-state usage while retaining the flexibility to switch instance families and regions without modifying the pricing contract. What should they purchase?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Standard Reserved Instances (RIs) for EC2."
+      },
+      {
+        "id": "B",
+        "text": "Convertible Reserved Instances (RIs) for EC2."
+      },
+      {
+        "id": "C",
+        "text": "Compute Savings Plans."
+      },
+      {
+        "id": "D",
+        "text": "EC2 Instance Savings Plans."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 58,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A multinational retailer is launching a new customer transaction logs analytics portal. Traffic is highly unpredictable; it often goes days with zero traffic, followed by sudden bursts of hundreds of concurrent users accessing complex queries. The backend is currently standard Amazon RDS MySQL, which is proving too expensive during idle times and too slow to scale during bursts. Which database solution resolves these issues?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Migrate to Amazon DynamoDB and use On-Demand capacity."
+      },
+      {
+        "id": "B",
+        "text": "Migrate to Amazon Aurora Serverless v2."
+      },
+      {
+        "id": "C",
+        "text": "Implement RDS Read Replicas and use an Auto Scaling group to manage them."
+      },
+      {
+        "id": "D",
+        "text": "Place Amazon ElastiCache in front of the existing RDS MySQL database."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 59,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A telecommunications company is planning a massive data center evacuation comprising 1200 VMs running various applications. The cloud team lacks documentation on application dependencies, networking communication paths, and resource utilization. They need to map out move-groups for the migration. Which AWS service should they deploy on-premises to gather this data?",
+    "options": [
+      {
+        "id": "A",
+        "text": "AWS Migration Hub with AWS Application Discovery Service."
+      },
+      {
+        "id": "B",
+        "text": "AWS Systems Manager Inventory."
+      },
+      {
+        "id": "C",
+        "text": "AWS DataSync."
+      },
+      {
+        "id": "D",
+        "text": "Amazon CloudWatch Agent."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 60,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A telecommunications company processes user-generated videos uploaded to an S3 bucket. The processing involves multiple steps: format validation, virus scanning, machine learning inference via Amazon SageMaker, and updating an RDS database. The previous system used a chain of Lambda functions calling each other synchronously, leading to timeouts and difficult error handling. How should the architecture be refactored?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use Amazon SQS to link each Lambda function sequentially."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS Step Functions to orchestrate the Lambda functions and SageMaker jobs."
+      },
+      {
+        "id": "C",
+        "text": "Use Amazon SNS to fan out the request to all Lambda functions simultaneously."
+      },
+      {
+        "id": "D",
+        "text": "Deploy the workflow on an Amazon EC2 instance using a cron scheduler."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 61,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "An ed-tech startup has a data lake on Amazon S3 currently storing 200 TB of sensor telemetry data. The data is heavily accessed for the first 30 days for reporting, after which it is rarely accessed but must be retained for 7 years for compliance. The company wants to optimize storage costs without introducing retrieval latency during the reporting period. Which solution is MOST cost-effective?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Transition the data to S3 Standard-Infrequent Access (S3 Standard-IA) immediately, then to S3 Glacier Deep Archive after 7 years."
+      },
+      {
+        "id": "B",
+        "text": "Use an S3 Lifecycle policy to transition objects to S3 Standard-IA after 30 days, and then to S3 Glacier Deep Archive after 1 year."
+      },
+      {
+        "id": "C",
+        "text": "Store all data directly in S3 Intelligent-Tiering and rely on automatic cost optimization."
+      },
+      {
+        "id": "D",
+        "text": "Move data to Amazon EFS after 30 days and then use AWS Backup to archive it."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 62,
+    "type": "multiple",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "An online gaming studio runs a highly seasonal API gateway application on Amazon ECS using AWS Fargate. During their peak season, CPU utilization jumps rapidly, but the ECS Service Auto Scaling is too slow to react, resulting in increased latency. Which combination of actions should the Solutions Architect take to improve scaling responsiveness? (Select two)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Change the scaling policy from target tracking to step scaling with aggressive scale-out thresholds."
+      },
+      {
+        "id": "B",
+        "text": "Implement Predictive Scaling to scale out ahead of historical traffic spikes."
+      },
+      {
+        "id": "C",
+        "text": "Switch the compute provider from AWS Fargate to Amazon EC2 and over-provision instances."
+      },
+      {
+        "id": "D",
+        "text": "Decrease the health check grace period on the Application Load Balancer."
+      },
+      {
+        "id": "E",
+        "text": "Use AWS Lambda instead of ECS for faster cold starts."
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 63,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "A fintech enterprise operates a hybrid environment connecting their on-premises network to AWS via AWS Direct Connect. They have an on-premises DNS server resolving hq.local and an AWS Route 53 Private Hosted Zone resolving cloud.local inside their VPC. They need bi-directional DNS resolution between the environments. What is the MOST resilient and AWS-native solution?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Deploy two Amazon EC2 instances running BIND DNS forwarders in multiple Availability Zones."
+      },
+      {
+        "id": "B",
+        "text": "Create a Route 53 Resolver Inbound Endpoint and an Outbound Endpoint. Configure forwarding rules for hq.local pointing to the on-premises DNS servers."
+      },
+      {
+        "id": "C",
+        "text": "Configure a DHCP Options Set in the VPC to point directly to the on-premises DNS servers."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Managed Microsoft AD to replicate DNS zones between on-premises and AWS."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 64,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A logistics provider stores user profile data in an Amazon DynamoDB table. Whenever a user updates their customer transaction logs, a downstream marketing application needs to process the change immediately to trigger personalized emails. The solution must be highly available and require minimal custom code. How should this be implemented?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a cron job on an EC2 instance that queries the DynamoDB table every minute for recently updated profiles."
+      },
+      {
+        "id": "B",
+        "text": "Enable DynamoDB Streams and configure it to trigger an AWS Lambda function which processes the payload and sends it to the marketing application."
+      },
+      {
+        "id": "C",
+        "text": "Configure an Amazon EventBridge rule that listens for CloudTrail DynamoDB UpdateItem API calls and triggers the marketing application."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Database Migration Service (DMS) to continuously replicate DynamoDB changes to the marketing application's RDS database."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 65,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A logistics provider provides a real-time inventory management API that is accessed by clients globally. The API runs on Amazon EC2 instances behind Application Load Balancers (ALBs) in three different AWS Regions (us-east-1, eu-west-1, ap-northeast-1). Users in distant locations are reporting high latency. The company requires a solution that minimizes internet routing variability and provides static entry points. What is the BEST solution?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an Amazon CloudFront distribution and set the ALBs as multiple origins using origin groups for failover."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS Global Accelerator, create an accelerator, and add the three regional ALBs as endpoint groups."
+      },
+      {
+        "id": "C",
+        "text": "Configure Amazon Route 53 Latency Based Routing with health checks to route clients to the nearest ALB."
+      },
+      {
+        "id": "D",
+        "text": "Deploy AWS Transit Gateway to interconnect the three regions and route internet traffic through it."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 66,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "The CISO of A logistics provider wants to consolidate security findings across 300 AWS accounts. Currently, Amazon GuardDuty, AWS Security Hub, and Amazon Macie are enabled independently in each account. The CISO wants a single pane of glass in a dedicated 'Security' account and needs to automatically remediate specific high-severity GuardDuty findings. Which approach is MOST appropriate?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use AWS Organizations to designate the Security account as the delegated administrator for GuardDuty, Security Hub, and Macie. Use EventBridge in the Security account to trigger Lambda remediations."
+      },
+      {
+        "id": "B",
+        "text": "Create a cross-account IAM role. Deploy a Lambda function in the master account that polls the APIs of all member accounts every 5 minutes and aggregates the findings."
+      },
+      {
+        "id": "C",
+        "text": "Configure CloudTrail in all accounts to deliver logs to an S3 bucket in the Security account. Use Amazon Athena to query for security findings."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Config aggregators to pull GuardDuty findings into the Security account and apply AWS Config managed rules for remediation."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 67,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "An ed-tech startup runs a predictable, steady-state baseline of e-commerce workloads on Amazon EC2 across multiple instance families and multiple AWS Regions. They also heavily utilize AWS Fargate for microservices. The CTO wants to maximize cost savings for this steady-state usage while retaining the flexibility to switch instance families and regions without modifying the pricing contract. What should they purchase?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Standard Reserved Instances (RIs) for EC2."
+      },
+      {
+        "id": "B",
+        "text": "Convertible Reserved Instances (RIs) for EC2."
+      },
+      {
+        "id": "C",
+        "text": "Compute Savings Plans."
+      },
+      {
+        "id": "D",
+        "text": "EC2 Instance Savings Plans."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 68,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A fintech enterprise is launching a new sensor telemetry data analytics portal. Traffic is highly unpredictable; it often goes days with zero traffic, followed by sudden bursts of hundreds of concurrent users accessing complex queries. The backend is currently standard Amazon RDS MySQL, which is proving too expensive during idle times and too slow to scale during bursts. Which database solution resolves these issues?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Migrate to Amazon DynamoDB and use On-Demand capacity."
+      },
+      {
+        "id": "B",
+        "text": "Migrate to Amazon Aurora Serverless v2."
+      },
+      {
+        "id": "C",
+        "text": "Implement RDS Read Replicas and use an Auto Scaling group to manage them."
+      },
+      {
+        "id": "D",
+        "text": "Place Amazon ElastiCache in front of the existing RDS MySQL database."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 69,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A healthcare conglomerate is planning a massive data center evacuation comprising 3000 VMs running various applications. The cloud team lacks documentation on application dependencies, networking communication paths, and resource utilization. They need to map out move-groups for the migration. Which AWS service should they deploy on-premises to gather this data?",
+    "options": [
+      {
+        "id": "A",
+        "text": "AWS Migration Hub with AWS Application Discovery Service."
+      },
+      {
+        "id": "B",
+        "text": "AWS Systems Manager Inventory."
+      },
+      {
+        "id": "C",
+        "text": "AWS DataSync."
+      },
+      {
+        "id": "D",
+        "text": "Amazon CloudWatch Agent."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 70,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A fintech enterprise processes clickstream data uploaded to an S3 bucket. The processing involves multiple steps: format validation, virus scanning, machine learning inference via Amazon SageMaker, and updating an RDS database. The previous system used a chain of Lambda functions calling each other synchronously, leading to timeouts and difficult error handling. How should the architecture be refactored?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use Amazon SQS to link each Lambda function sequentially."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS Step Functions to orchestrate the Lambda functions and SageMaker jobs."
+      },
+      {
+        "id": "C",
+        "text": "Use Amazon SNS to fan out the request to all Lambda functions simultaneously."
+      },
+      {
+        "id": "D",
+        "text": "Deploy the workflow on an Amazon EC2 instance using a cron scheduler."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 71,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "A digital media agency has a data lake on Amazon S3 currently storing 50 TB of clickstream data. The data is heavily accessed for the first 30 days for reporting, after which it is rarely accessed but must be retained for 7 years for compliance. The company wants to optimize storage costs without introducing retrieval latency during the reporting period. Which solution is MOST cost-effective?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Transition the data to S3 Standard-Infrequent Access (S3 Standard-IA) immediately, then to S3 Glacier Deep Archive after 7 years."
+      },
+      {
+        "id": "B",
+        "text": "Use an S3 Lifecycle policy to transition objects to S3 Standard-IA after 30 days, and then to S3 Glacier Deep Archive after 1 year."
+      },
+      {
+        "id": "C",
+        "text": "Store all data directly in S3 Intelligent-Tiering and rely on automatic cost optimization."
+      },
+      {
+        "id": "D",
+        "text": "Move data to Amazon EFS after 30 days and then use AWS Backup to archive it."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 72,
+    "type": "multiple",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A fintech enterprise runs a highly seasonal machine learning application on Amazon ECS using AWS Fargate. During their peak season, CPU utilization jumps rapidly, but the ECS Service Auto Scaling is too slow to react, resulting in increased latency. Which combination of actions should the Solutions Architect take to improve scaling responsiveness? (Select two)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Change the scaling policy from target tracking to step scaling with aggressive scale-out thresholds."
+      },
+      {
+        "id": "B",
+        "text": "Implement Predictive Scaling to scale out ahead of historical traffic spikes."
+      },
+      {
+        "id": "C",
+        "text": "Switch the compute provider from AWS Fargate to Amazon EC2 and over-provision instances."
+      },
+      {
+        "id": "D",
+        "text": "Decrease the health check grace period on the Application Load Balancer."
+      },
+      {
+        "id": "E",
+        "text": "Use AWS Lambda instead of ECS for faster cold starts."
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 73,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "A digital media agency operates a hybrid environment connecting their on-premises network to AWS via AWS Direct Connect. They have an on-premises DNS server resolving dc.internal and an AWS Route 53 Private Hosted Zone resolving vpc.internal inside their VPC. They need bi-directional DNS resolution between the environments. What is the MOST resilient and AWS-native solution?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Deploy two Amazon EC2 instances running BIND DNS forwarders in multiple Availability Zones."
+      },
+      {
+        "id": "B",
+        "text": "Create a Route 53 Resolver Inbound Endpoint and an Outbound Endpoint. Configure forwarding rules for dc.internal pointing to the on-premises DNS servers."
+      },
+      {
+        "id": "C",
+        "text": "Configure a DHCP Options Set in the VPC to point directly to the on-premises DNS servers."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Managed Microsoft AD to replicate DNS zones between on-premises and AWS."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 74,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A digital media agency stores user profile data in an Amazon DynamoDB table. Whenever a user updates their sensor telemetry data, a downstream marketing application needs to process the change immediately to trigger personalized emails. The solution must be highly available and require minimal custom code. How should this be implemented?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a cron job on an EC2 instance that queries the DynamoDB table every minute for recently updated profiles."
+      },
+      {
+        "id": "B",
+        "text": "Enable DynamoDB Streams and configure it to trigger an AWS Lambda function which processes the payload and sends it to the marketing application."
+      },
+      {
+        "id": "C",
+        "text": "Configure an Amazon EventBridge rule that listens for CloudTrail DynamoDB UpdateItem API calls and triggers the marketing application."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Database Migration Service (DMS) to continuously replicate DynamoDB changes to the marketing application's RDS database."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 75,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "An online gaming studio provides a real-time machine learning API that is accessed by clients globally. The API runs on Amazon EC2 instances behind Application Load Balancers (ALBs) in three different AWS Regions (us-east-1, eu-west-1, ap-northeast-1). Users in distant locations are reporting high latency. The company requires a solution that minimizes internet routing variability and provides static entry points. What is the BEST solution?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an Amazon CloudFront distribution and set the ALBs as multiple origins using origin groups for failover."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS Global Accelerator, create an accelerator, and add the three regional ALBs as endpoint groups."
+      },
+      {
+        "id": "C",
+        "text": "Configure Amazon Route 53 Latency Based Routing with health checks to route clients to the nearest ALB."
+      },
+      {
+        "id": "D",
+        "text": "Deploy AWS Transit Gateway to interconnect the three regions and route internet traffic through it."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 76,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "The CISO of A healthcare conglomerate wants to consolidate security findings across 500 AWS accounts. Currently, Amazon GuardDuty, AWS Security Hub, and Amazon Macie are enabled independently in each account. The CISO wants a single pane of glass in a dedicated 'Security' account and needs to automatically remediate specific high-severity GuardDuty findings. Which approach is MOST appropriate?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use AWS Organizations to designate the Security account as the delegated administrator for GuardDuty, Security Hub, and Macie. Use EventBridge in the Security account to trigger Lambda remediations."
+      },
+      {
+        "id": "B",
+        "text": "Create a cross-account IAM role. Deploy a Lambda function in the master account that polls the APIs of all member accounts every 5 minutes and aggregates the findings."
+      },
+      {
+        "id": "C",
+        "text": "Configure CloudTrail in all accounts to deliver logs to an S3 bucket in the Security account. Use Amazon Athena to query for security findings."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Config aggregators to pull GuardDuty findings into the Security account and apply AWS Config managed rules for remediation."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 77,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "A fintech enterprise runs a predictable, steady-state baseline of inventory management workloads on Amazon EC2 across multiple instance families and multiple AWS Regions. They also heavily utilize AWS Fargate for microservices. The CTO wants to maximize cost savings for this steady-state usage while retaining the flexibility to switch instance families and regions without modifying the pricing contract. What should they purchase?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Standard Reserved Instances (RIs) for EC2."
+      },
+      {
+        "id": "B",
+        "text": "Convertible Reserved Instances (RIs) for EC2."
+      },
+      {
+        "id": "C",
+        "text": "Compute Savings Plans."
+      },
+      {
+        "id": "D",
+        "text": "EC2 Instance Savings Plans."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 78,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A logistics provider is launching a new user-generated videos analytics portal. Traffic is highly unpredictable; it often goes days with zero traffic, followed by sudden bursts of hundreds of concurrent users accessing complex queries. The backend is currently standard Amazon RDS MySQL, which is proving too expensive during idle times and too slow to scale during bursts. Which database solution resolves these issues?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Migrate to Amazon DynamoDB and use On-Demand capacity."
+      },
+      {
+        "id": "B",
+        "text": "Migrate to Amazon Aurora Serverless v2."
+      },
+      {
+        "id": "C",
+        "text": "Implement RDS Read Replicas and use an Auto Scaling group to manage them."
+      },
+      {
+        "id": "D",
+        "text": "Place Amazon ElastiCache in front of the existing RDS MySQL database."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 79,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A healthcare conglomerate is planning a massive data center evacuation comprising 8000 VMs running various applications. The cloud team lacks documentation on application dependencies, networking communication paths, and resource utilization. They need to map out move-groups for the migration. Which AWS service should they deploy on-premises to gather this data?",
+    "options": [
+      {
+        "id": "A",
+        "text": "AWS Migration Hub with AWS Application Discovery Service."
+      },
+      {
+        "id": "B",
+        "text": "AWS Systems Manager Inventory."
+      },
+      {
+        "id": "C",
+        "text": "AWS DataSync."
+      },
+      {
+        "id": "D",
+        "text": "Amazon CloudWatch Agent."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 80,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A digital media agency processes sensor telemetry data uploaded to an S3 bucket. The processing involves multiple steps: format validation, virus scanning, machine learning inference via Amazon SageMaker, and updating an RDS database. The previous system used a chain of Lambda functions calling each other synchronously, leading to timeouts and difficult error handling. How should the architecture be refactored?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use Amazon SQS to link each Lambda function sequentially."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS Step Functions to orchestrate the Lambda functions and SageMaker jobs."
+      },
+      {
+        "id": "C",
+        "text": "Use Amazon SNS to fan out the request to all Lambda functions simultaneously."
+      },
+      {
+        "id": "D",
+        "text": "Deploy the workflow on an Amazon EC2 instance using a cron scheduler."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 81,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "A digital media agency has a data lake on Amazon S3 currently storing 50 TB of customer transaction logs. The data is heavily accessed for the first 90 days for reporting, after which it is rarely accessed but must be retained for 7 years for compliance. The company wants to optimize storage costs without introducing retrieval latency during the reporting period. Which solution is MOST cost-effective?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Transition the data to S3 Standard-Infrequent Access (S3 Standard-IA) immediately, then to S3 Glacier Deep Archive after 7 years."
+      },
+      {
+        "id": "B",
+        "text": "Use an S3 Lifecycle policy to transition objects to S3 Standard-IA after 90 days, and then to S3 Glacier Deep Archive after 1 year."
+      },
+      {
+        "id": "C",
+        "text": "Store all data directly in S3 Intelligent-Tiering and rely on automatic cost optimization."
+      },
+      {
+        "id": "D",
+        "text": "Move data to Amazon EFS after 90 days and then use AWS Backup to archive it."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 82,
+    "type": "multiple",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A telecommunications company runs a highly seasonal e-commerce application on Amazon ECS using AWS Fargate. During their peak season, CPU utilization jumps rapidly, but the ECS Service Auto Scaling is too slow to react, resulting in increased latency. Which combination of actions should the Solutions Architect take to improve scaling responsiveness? (Select two)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Change the scaling policy from target tracking to step scaling with aggressive scale-out thresholds."
+      },
+      {
+        "id": "B",
+        "text": "Implement Predictive Scaling to scale out ahead of historical traffic spikes."
+      },
+      {
+        "id": "C",
+        "text": "Switch the compute provider from AWS Fargate to Amazon EC2 and over-provision instances."
+      },
+      {
+        "id": "D",
+        "text": "Decrease the health check grace period on the Application Load Balancer."
+      },
+      {
+        "id": "E",
+        "text": "Use AWS Lambda instead of ECS for faster cold starts."
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 83,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "A logistics provider operates a hybrid environment connecting their on-premises network to AWS via AWS Direct Connect. They have an on-premises DNS server resolving onprem.net and an AWS Route 53 Private Hosted Zone resolving cloud.local inside their VPC. They need bi-directional DNS resolution between the environments. What is the MOST resilient and AWS-native solution?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Deploy two Amazon EC2 instances running BIND DNS forwarders in multiple Availability Zones."
+      },
+      {
+        "id": "B",
+        "text": "Create a Route 53 Resolver Inbound Endpoint and an Outbound Endpoint. Configure forwarding rules for onprem.net pointing to the on-premises DNS servers."
+      },
+      {
+        "id": "C",
+        "text": "Configure a DHCP Options Set in the VPC to point directly to the on-premises DNS servers."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Managed Microsoft AD to replicate DNS zones between on-premises and AWS."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 84,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A healthcare conglomerate stores user profile data in an Amazon DynamoDB table. Whenever a user updates their clickstream data, a downstream marketing application needs to process the change immediately to trigger personalized emails. The solution must be highly available and require minimal custom code. How should this be implemented?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a cron job on an EC2 instance that queries the DynamoDB table every minute for recently updated profiles."
+      },
+      {
+        "id": "B",
+        "text": "Enable DynamoDB Streams and configure it to trigger an AWS Lambda function which processes the payload and sends it to the marketing application."
+      },
+      {
+        "id": "C",
+        "text": "Configure an Amazon EventBridge rule that listens for CloudTrail DynamoDB UpdateItem API calls and triggers the marketing application."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Database Migration Service (DMS) to continuously replicate DynamoDB changes to the marketing application's RDS database."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 85,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A digital media agency provides a real-time e-commerce API that is accessed by clients globally. The API runs on Amazon EC2 instances behind Application Load Balancers (ALBs) in three different AWS Regions (us-east-1, eu-west-1, ap-northeast-1). Users in distant locations are reporting high latency. The company requires a solution that minimizes internet routing variability and provides static entry points. What is the BEST solution?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an Amazon CloudFront distribution and set the ALBs as multiple origins using origin groups for failover."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS Global Accelerator, create an accelerator, and add the three regional ALBs as endpoint groups."
+      },
+      {
+        "id": "C",
+        "text": "Configure Amazon Route 53 Latency Based Routing with health checks to route clients to the nearest ALB."
+      },
+      {
+        "id": "D",
+        "text": "Deploy AWS Transit Gateway to interconnect the three regions and route internet traffic through it."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 86,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "The CISO of An ed-tech startup wants to consolidate security findings across 500 AWS accounts. Currently, Amazon GuardDuty, AWS Security Hub, and Amazon Macie are enabled independently in each account. The CISO wants a single pane of glass in a dedicated 'Security' account and needs to automatically remediate specific high-severity GuardDuty findings. Which approach is MOST appropriate?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use AWS Organizations to designate the Security account as the delegated administrator for GuardDuty, Security Hub, and Macie. Use EventBridge in the Security account to trigger Lambda remediations."
+      },
+      {
+        "id": "B",
+        "text": "Create a cross-account IAM role. Deploy a Lambda function in the master account that polls the APIs of all member accounts every 5 minutes and aggregates the findings."
+      },
+      {
+        "id": "C",
+        "text": "Configure CloudTrail in all accounts to deliver logs to an S3 bucket in the Security account. Use Amazon Athena to query for security findings."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Config aggregators to pull GuardDuty findings into the Security account and apply AWS Config managed rules for remediation."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 87,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "A telecommunications company runs a predictable, steady-state baseline of machine learning workloads on Amazon EC2 across multiple instance families and multiple AWS Regions. They also heavily utilize AWS Fargate for microservices. The CTO wants to maximize cost savings for this steady-state usage while retaining the flexibility to switch instance families and regions without modifying the pricing contract. What should they purchase?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Standard Reserved Instances (RIs) for EC2."
+      },
+      {
+        "id": "B",
+        "text": "Convertible Reserved Instances (RIs) for EC2."
+      },
+      {
+        "id": "C",
+        "text": "Compute Savings Plans."
+      },
+      {
+        "id": "D",
+        "text": "EC2 Instance Savings Plans."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 88,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A healthcare conglomerate is launching a new customer transaction logs analytics portal. Traffic is highly unpredictable; it often goes days with zero traffic, followed by sudden bursts of hundreds of concurrent users accessing complex queries. The backend is currently standard Amazon RDS MySQL, which is proving too expensive during idle times and too slow to scale during bursts. Which database solution resolves these issues?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Migrate to Amazon DynamoDB and use On-Demand capacity."
+      },
+      {
+        "id": "B",
+        "text": "Migrate to Amazon Aurora Serverless v2."
+      },
+      {
+        "id": "C",
+        "text": "Implement RDS Read Replicas and use an Auto Scaling group to manage them."
+      },
+      {
+        "id": "D",
+        "text": "Place Amazon ElastiCache in front of the existing RDS MySQL database."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 89,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A multinational retailer is planning a massive data center evacuation comprising 8000 VMs running various applications. The cloud team lacks documentation on application dependencies, networking communication paths, and resource utilization. They need to map out move-groups for the migration. Which AWS service should they deploy on-premises to gather this data?",
+    "options": [
+      {
+        "id": "A",
+        "text": "AWS Migration Hub with AWS Application Discovery Service."
+      },
+      {
+        "id": "B",
+        "text": "AWS Systems Manager Inventory."
+      },
+      {
+        "id": "C",
+        "text": "AWS DataSync."
+      },
+      {
+        "id": "D",
+        "text": "Amazon CloudWatch Agent."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 90,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A logistics provider processes clickstream data uploaded to an S3 bucket. The processing involves multiple steps: format validation, virus scanning, machine learning inference via Amazon SageMaker, and updating an RDS database. The previous system used a chain of Lambda functions calling each other synchronously, leading to timeouts and difficult error handling. How should the architecture be refactored?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use Amazon SQS to link each Lambda function sequentially."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS Step Functions to orchestrate the Lambda functions and SageMaker jobs."
+      },
+      {
+        "id": "C",
+        "text": "Use Amazon SNS to fan out the request to all Lambda functions simultaneously."
+      },
+      {
+        "id": "D",
+        "text": "Deploy the workflow on an Amazon EC2 instance using a cron scheduler."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 91,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "A digital media agency has a data lake on Amazon S3 currently storing 50 TB of customer transaction logs. The data is heavily accessed for the first 30 days for reporting, after which it is rarely accessed but must be retained for 10 years for compliance. The company wants to optimize storage costs without introducing retrieval latency during the reporting period. Which solution is MOST cost-effective?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Transition the data to S3 Standard-Infrequent Access (S3 Standard-IA) immediately, then to S3 Glacier Deep Archive after 10 years."
+      },
+      {
+        "id": "B",
+        "text": "Use an S3 Lifecycle policy to transition objects to S3 Standard-IA after 30 days, and then to S3 Glacier Deep Archive after 1 year."
+      },
+      {
+        "id": "C",
+        "text": "Store all data directly in S3 Intelligent-Tiering and rely on automatic cost optimization."
+      },
+      {
+        "id": "D",
+        "text": "Move data to Amazon EFS after 30 days and then use AWS Backup to archive it."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 92,
+    "type": "multiple",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A telecommunications company runs a highly seasonal API gateway application on Amazon ECS using AWS Fargate. During their peak season, CPU utilization jumps rapidly, but the ECS Service Auto Scaling is too slow to react, resulting in increased latency. Which combination of actions should the Solutions Architect take to improve scaling responsiveness? (Select two)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Change the scaling policy from target tracking to step scaling with aggressive scale-out thresholds."
+      },
+      {
+        "id": "B",
+        "text": "Implement Predictive Scaling to scale out ahead of historical traffic spikes."
+      },
+      {
+        "id": "C",
+        "text": "Switch the compute provider from AWS Fargate to Amazon EC2 and over-provision instances."
+      },
+      {
+        "id": "D",
+        "text": "Decrease the health check grace period on the Application Load Balancer."
+      },
+      {
+        "id": "E",
+        "text": "Use AWS Lambda instead of ECS for faster cold starts."
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 93,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "A logistics provider operates a hybrid environment connecting their on-premises network to AWS via AWS Direct Connect. They have an on-premises DNS server resolving hq.local and an AWS Route 53 Private Hosted Zone resolving vpc.internal inside their VPC. They need bi-directional DNS resolution between the environments. What is the MOST resilient and AWS-native solution?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Deploy two Amazon EC2 instances running BIND DNS forwarders in multiple Availability Zones."
+      },
+      {
+        "id": "B",
+        "text": "Create a Route 53 Resolver Inbound Endpoint and an Outbound Endpoint. Configure forwarding rules for hq.local pointing to the on-premises DNS servers."
+      },
+      {
+        "id": "C",
+        "text": "Configure a DHCP Options Set in the VPC to point directly to the on-premises DNS servers."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Managed Microsoft AD to replicate DNS zones between on-premises and AWS."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 94,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A logistics provider stores user profile data in an Amazon DynamoDB table. Whenever a user updates their financial reports, a downstream marketing application needs to process the change immediately to trigger personalized emails. The solution must be highly available and require minimal custom code. How should this be implemented?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a cron job on an EC2 instance that queries the DynamoDB table every minute for recently updated profiles."
+      },
+      {
+        "id": "B",
+        "text": "Enable DynamoDB Streams and configure it to trigger an AWS Lambda function which processes the payload and sends it to the marketing application."
+      },
+      {
+        "id": "C",
+        "text": "Configure an Amazon EventBridge rule that listens for CloudTrail DynamoDB UpdateItem API calls and triggers the marketing application."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Database Migration Service (DMS) to continuously replicate DynamoDB changes to the marketing application's RDS database."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 95,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A telecommunications company provides a real-time machine learning API that is accessed by clients globally. The API runs on Amazon EC2 instances behind Application Load Balancers (ALBs) in three different AWS Regions (us-east-1, eu-west-1, ap-northeast-1). Users in distant locations are reporting high latency. The company requires a solution that minimizes internet routing variability and provides static entry points. What is the BEST solution?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an Amazon CloudFront distribution and set the ALBs as multiple origins using origin groups for failover."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS Global Accelerator, create an accelerator, and add the three regional ALBs as endpoint groups."
+      },
+      {
+        "id": "C",
+        "text": "Configure Amazon Route 53 Latency Based Routing with health checks to route clients to the nearest ALB."
+      },
+      {
+        "id": "D",
+        "text": "Deploy AWS Transit Gateway to interconnect the three regions and route internet traffic through it."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 96,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "The CISO of A digital media agency wants to consolidate security findings across 150 AWS accounts. Currently, Amazon GuardDuty, AWS Security Hub, and Amazon Macie are enabled independently in each account. The CISO wants a single pane of glass in a dedicated 'Security' account and needs to automatically remediate specific high-severity GuardDuty findings. Which approach is MOST appropriate?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use AWS Organizations to designate the Security account as the delegated administrator for GuardDuty, Security Hub, and Macie. Use EventBridge in the Security account to trigger Lambda remediations."
+      },
+      {
+        "id": "B",
+        "text": "Create a cross-account IAM role. Deploy a Lambda function in the master account that polls the APIs of all member accounts every 5 minutes and aggregates the findings."
+      },
+      {
+        "id": "C",
+        "text": "Configure CloudTrail in all accounts to deliver logs to an S3 bucket in the Security account. Use Amazon Athena to query for security findings."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Config aggregators to pull GuardDuty findings into the Security account and apply AWS Config managed rules for remediation."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 97,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "A digital media agency runs a predictable, steady-state baseline of inventory management workloads on Amazon EC2 across multiple instance families and multiple AWS Regions. They also heavily utilize AWS Fargate for microservices. The CTO wants to maximize cost savings for this steady-state usage while retaining the flexibility to switch instance families and regions without modifying the pricing contract. What should they purchase?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Standard Reserved Instances (RIs) for EC2."
+      },
+      {
+        "id": "B",
+        "text": "Convertible Reserved Instances (RIs) for EC2."
+      },
+      {
+        "id": "C",
+        "text": "Compute Savings Plans."
+      },
+      {
+        "id": "D",
+        "text": "EC2 Instance Savings Plans."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 98,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A telecommunications company is launching a new clickstream data analytics portal. Traffic is highly unpredictable; it often goes days with zero traffic, followed by sudden bursts of hundreds of concurrent users accessing complex queries. The backend is currently standard Amazon RDS MySQL, which is proving too expensive during idle times and too slow to scale during bursts. Which database solution resolves these issues?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Migrate to Amazon DynamoDB and use On-Demand capacity."
+      },
+      {
+        "id": "B",
+        "text": "Migrate to Amazon Aurora Serverless v2."
+      },
+      {
+        "id": "C",
+        "text": "Implement RDS Read Replicas and use an Auto Scaling group to manage them."
+      },
+      {
+        "id": "D",
+        "text": "Place Amazon ElastiCache in front of the existing RDS MySQL database."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 99,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A multinational retailer is planning a massive data center evacuation comprising 8000 VMs running various applications. The cloud team lacks documentation on application dependencies, networking communication paths, and resource utilization. They need to map out move-groups for the migration. Which AWS service should they deploy on-premises to gather this data?",
+    "options": [
+      {
+        "id": "A",
+        "text": "AWS Migration Hub with AWS Application Discovery Service."
+      },
+      {
+        "id": "B",
+        "text": "AWS Systems Manager Inventory."
+      },
+      {
+        "id": "C",
+        "text": "AWS DataSync."
+      },
+      {
+        "id": "D",
+        "text": "Amazon CloudWatch Agent."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": ""
+  },
+  {
+    "id": 100,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A digital media agency processes user-generated videos uploaded to an S3 bucket. The processing involves multiple steps: format validation, virus scanning, machine learning inference via Amazon SageMaker, and updating an RDS database. The previous system used a chain of Lambda functions calling each other synchronously, leading to timeouts and difficult error handling. How should the architecture be refactored?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use Amazon SQS to link each Lambda function sequentially."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS Step Functions to orchestrate the Lambda functions and SageMaker jobs."
+      },
+      {
+        "id": "C",
+        "text": "Use Amazon SNS to fan out the request to all Lambda functions simultaneously."
+      },
+      {
+        "id": "D",
+        "text": "Deploy the workflow on an Amazon EC2 instance using a cron scheduler."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": ""
+  }
+]

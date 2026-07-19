@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AWS SAP-C02 TestMaster practice exam interface.">
+  <title>AWS SAP-C02 TestMaster</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dark.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <div class="app-shell" data-theme="light">
+    <header class="topbar">
+      <a class="brand" href="#home" data-nav="home" aria-label="AWS SAP-C02 TestMaster home">
+        <span class="brand-mark" aria-hidden="true">AWS</span>
+        <span>
+          <strong>SAP-C02 TestMaster</strong>
+          <small>Solutions Architect Professional</small>
+        </span>
+      </a>
+
+      <nav class="top-nav" aria-label="Primary navigation">
+        <a href="#home" data-nav="home" class="active">Home</a>
+        <a href="#random" data-nav="random">Random Test</a>
+        <a href="#timed" data-nav="timed">Timed Quiz</a>
+        <a href="#mock" data-nav="mock">Mock Exam</a>
+        <a href="#stats" data-nav="stats">Statistics</a>
+        <a href="#upload" data-nav="upload">Upload</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="icon-button" type="button" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <span aria-hidden="true">◐</span>
+        </button>
+        <button class="icon-button menu-toggle" type="button" id="menuToggle" aria-label="Open navigation" aria-expanded="false">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+    </header>
+
+    <main class="main-layout">
+      <aside class="side-nav" aria-label="Section navigation">
+        <div class="side-title">Practice Modes</div>
+        <a href="#random" data-nav="random">
+          <span class="nav-icon" aria-hidden="true">R</span>
+          Random Test
+        </a>
+        <a href="#timed" data-nav="timed">
+          <span class="nav-icon" aria-hidden="true">T</span>
+          Timed Quiz
+        </a>
+        <a href="#mock" data-nav="mock">
+          <span class="nav-icon" aria-hidden="true">M</span>
+          SAP-C02 Mock Exam
+        </a>
+        <a href="#stats" data-nav="stats">
+          <span class="nav-icon" aria-hidden="true">S</span>
+          Statistics
+        </a>
+        <a href="#upload" data-nav="upload">
+          <span class="nav-icon" aria-hidden="true">U</span>
+          Upload Questions
+        </a>
+      </aside>
+
+      <section class="content">
+        <section class="view active" id="view-home" data-view="home" aria-labelledby="homeTitle">
+          <div class="hero">
+            <div class="hero-copy">
+              <span class="eyebrow">AWS Certification Prep</span>
+              <h1 id="homeTitle">AWS SAP-C02 TestMaster</h1>
+              <p>Navigate practice modes, launch exam shells, and prepare the foundation for a professional-grade AWS Solutions Architect Professional study tool.</p>
+              <div class="hero-actions">
+                <a class="primary-button" href="#random" data-nav="random">Start Random Test</a>
+                <a class="secondary-button" href="#mock" data-nav="mock">View Mock Exam</a>
+              </div>
+            </div>
+            <div class="hero-panel" aria-label="Exam readiness overview">
+              <div class="panel-topline">
+                <span>Readiness Workspace</span>
+                <strong>Framework Ready</strong>
+              </div>
+              <div class="metric-grid">
+                <dl>
+                  <dt>Modes</dt>
+                  <dd>4</dd>
+                </dl>
+                <dl>
+                  <dt>Modules</dt>
+                  <dd>11</dd>
+                </dl>
+                <dl>
+                  <dt>Status</dt>
+                  <dd>UI</dd>
+                </dl>
+              </div>
+              <div class="aws-bars" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Launchpad</span>
+              <h2>Choose a practice path</h2>
+            </div>
+          </div>
+
+          <div class="mode-grid" id="modeGrid">
+            <a href="#random" class="mode-card" data-nav="random">
+              <div class="card-icon random" aria-hidden="true">R</div>
+              <h3>Random Test</h3>
+              <p>Open a flexible test session shell for mixed-domain practice.</p>
+              <span>Configure session</span>
+            </a>
+            <a href="#timed" class="mode-card" data-nav="timed">
+              <div class="card-icon timed" aria-hidden="true">T</div>
+              <h3>Timed Quiz</h3>
+              <p>Enter a focused quiz workspace with time controls prepared.</p>
+              <span>Set quiz timer</span>
+            </a>
+            <a href="#mock" class="mode-card" data-nav="mock">
+              <div class="card-icon mock" aria-hidden="true">M</div>
+              <h3>SAP-C02 Mock Exam</h3>
+              <p>Preview a full certification-style exam environment.</p>
+              <span>Review exam shell</span>
+            </a>
+            <a href="#stats" class="mode-card" data-nav="stats">
+              <div class="card-icon stats" aria-hidden="true">S</div>
+              <h3>Statistics</h3>
+              <p>View the analytics dashboard layout for future performance data.</p>
+              <span>Open dashboard</span>
+            </a>
+            <a href="#upload" class="mode-card" data-nav="upload">
+              <div class="card-icon upload" aria-hidden="true">U</div>
+              <h3>Upload Questions</h3>
+              <p>Add new questions to your question bank by uploading a document.</p>
+              <span>Open uploader</span>
+            </a>
+          </div>
+        </section>
+
+        <section class="view" id="view-random" data-view="random" aria-labelledby="randomTitle">
+          <div class="workspace-header">
+            <div>
+              <span class="eyebrow">Practice Mode</span>
+              <h1 id="randomTitle">Random Test</h1>
+            </div>
+            <button class="primary-button" type="button" id="randomStart">Start Test</button>
+          </div>
+          <div class="mock-intro" id="randomIntro">
+            <div>
+              <h2>Instructions</h2>
+              <p>Start a practice session with randomly selected questions. Answer a question and get immediate feedback before moving to the next one. This is a great way to practice without time pressure.</p>
+            </div>
+            <div class="instruction-grid">
+              <span>1 question at a time</span>
+              <span>Immediate feedback</span>
+              <span>No time limit</span>
+            </div>
+            <div class="session-config">
+              <label for="randomSetSelector">Question Set:</label>
+              <select id="randomSetSelector"></select>
+            </div>
+          </div>
+          <div class="random-test-panel hidden" aria-live="polite">
+            <div class="question-top-actions" style="text-align: right; margin-bottom: 1rem;">
+              <button class="primary-button" type="button" id="randomNextTop">Next Question</button>
+            </div>
+            <div class="question-meta" id="randomQuestionMeta"></div>
+            <div class="question-card">
+              <div class="question-type" id="randomQuestionType"></div>
+              <h2 class="question-prompt" id="randomQuestionPrompt">Loading question...</h2>
+              <form class="answer-list" id="randomAnswerForm" aria-labelledby="randomQuestionPrompt"></form>
+              <div class="feedback-panel hidden" id="randomFeedback" role="status"></div>
+              <div class="question-actions">
+                <button class="primary-button" type="button" id="randomSubmit">Submit Answer</button>
+                <button class="secondary-action" type="button" id="randomNext">Next Question</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-timed" data-view="timed" aria-labelledby="timedTitle">
+          <div class="workspace-header">
+            <div>
+              <span class="eyebrow">Practice Mode</span>
+              <h1 id="timedTitle">Timed Quiz</h1>
+            </div>
+            <div class="exam-header-actions">
+              <div class="timer-display hidden" id="quizTimer" aria-label="Quiz timer" aria-live="polite">40:00</div>
+              <button class="primary-button" type="button" id="timedStart">Start Quiz</button>
+            </div>
+          </div>
+          <div class="mock-intro" id="timedIntro">
+            <div>
+              <h2>Instructions</h2>
+              <p>This quiz consists of 20 questions to be completed in 40 minutes. Your answers are saved as you progress. You can navigate between questions using the palette. The quiz will be submitted automatically when the time expires.</p>
+            </div>
+            <div class="instruction-grid">
+              <span>20 questions</span>
+              <span>40 minute timer</span>
+              <span>Review before finishing</span>
+            </div>
+            <div class="session-config">
+              <label for="timedSetSelector">Question Set:</label>
+              <select id="timedSetSelector"></select>
+            </div>
+          </div>
+          <div class="quiz-layout hidden" id="quizWorkspace">
+            <aside class="quiz-palette-panel" aria-label="Question palette">
+              <div class="palette-header">
+                <span>Question Palette</span>
+                <strong id="quizProgressText">0 / 20 answered</strong>
+              </div>
+              <div class="question-palette" id="quizPalette"></div>
+              <button class="finish-button" type="button" id="quizFinish">Finish Quiz</button>
+            </aside>
+            <div class="question-card quiz-card">
+              <div class="question-meta" id="quizQuestionMeta"></div>
+              <div class="question-type" id="quizQuestionType"></div>
+              <h2 class="question-prompt" id="quizQuestionPrompt">Loading quiz...</h2>
+              <form class="answer-list" id="quizAnswerForm" aria-labelledby="quizQuestionPrompt"></form>
+              <div class="question-actions">
+                <button class="secondary-action" type="button" id="quizPrevious">Previous</button>
+                <button class="primary-button" type="button" id="quizNext">Next</button>
+              </div>
+            </div>
+          </div>
+          <div class="result-page hidden" id="quizResult" aria-live="polite">
+            <div class="result-summary">
+              <span class="eyebrow">Quiz Complete</span>
+              <h2 id="quizResultTitle">Result</h2>
+              <p id="quizResultText"></p>
+              <button class="primary-button" type="button" id="quizRestart">Start New Quiz</button>
+            </div>
+            <div class="result-grid">
+              <dl class="stat-card">
+                <dt>Score</dt>
+                <dd id="quizScore">0%</dd>
+              </dl>
+              <dl class="stat-card">
+                <dt>Correct</dt>
+                <dd id="quizCorrectCount">0</dd>
+              </dl>
+              <dl class="stat-card">
+                <dt>Answered</dt>
+                <dd id="quizAnsweredCount">0</dd>
+              </dl>
+              <dl class="stat-card">
+                <dt>Time Used</dt>
+                <dd id="quizTimeUsed">0:00</dd>
+              </dl>
+            </div>
+            <div class="result-list" id="quizResultList"></div>
+          </div>
+        </section>
+
+        <section class="view" id="view-mock" data-view="mock" aria-labelledby="mockTitle">
+          <div class="workspace-header">
+            <div>
+              <span class="eyebrow">Exam Mode</span>
+              <h1 id="mockTitle">SAP-C02 Mock Exam</h1>
+              <p>Complete a 75-question certification-style exam with review, marking, and final submission flow.</p>
+            </div>
+            <div class="exam-header-actions">
+              <div class="timer-display" id="mockTimer" aria-label="Mock exam timer" aria-live="polite">180:00</div>
+              <button class="primary-button" type="button" id="mockStart">Begin Mock Exam</button>
+            </div>
+          </div>
+          <div class="mock-intro" id="mockIntro">
+            <div>
+              <h2>Exam Instructions</h2>
+              <p>You will have 3 hours to answer 75 questions. You may move forward and backward, jump through the question palette, and mark questions for review before final submission.</p>
+            </div>
+            <div class="instruction-grid">
+              <span>75 questions</span>
+              <span>3 hour timer</span>
+              <span>Review before submit</span>
+            </div>
+            <div class="session-config">
+              <label for="mockSetSelector">Question Set:</label>
+              <select id="mockSetSelector"></select>
+            </div>
+          </div>
+          <div class="mock-workspace hidden" id="mockWorkspace">
+            <div class="mock-status-bar">
+              <span id="mockProgressText" aria-live="polite">0 / 75 answered</span>
+              <span id="mockMarkedText" aria-live="polite">0 marked for review</span>
+              <button class="secondary-action" type="button" id="mockReviewButton">Review All</button>
+            </div>
+            <div class="mock-layout">
+              <div class="question-card mock-card">
+                <div class="question-meta" id="mockQuestionMeta"></div>
+                <div class="question-type" id="mockQuestionType"></div>
+                <h2 class="question-prompt" id="mockQuestionPrompt">Loading exam...</h2>
+                <form class="answer-list" id="mockAnswerForm" aria-labelledby="mockQuestionPrompt"></form>
+                <div class="question-actions exam-actions">
+                  <button class="secondary-action" type="button" id="mockPrevious">Previous</button>
+                  <button class="review-toggle" type="button" id="mockMarkReview">Mark for Review</button>
+                  <button class="primary-button" type="button" id="mockNext">Next</button>
+                </div>
+              </div>
+              <aside class="exam-palette-panel" aria-label="Mock exam question palette">
+                <div class="palette-header">
+                  <span>Question Palette</span>
+                  <strong>Jump to any question</strong>
+                </div>
+                <div class="exam-palette" id="mockPalette"></div>
+                <div class="palette-legend" aria-label="Palette legend">
+                  <span><span class="legend-box current"></span>Current</span>
+                  <span><span class="legend-box answered"></span>Answered</span>
+                  <span><span class="legend-box marked"></span>Marked</span>
+                </div>
+              </aside>
+            </div>
+          </div>
+          <div class="mock-review-screen hidden" id="mockReviewScreen">
+            <div class="review-header">
+              <div>
+                <span class="eyebrow">Review Screen</span>
+                <h2>Review Your Exam</h2>
+                <p>Confirm unanswered and marked questions before submitting your exam.</p>
+              </div>
+              <div class="review-actions">
+                <button class="secondary-action" type="button" id="mockReturnExam">Return to Exam</button>
+                <button class="finish-button" type="button" id="mockSubmitRequest">Submit Exam</button>
+              </div>
+            </div>
+            <div class="result-grid">
+              <dl class="stat-card">
+                <dt>Answered</dt>
+                <dd id="mockReviewAnswered">0</dd>
+              </dl>
+              <dl class="stat-card">
+                <dt>Unanswered</dt>
+                <dd id="mockReviewUnanswered">75</dd>
+              </dl>
+              <dl class="stat-card">
+                <dt>Marked</dt>
+                <dd id="mockReviewMarked">0</dd>
+              </dl>
+              <dl class="stat-card">
+                <dt>Remaining</dt>
+                <dd id="mockReviewTime">180:00</dd>
+              </dl>
+            </div>
+            <div class="review-list" id="mockReviewList"></div>
+          </div>
+          <div class="result-page hidden" id="mockResult" aria-live="polite">
+            <div class="result-summary">
+              <span class="eyebrow">Mock Exam Complete</span>
+              <h2 id="mockResultTitle">Result</h2>
+              <p id="mockResultText"></p>
+              <button class="primary-button" type="button" id="mockRestart">Start New Mock Exam</button>
+            </div>
+            <div class="result-grid">
+              <dl class="stat-card">
+                <dt>Score</dt>
+                <dd id="mockScore">0%</dd>
+              </dl>
+              <dl class="stat-card">
+                <dt>Correct</dt>
+                <dd id="mockCorrectCount">0</dd>
+              </dl>
+              <dl class="stat-card">
+                <dt>Answered</dt>
+                <dd id="mockAnsweredCount">0</dd>
+              </dl>
+              <dl class="stat-card">
+                <dt>Time Used</dt>
+                <dd id="mockTimeUsed">0:00</dd>
+              </dl>
+            </div>
+            <div class="result-list" id="mockResultList"></div>
+          </div>
+          <div class="modal-backdrop hidden" id="mockConfirmModal" role="presentation">
+            <div class="confirmation-dialog" role="dialog" aria-modal="true" aria-labelledby="mockConfirmTitle">
+              <h2 id="mockConfirmTitle">Submit exam?</h2>
+              <p id="mockConfirmText">You are about to submit your mock exam. You cannot change answers after submission.</p>
+              <div class="dialog-actions">
+                <button class="secondary-action" type="button" id="mockCancelSubmit">Return to Review</button>
+                <button class="finish-button" type="button" id="mockConfirmSubmit">Submit Exam</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-stats" data-view="stats" aria-labelledby="statsTitle">
+          <div class="workspace-header">
+            <div>
+              <span class="eyebrow">Insights</span>
+              <h1 id="statsTitle">Statistics</h1>
+              <p>Performance dashboard framework for future quiz attempts and trends.</p>
+            </div>
+            <button class="secondary-action" type="button" id="statsRefresh">Refresh Stats</button>
+          </div>
+          <div id="statsContent">
+            <div class="stats-grid">
+              <dl class="stat-card">
+                <dt>Attempts</dt>
+                <dd id="statsTotalAttempts">0</dd>
+              </dl>
+              <dl class="stat-card">
+                <dt>Average Score</dt>
+                <dd id="statsAverageScore">--</dd>
+              </dl>
+              <dl class="stat-card">
+                <dt>Best Score</dt>
+                <dd id="statsBestScore">--</dd>
+              </dl>
+              <dl class="stat-card">
+                <dt>Study Time</dt>
+                <dd id="statsStudyTime">0h 0m</dd>
+              </dl>
+            </div>
+
+            <div class="chart-grid">
+              <div class="chart-container">
+                <h3>Score by Domain</h3>
+                <canvas id="domainRadarChart"></canvas>
+              </div>
+              <div class="chart-container">
+                <h3>Recent Attempts</h3>
+                <canvas id="historyBarChart"></canvas>
+              </div>
+            </div>
+
+            <div class="section-heading">
+              <h2>Attempt History</h2>
+            </div>
+            <div class="history-table-container">
+              <table class="history-table" id="statsHistoryTable">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Score</th>
+                    <th>Time Used</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="empty-state hidden" id="statsEmptyState">
+            <h2>No Data Available</h2>
+            <p>Complete a quiz or mock exam to see your performance statistics.</p>
+          </div>
+        </section>
+
+        <section class="view" id="view-upload" data-view="upload" aria-labelledby="uploadTitle">
+          <div class="workspace-header">
+            <div>
+              <span class="eyebrow">Question Bank</span>
+              <h1 id="uploadTitle">Upload New Questions</h1>
+              <p>Import questions from a .docx file to expand your study materials.</p>
+            </div>
+          </div>
+          <div class="upload-panel">
+            <div class="upload-instructions">
+              <h2>File Format Instructions</h2>
+              <p>To successfully import questions, your <strong>.docx</strong> file must follow a strict format. Each question must be separated by three dashes (---).</p>
+              <p>The structure for each question should be:</p>
+              <pre><code>Question 1: [The question text...]
+Type: [Single Choice/Multiple Choice]
+Domain: [e.g., Design for New Solutions]
+A. [Option A text]
+B. [Option B text]
+C. [Option C text]
+D. [Option D text]
+...
+Answer: [Correct letter(s), e.g., A or A,C]
+Explanation: [Detailed explanation text...]
+---</code></pre>
+              <p><strong>Important:</strong> The file must contain at least 50 questions to be considered a valid question set.</p>
+              <p>After parsing, you'll be asked to pick this project's <code>data</code> folder so the new set can be saved there as the next available <code>setN.json</code> file. This requires a Chromium-based browser (Chrome or Edge).</p>
+            </div>
+            <div class="upload-box">
+              <h3>Select a .docx file to upload</h3>
+              <input type="file" id="docUploader" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="margin-bottom: 1rem;">
+              <button class="primary-button" id="parseFileButton">Parse and Save Questions</button>
+              <div class="upload-status" id="uploadStatus" role="status" aria-live="polite"></div>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.5.1/mammoth.browser.min.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/file-sets.js"></script>
+  <script src="js/question-engine.js"></script>
+  <script src="js/questions.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/view-helpers.js"></script>
+  <script src="js/exam.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/random.js"></script>
+  <script src="js/quiz.js"></script>
+  <script src="js/mock.js"></script>
+  <script src="js/upload.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

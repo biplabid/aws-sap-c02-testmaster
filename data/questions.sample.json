@@ -1,0 +1,62 @@
+{
+  "questions": [
+    {
+      "id": "sap-c02-sample-001",
+      "type": "single",
+      "prompt": "Which design approach improves availability for a mission-critical application deployed on Amazon EC2?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Deploy instances in multiple Availability Zones behind a load balancer."
+        },
+        {
+          "id": "B",
+          "text": "Deploy all instances in one Availability Zone with larger instance sizes."
+        },
+        {
+          "id": "C",
+          "text": "Store application logs only on instance store volumes."
+        },
+        {
+          "id": "D",
+          "text": "Use one NAT gateway as the primary failover target for application traffic."
+        }
+      ],
+      "correctAnswers": ["A"],
+      "domain": "Design Solutions for Organizational Complexity",
+      "difficulty": "easy",
+      "tags": ["ec2", "high-availability", "load-balancing"],
+      "explanation": "Spreading EC2 capacity across Availability Zones behind a load balancer reduces the impact of an Availability Zone failure."
+    },
+    {
+      "id": "sap-c02-sample-002",
+      "type": "multiple",
+      "prompt": "Which two controls can help secure access to AWS resources in a multi-account environment?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Apply service control policies in AWS Organizations."
+        },
+        {
+          "id": "B",
+          "text": "Use IAM roles with least privilege permissions."
+        },
+        {
+          "id": "C",
+          "text": "Share the root user credentials with platform teams."
+        },
+        {
+          "id": "D",
+          "text": "Disable CloudTrail in workload accounts."
+        }
+      ],
+      "correctAnswers": ["A", "B"],
+      "metadata": {
+        "domain": "Design for New Solutions",
+        "difficulty": "medium",
+        "tags": ["iam", "organizations", "security"],
+        "explanation": "Service control policies and least privilege IAM roles are standard controls for governing access across multiple AWS accounts."
+      }
+    }
+  ]
+}

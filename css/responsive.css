@@ -1,0 +1,185 @@
+@media (max-width: 1100px) {
+  .top-nav {
+    display: none;
+  }
+
+  .menu-toggle {
+    display: grid;
+  }
+
+  .main-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .side-nav {
+    position: fixed;
+    top: 68px;
+    right: 0;
+    bottom: 0;
+    left: auto;
+    z-index: 15;
+    width: min(320px, 88vw);
+    height: calc(100vh - 68px);
+    transform: translateX(100%);
+    box-shadow: var(--shadow);
+    transition: transform 180ms ease;
+  }
+
+  .side-nav.open {
+    transform: translateX(0);
+  }
+
+  .content {
+    width: 100%;
+  }
+
+  .mode-grid,
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  .topbar {
+    padding: 0 16px;
+  }
+
+  .brand {
+    min-width: 0;
+  }
+
+  .brand small {
+    display: none;
+  }
+
+  .content {
+    padding: 22px;
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 28px;
+  }
+
+  .workspace-header,
+  .section-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .workspace-grid,
+  .exam-layout,
+  .quiz-layout,
+  .mock-layout,
+  .mock-intro {
+    grid-template-columns: 1fr;
+  }
+
+  .quiz-palette-panel,
+  .exam-palette-panel {
+    position: static;
+  }
+
+  .result-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .topbar {
+    min-height: 62px;
+  }
+
+  .brand-mark {
+    width: 40px;
+  }
+
+  .brand strong {
+    font-size: 0.9rem;
+  }
+
+  .side-nav {
+    top: 62px;
+    height: calc(100vh - 62px);
+  }
+
+  .content {
+    padding: 16px;
+  }
+
+  .hero,
+  .workspace-header,
+  .settings-panel,
+  .preview-panel,
+  .exam-sidebar,
+  .stat-card,
+  .chart-placeholder,
+  .question-card,
+  .mock-intro,
+  .mock-workspace,
+  .mock-review-screen {
+    padding: 18px;
+  }
+
+  .hero h1,
+  .workspace-header h1 {
+    font-size: 2rem;
+  }
+
+  .hero p,
+  .workspace-header p {
+    font-size: 0.96rem;
+  }
+
+  .mode-grid,
+  .stats-grid,
+  .result-grid,
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mode-card {
+    min-height: 0;
+  }
+
+  .mode-card p {
+    min-height: 0;
+  }
+
+  .chart-placeholder {
+    gap: 10px;
+    height: 220px;
+  }
+
+  .toast {
+    right: 16px;
+    bottom: 16px;
+  }
+
+  .answer-option {
+    grid-template-columns: 1fr;
+  }
+
+  .result-row {
+    grid-template-columns: 1fr;
+  }
+
+  .instruction-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .exam-palette {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .review-row {
+    grid-template-columns: 1fr;
+  }
+
+  .exam-header-actions,
+  .review-actions,
+  .dialog-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,80 @@
+[data-theme="dark"] {
+  --surface: #111827;
+  --surface-muted: #0b1220;
+  --surface-raised: #1f2937;
+  --border: #344054;
+  --text: #f8fafc;
+  --text-muted: #aab6c5;
+  --shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="dark"] .app-shell {
+  background: var(--surface-muted);
+}
+
+[data-theme="dark"] .side-nav a:hover,
+[data-theme="dark"] .side-nav a.active {
+  color: #8cc7ff;
+  background: rgba(9, 114, 211, 0.16);
+}
+
+[data-theme="dark"] .toolbar button,
+[data-theme="dark"] .settings-panel select,
+[data-theme="dark"] .secondary-action,
+[data-theme="dark"] .palette-button {
+  color: var(--text);
+  background: var(--surface-raised);
+}
+
+[data-theme="dark"] .palette-button.current {
+  color: #ffffff;
+  background: var(--aws-blue);
+  border-color: var(--aws-blue);
+}
+
+[data-theme="dark"] .palette-button.answered {
+  color: #ffffff;
+  background: var(--aws-green);
+  border-color: var(--aws-green);
+}
+
+[data-theme="dark"] .palette-button.marked {
+  color: #111827;
+  background: var(--aws-orange);
+  border-color: var(--aws-orange);
+}
+
+[data-theme="dark"] .palette-button.answered.marked {
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--aws-green) 0 50%, var(--aws-orange) 50% 100%);
+  border-color: var(--aws-green);
+}
+
+[data-theme="dark"] .review-toggle {
+  color: var(--text);
+  background: rgba(255, 153, 0, 0.14);
+  border-color: rgba(255, 153, 0, 0.38);
+}
+
+[data-theme="dark"] .review-toggle.marked,
+[data-theme="dark"] .status-pill.marked {
+  color: #111827;
+  background: var(--aws-orange);
+}
+
+[data-theme="dark"] .timer-display {
+  color: #ffb4a1;
+  background: rgba(209, 50, 18, 0.14);
+  border-color: rgba(209, 50, 18, 0.3);
+}
+
+[data-theme="dark"] .question-skeleton,
+[data-theme="dark"] .answer-skeleton {
+  background: linear-gradient(90deg, #1f2937, #2c3a4d, #1f2937);
+}
+
+[data-theme="dark"] .progress-ring {
+  background:
+    radial-gradient(circle at center, var(--surface) 58%, transparent 60%),
+    conic-gradient(#60a5fa 0deg, #334155 0deg);
+}
