@@ -1,8 +1,8 @@
 # AWS SAP-C02 TestMaster
 
-**AWS SAP-C02 TestMaster** is a professional-grade, browser-based practice platform for the AWS Certified Solutions Architect – Professional (SAP-C02) certification. It is designed to simulate the real exam experience while offering multiple study modes for continuous, effective preparation.
+**AWS SAP-C02 TestMaster** is a professional-grade practice platform for the AWS Certified Solutions Architect – Professional (SAP-C02) certification. It is designed to simulate the real exam experience while offering multiple study modes for continuous, effective preparation.
 
-This application is built with vanilla JavaScript, HTML, and CSS, emphasizing a clean, modular, and maintainable architecture without reliance on external frameworks.
+This application is built with vanilla JavaScript, HTML, and CSS, emphasizing a clean, modular, and maintainable architecture without reliance on external frameworks. It runs directly in the browser, and is also packaged as a native Windows desktop app via Electron.
 
 ## Features
 
@@ -32,6 +32,7 @@ The platform is organized into several practice modes, each tailored for a diffe
 -   **Data**: Questions are loaded from JSON files, or imported from `.docx` uploads via [Mammoth.js](https://github.com/mwilliamson/mammoth.js) (extracts raw text for parsing).
 -   **Storage**: `LocalStorage` API for session, statistics, theme, and progress persistence; the [File System Access API](https://developer.mozilla.org/en-US/docs/Web/API/File_System_Access_API) (Chrome/Edge only) for writing newly uploaded question sets to disk.
 -   **Analytics**: Chart.js for rendering performance charts.
+-   **Desktop Packaging**: [Electron](https://www.electronjs.org/) wraps the app in a native window (backed by a local static server so `fetch()` and the File System Access API work exactly as they do in the browser); [electron-builder](https://www.electron.build/) produces the Windows installer and portable executable.
 
 ## Project Structure
 
@@ -65,12 +66,20 @@ aws-sap-c02-testmaster/
 │   ├── set1.json              # Bundled official question bank
 │   ├── set2.json, set3.json, set4.json  # Sets previously imported via Upload
 │   └── questions.sample.json  # Minimal sample set
+├── assets/
+│   ├── icon.ico                # Windows app/installer icon
+│   └── icon.png                # App window/taskbar icon, also used as the browser favicon
+├── electron/
+│   └── main.js                  # Electron main process: local static server + app window
+├── package.json                 # Electron/electron-builder scripts and packaging config
 └── README.md
 ```
 
 ## Getting Started
 
-This is a pure client-side application with no build dependencies.
+### Run in a Browser
+
+The core app is pure client-side with no build dependencies.
 
 1.  Clone the repository or download the source files.
 2.  Serve the project root with a local static server (needed so `fetch()` can load the JSON question sets without hitting CORS restrictions):
@@ -84,6 +93,35 @@ python -m http.server
 
 For the Upload feature specifically, use **Chrome or Edge** — it relies on the File System Access API to save new question sets directly into `data/`, which other browsers don't yet support. All other features work in any modern browser.
 
+### Run as a Desktop App (Windows)
+
+The same app is also available as a native Windows desktop app, built with [Electron](https://www.electronjs.org/). This requires [Node.js](https://nodejs.org/).
+
+1.  Install dependencies:
+
+```bash
+npm install
+```
+
+2.  Launch it in development mode:
+
+```bash
+npm start
+```
+
+3.  Build a distributable Windows executable:
+
+```bash
+npm run dist
+```
+
+This produces two artifacts in `dist/`:
+
+-   **`AWS SAP-C02 TestMaster Setup <version>.exe`** — an installer that installs per-user (no admin rights required) with Desktop and Start Menu shortcuts.
+-   **`AWS SAP-C02 TestMaster <version>.exe`** — a portable build that runs without installing.
+
+The desktop app behaves identically to the browser version — it runs the same `index.html`/`css`/`js`/`data` against a local server inside the Electron window, including the Upload feature's file-write flow.
+
 ## How It Works
 
 1.  **Initialization**: `app.js` initializes all modules and sets up the main application state.
@@ -93,6 +131,7 @@ For the Upload feature specifically, use **Chrome or Edge** — it relies on the
 5.  **Custom Question Banks**: `upload.js` parses a user-provided `.docx` file (via Mammoth.js) into the application's canonical question format, then `file-sets.js` writes it to `data/` as the next `setN.json` and remembers it in `LocalStorage` so it shows up in every mode's set selector.
 6.  **State Management**: `storage.js` provides a simple API for saving and retrieving data from `LocalStorage` — session progress, statistics, attempt history, theme preference, and per-question "done" flags for Random Test.
 7.  **Analytics**: `analytics.js` reads attempt history from storage and uses Chart.js to render the domain radar chart and recent-attempts bar chart on the Statistics page.
+8.  **Desktop Shell**: `electron/main.js` starts a local HTTP server over the project root and opens it in an Electron window, so the exact same `index.html` runs unmodified whether launched in a browser or as the packaged desktop app.
 
 ## Question Upload Format
 
