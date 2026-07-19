@@ -1,6 +1,6 @@
 window.TestMaster = window.TestMaster || {};
 
-window.TestMaster.random = (function createRandomModule(viewHelpers, questionEngine) {
+window.TestMaster.random = (function createRandomModule(viewHelpers, questionEngine, storage) {
   function initRandomShell(appState) {
     const elements = getElements();
 
@@ -11,10 +11,13 @@ window.TestMaster.random = (function createRandomModule(viewHelpers, questionEng
     appState.random = {
       pool: [],
       currentIndex: 0,
-      submitted: false
+      submitted: false,
+      setKey: null,
+      doneIds: new Set()
     };
 
     populateSetSelector(elements);
+    updateDoneStatus(elements);
 
     elements.start.addEventListener("click", () => {
       startTest(appState, elements);
@@ -31,6 +34,24 @@ window.TestMaster.random = (function createRandomModule(viewHelpers, questionEng
     elements.nextTop.addEventListener("click", () => {
       nextQuestion(appState, elements);
     });
+
+    if (elements.markDone) {
+      elements.markDone.addEventListener("click", () => {
+        markCurrentAsDone(appState, elements);
+      });
+    }
+
+    if (elements.setSelector) {
+      elements.setSelector.addEventListener("change", () => {
+        updateDoneStatus(elements);
+      });
+    }
+
+    if (elements.resetDone) {
+      elements.resetDone.addEventListener("click", () => {
+        resetDoneQuestions(elements);
+      });
+    }
 
     window.addEventListener("testmaster:view-change", (event) => {
       if (event.detail.view === "random") {
@@ -52,12 +73,42 @@ window.TestMaster.random = (function createRandomModule(viewHelpers, questionEng
       feedback: document.querySelector("#randomFeedback"),
       submit: document.querySelector("#randomSubmit"),
       next: document.querySelector("#randomNext"),
-      nextTop: document.querySelector("#randomNextTop")
+      nextTop: document.querySelector("#randomNextTop"),
+      markDone: document.querySelector("#randomMarkDone"),
+      resetDone: document.querySelector("#randomResetDone"),
+      doneStatus: document.querySelector("#randomDoneStatusText")
     };
   }
 
   function populateSetSelector(elements) {
     viewHelpers.populateSetSelector(elements.setSelector);
+  }
+
+  function updateDoneStatus(elements) {
+    if (!elements.doneStatus || !elements.setSelector || !elements.setSelector.value) {
+      return;
+    }
+
+    const setKey = elements.setSelector.value;
+    const doneCount = storage.loadDoneQuestions(setKey).length;
+    elements.doneStatus.textContent = doneCount > 0
+      ? `${doneCount} question${doneCount === 1 ? "" : "s"} marked done in this set.`
+      : "No questions marked done in this set yet.";
+  }
+
+  function resetDoneQuestions(elements) {
+    const setKey = elements.setSelector.value;
+
+    if (!setKey) {
+      return;
+    }
+
+    storage.saveDoneQuestions(setKey, []);
+    updateDoneStatus(elements);
+
+    if (window.TestMaster.ui) {
+      window.TestMaster.ui.showToast("Done questions have been reset for this set.");
+    }
   }
 
   function resetToIntro(appState, elements) {
@@ -66,6 +117,7 @@ window.TestMaster.random = (function createRandomModule(viewHelpers, questionEng
     elements.feedback.classList.add("hidden");
     elements.feedback.innerHTML = "";
     populateSetSelector(elements);
+    updateDoneStatus(elements);
   }
 
   async function startTest(appState, elements) {
@@ -78,15 +130,26 @@ window.TestMaster.random = (function createRandomModule(viewHelpers, questionEng
 
     const source = viewHelpers.resolveQuestionSetSource(setKey);
     await questionEngine.loadQuestions(source);
-    const pool = questionEngine.shuffle(questionEngine.getQuestions());
 
-    if (!pool.length) {
+    const doneIds = new Set(storage.loadDoneQuestions(setKey));
+    const remaining = questionEngine.getQuestions().filter((question) => !doneIds.has(question.id));
+
+    if (!questionEngine.getQuestions().length) {
       alert("This question set is empty or could not be loaded.");
       return;
     }
 
+    if (!remaining.length) {
+      alert("All questions in this set are marked as Done. Reset done questions to practice this set again.");
+      return;
+    }
+
+    const pool = questionEngine.shuffle(remaining);
+
     appState.random.pool = pool;
     appState.random.currentIndex = 0;
+    appState.random.setKey = setKey;
+    appState.random.doneIds = doneIds;
 
     elements.intro.classList.add("hidden");
     elements.panel.classList.remove("hidden");
@@ -106,6 +169,11 @@ window.TestMaster.random = (function createRandomModule(viewHelpers, questionEng
     elements.feedback.classList.add("hidden");
     elements.feedback.innerHTML = "";
     elements.submit.disabled = false;
+
+    if (elements.markDone) {
+      elements.markDone.disabled = false;
+      elements.markDone.textContent = "Mark as Done";
+    }
 
     const isLast = appState.random.currentIndex === appState.random.pool.length - 1;
     elements.next.textContent = isLast ? "Finish" : "Next Question";
@@ -165,7 +233,26 @@ window.TestMaster.random = (function createRandomModule(viewHelpers, questionEng
     renderCurrentQuestion(appState, elements);
   }
 
+  function markCurrentAsDone(appState, elements) {
+    if (!appState.random.pool.length) {
+      return;
+    }
+
+    const question = appState.random.pool[appState.random.currentIndex];
+    appState.random.doneIds.add(question.id);
+    storage.saveDoneQuestions(appState.random.setKey, Array.from(appState.random.doneIds));
+
+    if (elements.markDone) {
+      elements.markDone.disabled = true;
+      elements.markDone.textContent = "Marked as Done";
+    }
+
+    if (window.TestMaster.ui) {
+      window.TestMaster.ui.showToast("Question marked as done. It won't appear in future sessions.");
+    }
+  }
+
   return {
     initRandomShell
   };
-})(window.TestMaster.viewHelpers, window.TestMaster.questionEngine);
+})(window.TestMaster.viewHelpers, window.TestMaster.questionEngine, window.TestMaster.storage);

@@ -172,6 +172,10 @@
               <label for="randomSetSelector">Question Set:</label>
               <select id="randomSetSelector"></select>
             </div>
+            <div class="done-status-row">
+              <span id="randomDoneStatusText"></span>
+              <button class="secondary-action" type="button" id="randomResetDone">Reset Done Questions</button>
+            </div>
           </div>
           <div class="random-test-panel hidden" aria-live="polite">
             <div class="question-top-actions" style="text-align: right; margin-bottom: 1rem;">
@@ -185,6 +189,7 @@
               <div class="feedback-panel hidden" id="randomFeedback" role="status"></div>
               <div class="question-actions">
                 <button class="primary-button" type="button" id="randomSubmit">Submit Answer</button>
+                <button class="secondary-action" type="button" id="randomMarkDone">Mark as Done</button>
                 <button class="secondary-action" type="button" id="randomNext">Next Question</button>
               </div>
             </div>

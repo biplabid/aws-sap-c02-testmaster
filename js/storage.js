@@ -9,7 +9,8 @@ window.TestMaster.storage = (function createStorageModule() {
     SESSION_PREFIX: "session:",
     TIMER_PREFIX: "timer:",
     ANSWERS_PREFIX: "answers:",
-    REVIEW_PREFIX: "review:"
+    REVIEW_PREFIX: "review:",
+    DONE_QUESTIONS_PREFIX: "done_questions:"
   };
 
   const DEFAULT_STATISTICS = {
@@ -188,6 +189,14 @@ window.TestMaster.storage = (function createStorageModule() {
     return get(KEYS.ATTEMPT_HISTORY, []);
   }
 
+  function loadDoneQuestions(setKey) {
+    return get(`${KEYS.DONE_QUESTIONS_PREFIX}${setKey}`, []);
+  }
+
+  function saveDoneQuestions(setKey, questionIds) {
+    return set(`${KEYS.DONE_QUESTIONS_PREFIX}${setKey}`, questionIds || []);
+  }
+
   function listUnfinishedExams() {
     const sessions = [];
 
@@ -239,6 +248,8 @@ window.TestMaster.storage = (function createStorageModule() {
     saveExamSession,
     loadExamSession,
     clearExamSession,
+    loadDoneQuestions,
+    saveDoneQuestions,
     listUnfinishedExams
   };
 })();
