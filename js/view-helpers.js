@@ -104,20 +104,32 @@ window.TestMaster.viewHelpers = (function createViewHelpersModule() {
   }
 
   /**
-   * Lists the built-in set1 question bank plus any sets that have been
-   * written to data/ via the Upload feature's File System Access flow.
+   * The question banks bundled in data/ and shipped with the app, shown to
+   * every user regardless of upload history.
+   */
+  const BUILT_IN_SETS = [
+    { key: "set1", name: "Official AWS Practice Questions" },
+    { key: "set2", name: "Practice Set 2" },
+    { key: "set3", name: "Practice Set 3" },
+    { key: "set4", name: "Practice Set 4" },
+    { key: "set5", name: "Practice Set 5" }
+  ];
+
+  /**
+   * Lists the bundled question banks plus any sets that have been written
+   * to data/ via the Upload feature's File System Access flow.
    */
   function getAvailableQuestionSets() {
     const fileSets = window.TestMaster.fileSets;
     const knownFiles = fileSets ? fileSets.getKnownSets() : [];
+    const builtInKeys = new Set(BUILT_IN_SETS.map((set) => set.key));
 
-    return [
-      { key: "set1", name: "Official AWS Practice Questions" },
-      ...knownFiles.map((fileName) => ({
-        key: fileName.replace(/\.json$/i, ""),
-        name: `Uploaded Set (${fileName})`
-      }))
-    ];
+    const uploadedSets = knownFiles
+      .map((fileName) => fileName.replace(/\.json$/i, ""))
+      .filter((key) => !builtInKeys.has(key))
+      .map((key) => ({ key, name: `Uploaded Set (${key}.json)` }));
+
+    return [...BUILT_IN_SETS, ...uploadedSets];
   }
 
   /**
