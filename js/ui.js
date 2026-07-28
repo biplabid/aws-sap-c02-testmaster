@@ -13,8 +13,7 @@ window.TestMaster.ui = (function createUiModule() {
     const knownViews = views.map((view) => view.dataset.view);
 
     const activate = (target) => {
-      const requested = target || "home";
-      const viewName = knownViews.includes(requested) ? requested : "home";
+      const viewName = target || "home";
 
       views.forEach((view) => {
         view.classList.toggle("active", view.dataset.view === viewName);
@@ -45,6 +44,19 @@ window.TestMaster.ui = (function createUiModule() {
       }));
     };
 
+    // In-page anchors (e.g. the table of contents on the User Guide /
+    // Architecture pages) also change location.hash, which fires "popstate"
+    // in most browsers even for a plain anchor click. Only treat a hash as
+    // a real view change when it names a known top-level view; otherwise
+    // leave the current view alone and let the browser's native anchor
+    // scrolling do its thing.
+    const activateRoute = (route) => {
+      if (!knownViews.includes(route)) {
+        return;
+      }
+      activate(route);
+    };
+
     const allNavLinks = [...navItems, ...modeCards];
 
     allNavLinks.forEach((item) => {
@@ -71,10 +83,10 @@ window.TestMaster.ui = (function createUiModule() {
     }
 
     window.addEventListener("popstate", () => {
-      activate(getRouteFromHash());
+      activateRoute(getRouteFromHash());
     });
 
-    activate(getRouteFromHash());
+    activateRoute(getRouteFromHash());
 
     initKeyboardShortcuts(navItems, activate);
   }
