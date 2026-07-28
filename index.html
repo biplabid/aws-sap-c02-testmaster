@@ -8,6 +8,7 @@
   <link rel="icon" type="image/png" href="assets/icon.png">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/dark.css">
+  <link rel="stylesheet" href="css/docs.css">
   <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
@@ -28,6 +29,8 @@
         <a href="#mock" data-nav="mock">Mock Exam</a>
         <a href="#stats" data-nav="stats">Statistics</a>
         <a href="#upload" data-nav="upload">Upload</a>
+        <a href="#guide" data-nav="guide">User Guide</a>
+        <a href="#architecture" data-nav="architecture">Architecture</a>
       </nav>
 
       <div class="header-actions">
@@ -62,6 +65,16 @@
         <a href="#upload" data-nav="upload">
           <span class="nav-icon" aria-hidden="true">U</span>
           Upload Questions
+        </a>
+
+        <div class="side-title">Resources</div>
+        <a href="#guide" data-nav="guide">
+          <span class="nav-icon" aria-hidden="true">?</span>
+          User Guide
+        </a>
+        <a href="#architecture" data-nav="architecture">
+          <span class="nav-icon" aria-hidden="true">A</span>
+          Architecture
         </a>
 
         <div class="sidebar-footer">
@@ -508,6 +521,412 @@ Explanation: [Detailed explanation text...]
             </div>
           </div>
         </section>
+
+        <section class="view" id="view-guide" data-view="guide" aria-labelledby="guideTitle">
+          <div class="workspace-header">
+            <div>
+              <span class="eyebrow">Help</span>
+              <h1 id="guideTitle">User Guide</h1>
+              <p>Everything you need to know to study effectively with TestMaster, from picking a practice mode to reading your results.</p>
+            </div>
+          </div>
+
+          <div class="doc-layout">
+            <nav class="doc-toc" aria-label="User guide sections">
+              <span class="doc-toc-title">On this page</span>
+              <a href="#guide-overview">Overview</a>
+              <a href="#guide-navigation">Getting Around</a>
+              <a href="#guide-random">Random Test</a>
+              <a href="#guide-timed">Timed Quiz</a>
+              <a href="#guide-mock">Mock Exam</a>
+              <a href="#guide-results">Reading Your Results</a>
+              <a href="#guide-stats">Statistics</a>
+              <a href="#guide-sets">Question Sets</a>
+              <a href="#guide-upload">Uploading Questions</a>
+              <a href="#guide-data">Your Data & Privacy</a>
+              <a href="#guide-faq">Troubleshooting</a>
+            </nav>
+
+            <article class="doc-content">
+              <section class="doc-section" id="guide-overview">
+                <span class="doc-kicker">Start Here</span>
+                <h2>Overview</h2>
+                <p>AWS SAP-C02 TestMaster is a practice platform for the AWS Certified Solutions Architect – Professional exam. It offers three ways to study &mdash; quick one-at-a-time questions, a short timed quiz, and a full-length mock exam &mdash; plus a statistics dashboard that tracks your progress across attempts.</p>
+                <p>The app runs entirely in your browser (or as a desktop app on Windows). There is no account, no sign-in, and no server: your progress, answers, and attempt history are all saved locally on your device.</p>
+              </section>
+
+              <section class="doc-section" id="guide-navigation">
+                <h2>Getting Around</h2>
+                <p>Use the top navigation bar (or the menu button on smaller screens) to switch between modes. The current section is always highlighted.</p>
+                <h3>Dark Mode</h3>
+                <p>Click the <strong>◐</strong> icon in the top-right corner to switch between light and dark themes. Your choice is remembered the next time you open the app.</p>
+                <h3>Keyboard Shortcuts</h3>
+                <p>Jump between sections without touching the mouse using <kbd>Alt</kbd> plus a letter:</p>
+                <div class="doc-table-wrap">
+                  <table>
+                    <thead>
+                      <tr><th>Shortcut</th><th>Goes to</th></tr>
+                    </thead>
+                    <tbody>
+                      <tr><td><kbd>Alt</kbd> + <kbd>H</kbd></td><td>Home</td></tr>
+                      <tr><td><kbd>Alt</kbd> + <kbd>R</kbd></td><td>Random Test</td></tr>
+                      <tr><td><kbd>Alt</kbd> + <kbd>T</kbd></td><td>Timed Quiz</td></tr>
+                      <tr><td><kbd>Alt</kbd> + <kbd>M</kbd></td><td>Mock Exam</td></tr>
+                      <tr><td><kbd>Alt</kbd> + <kbd>S</kbd></td><td>Statistics</td></tr>
+                      <tr><td><kbd>Alt</kbd> + <kbd>G</kbd></td><td>User Guide</td></tr>
+                      <tr><td><kbd>Alt</kbd> + <kbd>A</kbd></td><td>Technical Architecture</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="doc-section" id="guide-random">
+                <h2>Random Test</h2>
+                <p>The most flexible way to study. Pick a question set and answer questions one at a time, in random order, with immediate feedback after each submission &mdash; correct/incorrect, the right answer, and the explanation.</p>
+                <ul>
+                  <li><strong>Mark as Done</strong> &mdash; permanently excludes a question from future Random Test sessions for that set, so you can focus on questions you haven't mastered yet. This flag is remembered even after you close the app.</li>
+                  <li><strong>Reset Progress</strong> &mdash; clears all "done" flags for the currently selected set from the intro screen, if you want to start over.</li>
+                </ul>
+                <p>Random Test has no timer and no scoring &mdash; it's meant for low-pressure, question-by-question learning.</p>
+              </section>
+
+              <section class="doc-section" id="guide-timed">
+                <h2>Timed Quiz</h2>
+                <p>A focused, 20-question quiz with a 40-minute countdown timer, meant to simulate a short section of the real exam.</p>
+                <ul>
+                  <li>Navigate freely between questions using <strong>Previous</strong> / <strong>Next</strong> or the question palette; your answers are saved automatically as you go.</li>
+                  <li>The timer keeps running even if you switch away from the Timed Quiz view or close and reopen the app &mdash; it's based on elapsed real time, not just active screen time.</li>
+                  <li>If time runs out, the quiz submits automatically with whatever answers you've selected so far.</li>
+                  <li>Click <strong>Finish Quiz</strong> at any point to submit early.</li>
+                </ul>
+              </section>
+
+              <section class="doc-section" id="guide-mock">
+                <h2>Mock Exam</h2>
+                <p>A full-length, 75-question simulation with a 3-hour timer &mdash; the closest thing to sitting the real SAP-C02 exam.</p>
+                <ul>
+                  <li><strong>Question palette</strong> &mdash; jump to any question directly; answered questions and questions marked for review are color-coded.</li>
+                  <li><strong>Mark for Review</strong> &mdash; flag a question to revisit later without losing your place.</li>
+                  <li><strong>Review Screen</strong> &mdash; before submitting, see a full breakdown of answered, unanswered, and marked questions, with the remaining time.</li>
+                  <li><strong>Submit confirmation</strong> &mdash; you'll be warned if you have unanswered or marked questions before the exam locks in your answers.</li>
+                </ul>
+              </section>
+
+              <section class="doc-section" id="guide-results">
+                <h2>Reading Your Results</h2>
+                <p>Both Timed Quiz and Mock Exam show the same kind of results screen after you submit: your score, how many questions you answered, and a per-question list.</p>
+                <p>Click the <strong>Correct</strong> or <strong>Incorrect</strong> summary tile to filter the question list down to just those questions. In this filtered view, each question expands to show:</p>
+                <ul>
+                  <li>The answer you selected (or "Not answered").</li>
+                  <li>A <strong>Show correct answer &amp; explanation</strong> button (for incorrect questions) that reveals the correct answer and the full explanation, so you can understand exactly why an answer was right or wrong.</li>
+                </ul>
+                <p>Click the tile again, or the <strong>Show all questions</strong> button, to return to the full list.</p>
+              </section>
+
+              <section class="doc-section" id="guide-stats">
+                <h2>Statistics</h2>
+                <p>The Statistics dashboard aggregates every Timed Quiz and Mock Exam attempt you've completed:</p>
+                <ul>
+                  <li><strong>Summary cards</strong> &mdash; total attempts, average score, best score, and total study time.</li>
+                  <li><strong>Score by Domain</strong> radar chart &mdash; shows your accuracy across different SAP-C02 exam domains, so you can see where to focus your remaining study time.</li>
+                  <li><strong>Recent Attempts</strong> bar chart &mdash; your last 10 attempt scores at a glance.</li>
+                  <li><strong>Attempt history table</strong> &mdash; every attempt with its date, type, score, and time used.</li>
+                </ul>
+                <div class="doc-callout">
+                  <span class="doc-callout-icon" aria-hidden="true">&#9432;</span>
+                  <p>The dashboard only appears once you've completed at least one Timed Quiz or Mock Exam attempt.</p>
+                </div>
+              </section>
+
+              <section class="doc-section" id="guide-sets">
+                <h2>Question Sets</h2>
+                <p>Every practice mode has a <strong>Question Set</strong> selector. The app ships with several bundled sets covering different practice questions; any question sets you import via Upload appear in the same dropdown, in every mode.</p>
+              </section>
+
+              <section class="doc-section" id="guide-upload">
+                <h2>Uploading Your Own Questions</h2>
+                <p>The Upload page lets you add a new question bank from a specially formatted <code>.docx</code> file. Each question block must be separated by three dashes (<code>---</code>), and the file needs at least 50 questions. See the Upload page itself for the exact structure required.</p>
+                <div class="doc-callout warning">
+                  <span class="doc-callout-icon" aria-hidden="true">&#9888;</span>
+                  <p>Saving an uploaded set requires <strong>Chrome or Edge</strong> &mdash; it relies on the File System Access API to write the new set directly into the app's <code>data</code> folder. Other browsers can't save the file, though all other features work everywhere.</p>
+                </div>
+                <p>On success, you'll be asked to pick this project's <code>data</code> folder once; the new set is saved as the next available <code>setN.json</code> and immediately shows up as a selectable set everywhere.</p>
+              </section>
+
+              <section class="doc-section" id="guide-data">
+                <h2>Your Data & Privacy</h2>
+                <p>TestMaster doesn't have a backend or an account system. Everything &mdash; your in-progress sessions, saved answers, timer state, "done" flags, attempt history, and theme preference &mdash; is stored locally in your browser's <code>LocalStorage</code>. Nothing is uploaded anywhere.</p>
+                <p>This also means your data is tied to a specific browser profile and device. Clearing your browser's site data for this app (or switching browsers/computers) will reset your progress and statistics.</p>
+              </section>
+
+              <section class="doc-section" id="guide-faq">
+                <h2>Troubleshooting</h2>
+                <h3>My Timed Quiz or Mock Exam didn't save my progress</h3>
+                <p>Make sure your browser allows LocalStorage for this site (private/incognito windows sometimes restrict or clear it) and that you're not clearing site data between sessions.</p>
+                <h3>The Upload button says my browser isn't supported</h3>
+                <p>Uploading requires the File System Access API, currently available only in Chromium-based browsers (Chrome, Edge). Try one of those.</p>
+                <h3>I want to restart a set from scratch</h3>
+                <p>In Random Test, use <strong>Reset Progress</strong> to clear "done" flags for a set. For Timed Quiz or Mock Exam, use <strong>Start New Quiz</strong> / <strong>Start New Mock Exam</strong> on the results screen, or just start the mode again &mdash; a fresh, in-progress session always replaces a completed one.</p>
+              </section>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="view-architecture" data-view="architecture" aria-labelledby="architectureTitle">
+          <div class="workspace-header">
+            <div>
+              <span class="eyebrow">Reference</span>
+              <h1 id="architectureTitle">Technical Architecture</h1>
+              <p>How AWS SAP-C02 TestMaster is put together: the runtime, the module boundaries, the data flow, and the desktop packaging.</p>
+            </div>
+          </div>
+
+          <div class="doc-layout">
+            <nav class="doc-toc" aria-label="Architecture sections">
+              <span class="doc-toc-title">On this page</span>
+              <a href="#arch-overview">Overview</a>
+              <a href="#arch-diagram">Architecture Diagram</a>
+              <a href="#arch-shell">App Shell & Routing</a>
+              <a href="#arch-modules">Module Reference</a>
+              <a href="#arch-data-pipeline">Question Data Pipeline</a>
+              <a href="#arch-modes">Practice Mode State</a>
+              <a href="#arch-storage">LocalStorage Schema</a>
+              <a href="#arch-upload">Upload Pipeline</a>
+              <a href="#arch-analytics">Analytics Pipeline</a>
+              <a href="#arch-desktop">Desktop Packaging</a>
+              <a href="#arch-limitations">Known Limitations</a>
+              <a href="#arch-extending">Extending the App</a>
+            </nav>
+
+            <article class="doc-content">
+              <section class="doc-section" id="arch-overview">
+                <span class="doc-kicker">Design Principles</span>
+                <h2>Overview</h2>
+                <p>TestMaster is a vanilla HTML/CSS/JavaScript single-page application &mdash; no build step, no bundler, no framework, and no backend. Every <code>js/*.js</code> file attaches a small module to a shared <code>window.TestMaster</code> namespace, and <code>index.html</code> loads them all as plain <code>&lt;script&gt;</code> tags in dependency order.</p>
+                <p>The same static files run two ways:</p>
+                <ul>
+                  <li><strong>In a browser</strong> &mdash; served by any static file server (e.g. <code>python -m http.server</code>), so <code>fetch()</code> can load the bundled question JSON without hitting CORS restrictions.</li>
+                  <li><strong>As a Windows desktop app</strong> &mdash; an Electron shell (<code>electron/main.js</code>) starts a local HTTP server over the project root and loads it into a native window, so the exact same code runs unmodified in both contexts.</li>
+                </ul>
+                <p>There is no server-side persistence: all state lives in the browser's <code>LocalStorage</code>, and the only writes to disk happen when the Upload feature saves a new question set file, via the browser's File System Access API.</p>
+              </section>
+
+              <section class="doc-section" id="arch-diagram">
+                <h2>Architecture Diagram</h2>
+                <div class="arch-diagram" role="img" aria-label="Layered architecture: browser or Electron window renders index.html and CSS, app.js bootstraps core and feature modules, which read and write data files and LocalStorage.">
+                  <div class="arch-tier">
+                    <div class="arch-tier-label">Runtime</div>
+                    <div class="arch-boxes">
+                      <div class="arch-box"><strong>Browser</strong><span>Any modern browser, served statically</span></div>
+                      <div class="arch-box"><strong>Electron Window</strong><span>electron/main.js + local HTTP server (serve-handler)</span></div>
+                    </div>
+                  </div>
+                  <div class="arch-arrow" aria-hidden="true"></div>
+                  <div class="arch-tier">
+                    <div class="arch-tier-label">App Shell</div>
+                    <div class="arch-boxes">
+                      <div class="arch-box accent"><strong>index.html</strong><span>Single-page shell; all views are hash-routed sections</span></div>
+                      <div class="arch-box"><strong>css/*.css</strong><span>style, dark, docs, responsive</span></div>
+                      <div class="arch-box"><strong>app.js</strong><span>Bootstraps every module on load</span></div>
+                    </div>
+                  </div>
+                  <div class="arch-arrow" aria-hidden="true"></div>
+                  <div class="arch-tier">
+                    <div class="arch-tier-label">Core Modules</div>
+                    <div class="arch-boxes">
+                      <div class="arch-box blue"><strong>ui.js</strong><span>Routing, theme, shortcuts</span></div>
+                      <div class="arch-box blue"><strong>question-engine.js</strong><span>Fetch, normalize, shuffle</span></div>
+                      <div class="arch-box blue"><strong>view-helpers.js</strong><span>Set selector, rendering</span></div>
+                      <div class="arch-box blue"><strong>storage.js</strong><span>LocalStorage API</span></div>
+                      <div class="arch-box blue"><strong>timer.js</strong><span>Countdown timer factory</span></div>
+                      <div class="arch-box blue"><strong>file-sets.js</strong><span>Uploaded-set discovery/writes</span></div>
+                    </div>
+                  </div>
+                  <div class="arch-arrow" aria-hidden="true"></div>
+                  <div class="arch-tier">
+                    <div class="arch-tier-label">Feature Modules</div>
+                    <div class="arch-boxes">
+                      <div class="arch-box"><strong>random.js</strong></div>
+                      <div class="arch-box"><strong>quiz.js</strong></div>
+                      <div class="arch-box"><strong>mock.js</strong></div>
+                      <div class="arch-box"><strong>analytics.js</strong></div>
+                      <div class="arch-box"><strong>upload.js</strong></div>
+                    </div>
+                  </div>
+                  <div class="arch-arrow" aria-hidden="true"></div>
+                  <div class="arch-tier">
+                    <div class="arch-tier-label">Data & Persistence</div>
+                    <div class="arch-boxes">
+                      <div class="arch-box accent"><strong>data/*.json</strong><span>Bundled &amp; uploaded question banks</span></div>
+                      <div class="arch-box accent"><strong>LocalStorage</strong><span>Sessions, answers, stats, theme</span></div>
+                      <div class="arch-box accent"><strong>File System Access API</strong><span>Writes new setN.json (Chromium only)</span></div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="doc-section" id="arch-shell">
+                <h2>App Shell &amp; Routing</h2>
+                <p><code>index.html</code> contains every view as a sibling <code>&lt;section class="view" data-view="..."&gt;</code> inside one <code>.content</code> container. <code>ui.js</code> owns navigation:</p>
+                <ul>
+                  <li>Any element with a <code>data-nav</code> attribute (top nav links, sidebar links, home page mode cards) is a navigation trigger.</li>
+                  <li>Clicking one pushes a <code>history</code> entry for <code>#&lt;view&gt;</code> and toggles the matching <code>[data-view]</code> section's <code>active</code> class &mdash; there's no client-side router library, just hash matching.</li>
+                  <li>Activating a view dispatches a <code>testmaster:view-change</code> <code>CustomEvent</code> on <code>window</code>, which feature modules listen for to refresh their set selector or resume an in-progress session.</li>
+                  <li><code>Alt</code>+letter keyboard shortcuts and the dark/light theme toggle (persisted to <code>LocalStorage</code>) are also owned by <code>ui.js</code>.</li>
+                </ul>
+              </section>
+
+              <section class="doc-section" id="arch-modules">
+                <h2>Module Reference</h2>
+                <h3>Application Shell</h3>
+                <div class="doc-card-grid">
+                  <div class="doc-card"><h4><code>app.js</code></h4><p>Entry point. Builds the shared <code>appState</code> object and calls each module's <code>init*Shell</code> function in order.</p></div>
+                  <div class="doc-card"><h4><code>ui.js</code></h4><p>Hash-based view routing, dark/light theme toggle, keyboard shortcuts, toast notifications.</p></div>
+                  <div class="doc-card"><h4><code>utils.js</code></h4><p>Tiny DOM query helpers (<code>qs</code>/<code>qsa</code>) and number formatting used throughout.</p></div>
+                </div>
+
+                <h3>Core / Shared Modules</h3>
+                <div class="doc-card-grid">
+                  <div class="doc-card"><h4><code>question-engine.js</code></h4><p>Fetches a question set, normalizes any raw JSON shape into the canonical question object, and provides shuffle/random-selection helpers. Falls back to two built-in placeholder questions if a set fails to load or normalizes to zero valid questions.</p></div>
+                  <div class="doc-card"><h4><code>view-helpers.js</code></h4><p>Lists available question sets (bundled + uploaded), resolves a set key to its JSON path, renders a question into the shared answer-form markup, and grades single/multi-select answers.</p></div>
+                  <div class="doc-card"><h4><code>file-sets.js</code></h4><p>Discovers uploaded sets remembered in <code>LocalStorage</code> and writes new <code>setN.json</code> files into <code>data/</code> via the File System Access API.</p></div>
+                  <div class="doc-card"><h4><code>storage.js</code></h4><p>The only module that touches <code>window.localStorage</code> directly. Provides typed get/set helpers plus higher-level session, timer, answer, and statistics APIs.</p></div>
+                  <div class="doc-card"><h4><code>timer.js</code></h4><p>A persisted, elapsed-time-based countdown timer factory used by both Timed Quiz and Mock Exam, so a timer survives a page reload or an app restart.</p></div>
+                  <div class="doc-card"><h4><code>exam.js</code></h4><p>A minimal shared session-state placeholder (<code>appState.exam</code>); each mode currently keeps its own richer state (<code>appState.quiz</code>, <code>appState.mockExam</code>, <code>appState.random</code>) rather than a unified shape.</p></div>
+                </div>
+
+                <h3>Practice Mode Modules</h3>
+                <div class="doc-card-grid">
+                  <div class="doc-card"><h4><code>random.js</code></h4><p>Random Test: untimed, one question at a time, immediate feedback, and per-question "Mark as Done" tracking keyed by question set.</p></div>
+                  <div class="doc-card"><h4><code>quiz.js</code></h4><p>Timed Quiz: 20 questions, 40-minute timer, question palette, filterable Correct/Incorrect results with per-question answer reveal.</p></div>
+                  <div class="doc-card"><h4><code>mock.js</code></h4><p>Mock Exam: 75 questions, 3-hour timer, mark-for-review, a pre-submission review screen, and the same filterable results view as Timed Quiz.</p></div>
+                  <div class="doc-card"><h4><code>analytics.js</code></h4><p>Statistics dashboard: renders summary cards and two Chart.js visualizations (domain radar, recent-attempts bar) from attempt history.</p></div>
+                  <div class="doc-card"><h4><code>upload.js</code></h4><p>Parses a <code>.docx</code> file (via Mammoth.js) into the canonical question shape and hands it to <code>file-sets.js</code> to persist.</p></div>
+                </div>
+
+                <h3>Legacy / Unused Modules</h3>
+                <p>Two modules exist in <code>js/</code> but are <strong>not</strong> loaded by <code>index.html</code> and have no effect on the running app &mdash; kept for reference only:</p>
+                <div class="doc-card-grid">
+                  <div class="doc-card"><h4><code>questions.js</code> <span class="doc-pill legacy">Unused</span></h4><p>An earlier question-set helper (<code>questionService</code>) superseded by <code>view-helpers.js</code>.</p></div>
+                  <div class="doc-card"><h4><code>question-loader.js</code> <span class="doc-pill legacy">Unused</span></h4><p>An earlier single-set loader superseded by the current per-mode <code>buildQuestionSet</code> functions.</p></div>
+                </div>
+              </section>
+
+              <section class="doc-section" id="arch-data-pipeline">
+                <h2>Question Data Pipeline</h2>
+                <p>Every question set on disk (<code>data/set1.json</code> &hellip; <code>data/set5.json</code>, plus anything saved via Upload) is a flat JSON array of raw question objects. Loading always goes through the same normalization contract in <code>question-engine.js</code>, regardless of the source file's exact field names:</p>
+                <div class="doc-table-wrap">
+                  <table>
+                    <thead>
+                      <tr><th>Raw field (accepted aliases)</th><th>Canonical field</th></tr>
+                    </thead>
+                    <tbody>
+                      <tr><td><code>question</code> / <code>prompt</code> / <code>text</code></td><td><code>prompt</code></td></tr>
+                      <tr><td><code>type</code> (anything starting with "multi" &rarr; multi-select)</td><td><code>type</code>: <code>"single"</code> | <code>"multiple"</code></td></tr>
+                      <tr><td><code>options[]</code> (string or <code>{id/letter, text}</code>)</td><td><code>options[]</code>: <code>{id, text}</code></td></tr>
+                      <tr><td><code>answer</code> / <code>answers</code> / <code>correctAnswers</code></td><td><code>correctAnswers[]</code> (upper-cased letters)</td></tr>
+                      <tr><td><code>domain</code>, <code>difficulty</code>, <code>explanation</code></td><td>passed through as-is (defaulted if missing)</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p>Any raw question missing a prompt, options, or a correct answer is dropped during normalization. If an entire set normalizes to zero valid questions (or fails to fetch), <code>question-engine.js</code> silently falls back to two generic built-in questions so the UI never renders a blank state &mdash; see <a href="#arch-limitations">Known Limitations</a> for why this matters.</p>
+                <p>Set selection flows through <code>view-helpers.js</code>: <code>getAvailableQuestionSets()</code> returns the bundled sets plus any uploaded sets from <code>file-sets.js</code>, <code>populateSetSelector()</code> fills each mode's <code>&lt;select&gt;</code>, and <code>resolveQuestionSetSource()</code> turns the chosen key into a <code>data/&lt;key&gt;.json</code> path for <code>question-engine.js</code> to fetch.</p>
+              </section>
+
+              <section class="doc-section" id="arch-modes">
+                <h2>Practice Mode State</h2>
+                <p>Timed Quiz and Mock Exam share the same lifecycle shape, each owning its own slice of <code>appState</code> (<code>appState.quiz</code> / <code>appState.mockExam</code>):</p>
+                <ol>
+                  <li><strong>Start</strong> &mdash; build a question set (bundled questions shuffled and sliced to the mode's count), or restore an in-progress session from <code>storage.loadExamSession()</code> if one exists.</li>
+                  <li><strong>In progress</strong> &mdash; every answer change and navigation saves the current answers and session pointer to <code>LocalStorage</code> immediately, and a persisted <code>timer.js</code> instance keeps counting down based on elapsed wall-clock time.</li>
+                  <li><strong>Finish</strong> &mdash; triggered manually or by timer expiry; computes the score, records the attempt via <code>storage.recordAttempt()</code>, clears the session, and renders the filterable results view.</li>
+                </ol>
+                <p>Random Test (<code>random.js</code>) is simpler and stateless across reloads: it holds an in-memory shuffled pool for the current visit and persists only the per-question "done" flags, keyed by question set.</p>
+              </section>
+
+              <section class="doc-section" id="arch-storage">
+                <h2>LocalStorage Schema</h2>
+                <p>Every key <code>storage.js</code> writes is namespaced under <code>sap-c02-testmaster:</code> and JSON-encoded:</p>
+                <div class="doc-table-wrap">
+                  <table>
+                    <thead>
+                      <tr><th>Key</th><th>Shape</th><th>Purpose</th></tr>
+                    </thead>
+                    <tbody>
+                      <tr><td><code>settings</code></td><td><code>{ theme, updatedAt }</code></td><td>Theme preference</td></tr>
+                      <tr><td><code>statistics</code></td><td>Aggregate counters</td><td>Attempts, average/best score, study time</td></tr>
+                      <tr><td><code>attempt_history</code></td><td>Array of attempt records</td><td>Backs the Statistics page (list, charts)</td></tr>
+                      <tr><td><code>session:&lt;id&gt;</code></td><td><code>{ status, currentIndex, questions, ... }</code></td><td>Resumable in-progress quiz/mock session</td></tr>
+                      <tr><td><code>timer:&lt;id&gt;</code></td><td>Timer state snapshot</td><td>Countdown survives reloads</td></tr>
+                      <tr><td><code>answers:&lt;id&gt;</code></td><td><code>{ [questionId]: string[] }</code></td><td>Selected answers for a session</td></tr>
+                      <tr><td><code>review:&lt;id&gt;</code></td><td><code>{ [questionId]: true }</code></td><td>Mock Exam "marked for review" flags</td></tr>
+                      <tr><td><code>done_questions:&lt;setKey&gt;</code></td><td>Array of question IDs</td><td>Random Test "Mark as Done" per set</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p><code>&lt;id&gt;</code> is the session id (<code>"timed-quiz"</code> or <code>"mock-exam"</code>). <code>storage.clearExamSession()</code> clears the session, answers, review flags, and timer together once an attempt finishes.</p>
+              </section>
+
+              <section class="doc-section" id="arch-upload">
+                <h2>Upload Pipeline</h2>
+                <p>Custom question banks flow through three modules in sequence:</p>
+                <ol>
+                  <li><strong><code>upload.js</code></strong> reads the selected <code>.docx</code> as an array buffer, extracts raw text with Mammoth.js, splits it into <code>---</code>-delimited blocks (minimum 50), and parses each block's <code>Question</code> / <code>Type</code> / <code>Domain</code> / lettered options / <code>Answer</code> / <code>Explanation</code> lines into the canonical question shape.</li>
+                  <li><strong><code>file-sets.js</code></strong> requests write access to the project's <code>data</code> folder via <code>window.showDirectoryPicker()</code>, determines the next free <code>setN.json</code> name, and writes the parsed questions to it.</li>
+                  <li>The new file name is remembered in <code>LocalStorage</code> (<code>file_sets_index</code>) so <code>view-helpers.js</code> can list it as a selectable set in every mode on subsequent visits, without needing to re-scan the file system.</li>
+                </ol>
+                <div class="doc-callout warning">
+                  <span class="doc-callout-icon" aria-hidden="true">&#9888;</span>
+                  <p>Both the directory picker and the write itself depend on the File System Access API, which only Chromium-based browsers implement &mdash; there is no fallback download-a-file path for other browsers.</p>
+                </div>
+              </section>
+
+              <section class="doc-section" id="arch-analytics">
+                <h2>Analytics Pipeline</h2>
+                <p><code>analytics.js</code> reads <code>attempt_history</code> and <code>statistics</code> from storage whenever the Statistics view activates. Per-domain accuracy for the radar chart is computed by re-grading every stored attempt's saved <code>questions</code>/<code>answers</code> against <code>viewHelpers.isAnswerCorrect()</code> and grouping by each question's <code>domain</code> field. Both charts are rendered with Chart.js and re-themed (grid/label colors) on every render based on the current light/dark theme.</p>
+              </section>
+
+              <section class="doc-section" id="arch-desktop">
+                <h2>Desktop Packaging</h2>
+                <p><code>electron/main.js</code> is the entire Electron main process: on <code>app.whenReady()</code> it starts a local HTTP server (<code>serve-handler</code>) bound to an OS-assigned port over the project root, then opens a <code>BrowserWindow</code> pointed at <code>http://127.0.0.1:&lt;port&gt;/index.html</code>. Context isolation and Node integration are disabled in the renderer (<code>contextIsolation: true</code>, <code>nodeIntegration: false</code>, <code>sandbox: true</code>) &mdash; the desktop app has no elevated capabilities beyond what the same page could do in a regular browser tab.</p>
+                <p><code>package.json</code>'s <code>build</code> field configures <a href="https://www.electron.build/" target="_blank" rel="noopener noreferrer">electron-builder</a> to produce two Windows targets from <code>npm run dist</code>:</p>
+                <ul>
+                  <li><strong>NSIS installer</strong> &mdash; per-user, no admin rights, with Desktop and Start Menu shortcuts.</li>
+                  <li><strong>Portable executable</strong> &mdash; runs directly with no installation step.</li>
+                </ul>
+                <p>Both bundle <code>index.html</code>, <code>css/</code>, <code>js/</code>, <code>data/</code>, and <code>assets/</code> as-is (via <code>asar</code> packaging) &mdash; there's no separate desktop build artifact to keep in sync with the web version.</p>
+              </section>
+
+              <section class="doc-section" id="arch-limitations">
+                <h2>Known Limitations</h2>
+                <div class="doc-callout limitation">
+                  <span class="doc-callout-icon" aria-hidden="true">&#9888;</span>
+                  <p><strong>Mock Exam attempts are missing from domain analytics.</strong> <code>mock.js</code>'s call to <code>storage.recordAttempt()</code> omits the <code>questions</code>/<code>answers</code> fields that <code>quiz.js</code> includes. <code>analytics.js</code>'s domain radar chart re-grades attempts from those fields, so Mock Exam attempts silently contribute nothing to the per-domain breakdown even though they still count toward the summary cards and history table.</p>
+                </div>
+                <div class="doc-callout limitation">
+                  <span class="doc-callout-icon" aria-hidden="true">&#9888;</span>
+                  <p><strong><code>data/set4.json</code> has no usable questions.</strong> Every entry in that file has an empty <code>options</code> and <code>answer</code> array. <code>question-engine.js</code> normalizes it down to zero valid questions and silently falls back to the two generic built-in questions, repeated to fill the requested count.</p>
+                </div>
+                <div class="doc-callout limitation">
+                  <span class="doc-callout-icon" aria-hidden="true">&#9888;</span>
+                  <p><strong>Upload is Chromium-only,</strong> with no fallback (e.g. a plain file download) for Firefox or Safari users who want to import a custom set.</p>
+                </div>
+                <div class="doc-callout limitation">
+                  <span class="doc-callout-icon" aria-hidden="true">&#9888;</span>
+                  <p><strong>No automated test suite.</strong> There's no unit, integration, or end-to-end test tooling configured in <code>package.json</code>; correctness currently relies on manual verification.</p>
+                </div>
+              </section>
+
+              <section class="doc-section" id="arch-extending">
+                <h2>Extending the App</h2>
+                <h3>Adding a new practice mode</h3>
+                <p>Create a new <code>js/&lt;mode&gt;.js</code> module following the existing pattern (an IIFE attaching to <code>window.TestMaster.&lt;mode&gt;</code>, an <code>init&lt;Mode&gt;Shell(appState)</code> entry point), add its markup as a new <code>[data-view]</code> section in <code>index.html</code>, register it in <code>app.js</code>'s bootstrap sequence, and add matching <code>[data-nav]</code> links in the header and sidebar.</p>
+                <h3>Adding a new question set</h3>
+                <p>Either drop a new <code>data/setN.json</code> file (array of raw questions matching the schema in <a href="#arch-data-pipeline">Question Data Pipeline</a>) and add it to the <code>BUILT_IN_SETS</code> list in <code>view-helpers.js</code>, or let a user add one at runtime through the Upload page.</p>
+              </section>
+            </article>
+          </div>
+        </section>
       </section>
     </main>
   </div>
@@ -528,6 +947,7 @@ Explanation: [Detailed explanation text...]
   <script src="js/quiz.js"></script>
   <script src="js/mock.js"></script>
   <script src="js/upload.js"></script>
+  <script src="js/docs.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

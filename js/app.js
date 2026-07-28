@@ -28,5 +28,9 @@
     window.TestMaster.ui.initTheme({ storage: window.TestMaster.storage });
   }
 
+  if (window.TestMaster.docs) {
+    window.TestMaster.docs.initDocsShell();
+  }
+
   window.TestMaster.appState = appState;
 })();

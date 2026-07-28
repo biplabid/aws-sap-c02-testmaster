@@ -11,10 +11,15 @@ The platform is organized into several practice modes, each tailored for a diffe
 ### Practice Modes
 
 -   **Random Test**: Answer randomly selected questions one at a time with immediate feedback. Any question can be flagged **Mark as Done**, which permanently excludes it from future Random Test sessions for that question set (the flag persists across reloads). Progress can be reset per set from the intro screen.
--   **Timed Quiz**: A 20-question, 40-minute quiz that mimics a subsection of the exam. Answers are saved as you progress, and results are provided upon completion.
--   **Mock Exam**: A full 75-question, 3-hour simulation of the SAP-C02 exam, with a question palette for navigation, the ability to mark questions for review, a pre-submission review screen, and a results summary showing your score and a per-question correct/wrong/unanswered/marked breakdown.
+-   **Timed Quiz**: A 20-question, 40-minute quiz that mimics a subsection of the exam, with a persistent countdown timer. Answers are saved as you progress, and the results screen lets you filter to just your Correct or Incorrect answers, revealing your selected answer, the correct answer, and the explanation for each question.
+-   **Mock Exam**: A full 75-question, 3-hour simulation of the SAP-C02 exam, with a question palette for navigation, the ability to mark questions for review, a pre-submission review screen, and a results summary showing your score and a per-question correct/wrong/unanswered/marked breakdown. As in Timed Quiz, the Correct/Incorrect tiles filter the results and reveal each question's selected answer, correct answer, and explanation.
 -   **Statistics**: A dashboard with a radar chart of your score by domain, a bar chart of your most recent attempts, summary cards (attempts, average score, best score, study time), and a full attempt history table.
 -   **Upload**: Import a custom question bank from a formatted `.docx` file. The file is parsed in the browser and written directly into the project's `data/` folder as a new `setN.json` file, which then appears as a selectable question set in every practice mode.
+
+### Resources
+
+-   **User Guide**: An in-app guide covering every practice mode, keyboard shortcuts, how to read your results, question sets, uploading questions, and data/privacy — no need to leave the app.
+-   **Technical Architecture**: An in-app reference for contributors/maintainers: an architecture diagram, a per-module breakdown, the question data pipeline, the `LocalStorage` schema, the upload pipeline, and known limitations.
 
 ### Core Functionality
 
@@ -44,6 +49,7 @@ aws-sap-c02-testmaster/
 ├── css/
 │   ├── style.css            # Base styles
 │   ├── dark.css             # Dark mode theme
+│   ├── docs.css             # User Guide / Architecture page styling
 │   └── responsive.css       # Responsive design rules
 ├── js/
 │   ├── app.js                # Main application entry point
@@ -58,6 +64,7 @@ aws-sap-c02-testmaster/
 │   ├── storage.js             # LocalStorage abstraction layer
 │   ├── timer.js               # Countdown timer factory
 │   ├── ui.js                   # View navigation, keyboard shortcuts, theme toggle
+│   ├── docs.js                 # Scroll-spy for the User Guide / Architecture table of contents
 │   ├── utils.js                # General utility functions
 │   ├── view-helpers.js        # Shared question rendering + set-selector helpers
 │   ├── questions.js           # Legacy question-set helper, not currently used
@@ -125,13 +132,14 @@ The desktop app behaves identically to the browser version — it runs the same 
 ## How It Works
 
 1.  **Initialization**: `app.js` initializes all modules and sets up the main application state.
-2.  **Navigation**: `ui.js` handles view switching based on URL hashes (`#random`, `#timed`, `#mock`, `#stats`, `#upload`), keyboard shortcuts, and the dark/light theme toggle.
+2.  **Navigation**: `ui.js` handles view switching based on URL hashes (`#random`, `#timed`, `#mock`, `#stats`, `#upload`, `#guide`, `#architecture`), keyboard shortcuts, and the dark/light theme toggle.
 3.  **Question Loading**: `view-helpers.js` lists the available question sets (the bundled set plus any uploaded sets remembered by `file-sets.js`) and resolves a selected set to its JSON path; `question-engine.js` fetches, normalizes, and shuffles the questions.
 4.  **Exam Modes**: Each mode (`random.js`, `quiz.js`, `mock.js`) manages its own state, user interactions, and rendering logic, building on the shared session shell in `exam.js` and helpers from `view-helpers.js`.
 5.  **Custom Question Banks**: `upload.js` parses a user-provided `.docx` file (via Mammoth.js) into the application's canonical question format, then `file-sets.js` writes it to `data/` as the next `setN.json` and remembers it in `LocalStorage` so it shows up in every mode's set selector.
 6.  **State Management**: `storage.js` provides a simple API for saving and retrieving data from `LocalStorage` — session progress, statistics, attempt history, theme preference, and per-question "done" flags for Random Test.
 7.  **Analytics**: `analytics.js` reads attempt history from storage and uses Chart.js to render the domain radar chart and recent-attempts bar chart on the Statistics page.
 8.  **Desktop Shell**: `electron/main.js` starts a local HTTP server over the project root and opens it in an Electron window, so the exact same `index.html` runs unmodified whether launched in a browser or as the packaged desktop app.
+9.  **In-App Documentation**: The User Guide and Technical Architecture pages are regular views like any practice mode, styled by `css/docs.css`; `docs.js` highlights the current section in each page's table of contents as you scroll.
 
 ## Question Upload Format
 
@@ -160,7 +168,6 @@ On success, the parsed questions are saved directly to `data/setN.json` (the nex
 
 ## Future Improvements
 
--   **Answer-level Review**: Extend the Mock Exam results screen to show each question's selected answer, the correct answer, and its explanation inline (today it shows a correct/wrong/unanswered/marked status per question, without the answer detail).
 -   **Mark as Done for Timed Quiz / Mock Exam**: Extend the Random Test "Mark as Done" progress tracking to the other practice modes.
 -   **Cloud-Based Sync**: Option to sync progress and statistics across devices using a backend service.
 

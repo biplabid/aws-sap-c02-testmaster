@@ -10,8 +10,11 @@ window.TestMaster.ui = (function createUiModule() {
     const sideNav = window.TestMaster.utils.qs(".side-nav");
     const menuToggle = window.TestMaster.utils.qs("#menuToggle");
 
+    const knownViews = views.map((view) => view.dataset.view);
+
     const activate = (target) => {
-      const viewName = target || "home";
+      const requested = target || "home";
+      const viewName = knownViews.includes(requested) ? requested : "home";
 
       views.forEach((view) => {
         view.classList.toggle("active", view.dataset.view === viewName);
@@ -32,6 +35,8 @@ window.TestMaster.ui = (function createUiModule() {
       document.title = viewName === "home"
         ? "AWS SAP-C02 TestMaster"
         : `${formatTitle(viewName)} | AWS SAP-C02 TestMaster`;
+
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
 
       window.dispatchEvent(new CustomEvent("testmaster:view-change", {
         detail: {
@@ -123,7 +128,10 @@ window.TestMaster.ui = (function createUiModule() {
       random: "Random Test",
       timed: "Timed Quiz",
       mock: "SAP-C02 Mock Exam",
-      stats: "Statistics"
+      stats: "Statistics",
+      upload: "Upload Questions",
+      guide: "User Guide",
+      architecture: "Technical Architecture"
     };
 
     return labels[viewName] || "Home";
@@ -135,7 +143,9 @@ window.TestMaster.ui = (function createUiModule() {
       R: "random",
       T: "timed",
       M: "mock",
-      S: "stats"
+      S: "stats",
+      G: "guide",
+      A: "architecture"
     };
 
     window.addEventListener("keydown", (event) => {
