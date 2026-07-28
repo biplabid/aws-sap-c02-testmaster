@@ -32,5 +32,17 @@
     window.TestMaster.docs.initDocsShell();
   }
 
+  if (window.TestMaster.auth) {
+    window.TestMaster.auth.init();
+  }
+
+  if (window.TestMaster.accountUi) {
+    window.TestMaster.accountUi.initAccountUi();
+  }
+
+  if (window.TestMaster.driveSync) {
+    window.TestMaster.driveSync.init();
+  }
+
   window.TestMaster.appState = appState;
 })();

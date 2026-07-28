@@ -58,6 +58,13 @@ window.TestMaster.random = (function createRandomModule(viewHelpers, questionEng
         resetToIntro(appState, elements);
       }
     });
+
+    // "Mark as Done" counts are namespaced per signed-in user (they're
+    // synced to Drive); refresh the displayed count if sign-in resolves
+    // (or changes) while this view is already showing.
+    window.addEventListener("testmaster:user-change", () => {
+      updateDoneStatus(elements);
+    });
   }
 
   function getElements() {

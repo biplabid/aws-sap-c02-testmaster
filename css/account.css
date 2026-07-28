@@ -1,0 +1,97 @@
+/* Google Sign-In control + account/sync popover in the header. */
+
+.account-control {
+  position: relative;
+}
+
+.account-signin-button {
+  padding: 0 14px;
+  font-size: 0.83rem;
+  white-space: nowrap;
+}
+
+.account-avatar-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 12px 0 4px;
+  color: #ffffff;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+
+.account-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--surface-raised);
+}
+
+.account-name {
+  max-width: 110px;
+  overflow: hidden;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-popover {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 30;
+  width: 260px;
+  padding: 16px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.account-popover-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.account-popover-header .account-avatar {
+  width: 40px;
+  height: 40px;
+}
+
+.account-popover-header strong {
+  display: block;
+  font-size: 0.92rem;
+}
+
+.account-popover-header small {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+}
+
+.account-sync-status {
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+  background: var(--surface-raised);
+  border-radius: 6px;
+}
+
+.account-sync-status.sync-error {
+  color: var(--aws-red);
+}
+
+.account-popover .secondary-action {
+  width: 100%;
+  margin-top: 8px;
+}

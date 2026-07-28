@@ -17,6 +17,15 @@ window.TestMaster.analytics = (function createAnalyticsModule(storage, timerFact
       }
     });
 
+    // Attempt history/statistics are namespaced per signed-in user; if
+    // sign-in resolves (or changes) while this view is already showing,
+    // refresh so it doesn't keep displaying the previous scope's data.
+    window.addEventListener("testmaster:user-change", () => {
+      if (window.TestMaster.ui.getRouteFromHash() === "stats") {
+        renderAnalytics(elements);
+      }
+    });
+
     elements.refresh.addEventListener("click", () => {
       renderAnalytics(elements);
       window.TestMaster.ui.showToast("Statistics have been updated.");

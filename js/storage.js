@@ -25,6 +25,64 @@ window.TestMaster.storage = (function createStorageModule() {
     lastAttemptAt: null
   };
 
+  // Only statistics/attempt_history/done_questions are namespaced per signed-in
+  // user (they're the data synced to Drive). Settings, sessions, timers,
+  // answers, and review flags intentionally stay on the shared/guest prefix
+  // below — they're excluded from sync, so namespacing them would only
+  // reintroduce the bootstrap-ordering problem (auth resolves after these
+  // modules' first synchronous reads) for no benefit.
+  let currentUserId = null;
+
+  function setCurrentUser(userId) {
+    const nextUserId = userId || null;
+
+    if (nextUserId !== currentUserId) {
+      warnIfForeignSessionExists(nextUserId);
+    }
+
+    currentUserId = nextUserId;
+
+    window.dispatchEvent(new CustomEvent("testmaster:user-change", {
+      detail: { userId: currentUserId }
+    }));
+  }
+
+  function getCurrentUser() {
+    return currentUserId;
+  }
+
+  function warnIfForeignSessionExists(nextUserId) {
+    const foreignSession = listUnfinishedExams().find((session) => session.sessionOwner !== nextUserId);
+
+    if (foreignSession && window.TestMaster.ui) {
+      window.TestMaster.ui.showToast(
+        "An unfinished session from a different account was found on this device. Starting a new one will discard it."
+      );
+    }
+  }
+
+  function getUserScopedKey(key) {
+    return currentUserId ? `${APP_PREFIX}${currentUserId}:${key}` : `${APP_PREFIX}${key}`;
+  }
+
+  function getUserScoped(key, fallback = null) {
+    try {
+      const value = window.localStorage.getItem(getUserScopedKey(key));
+      return value === null ? fallback : JSON.parse(value);
+    } catch (error) {
+      return fallback;
+    }
+  }
+
+  function setUserScoped(key, value) {
+    try {
+      window.localStorage.setItem(getUserScopedKey(key), JSON.stringify(value));
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   function get(key, fallback = null) {
     try {
       const value = window.localStorage.getItem(getKey(key));
@@ -68,7 +126,7 @@ window.TestMaster.storage = (function createStorageModule() {
   }
 
   function saveStatistics(statistics) {
-    return set(KEYS.STATISTICS, {
+    return setUserScoped(KEYS.STATISTICS, {
       ...DEFAULT_STATISTICS,
       ...(statistics || {}),
       updatedAt: Date.now()
@@ -78,7 +136,7 @@ window.TestMaster.storage = (function createStorageModule() {
   function loadStatistics() {
     return {
       ...DEFAULT_STATISTICS,
-      ...get(KEYS.STATISTICS, DEFAULT_STATISTICS)
+      ...getUserScoped(KEYS.STATISTICS, DEFAULT_STATISTICS)
     };
   }
 
@@ -121,6 +179,7 @@ window.TestMaster.storage = (function createStorageModule() {
 
     saveStatistics(nextStatistics);
     saveAttemptHistory(attemptHistory);
+    window.dispatchEvent(new CustomEvent("testmaster:data-changed"));
   }
 
   function saveAnswers(sessionId, answers) {
@@ -166,6 +225,7 @@ window.TestMaster.storage = (function createStorageModule() {
     return set(`${KEYS.SESSION_PREFIX}${sessionId}`, {
       ...(sessionState || {}),
       sessionId,
+      sessionOwner: currentUserId,
       updatedAt: Date.now()
     });
   }
@@ -182,19 +242,21 @@ window.TestMaster.storage = (function createStorageModule() {
   }
 
   function saveAttemptHistory(history) {
-    return set(KEYS.ATTEMPT_HISTORY, history || []);
+    return setUserScoped(KEYS.ATTEMPT_HISTORY, history || []);
   }
 
   function loadAttemptHistory() {
-    return get(KEYS.ATTEMPT_HISTORY, []);
+    return getUserScoped(KEYS.ATTEMPT_HISTORY, []);
   }
 
   function loadDoneQuestions(setKey) {
-    return get(`${KEYS.DONE_QUESTIONS_PREFIX}${setKey}`, []);
+    return getUserScoped(`${KEYS.DONE_QUESTIONS_PREFIX}${setKey}`, []);
   }
 
   function saveDoneQuestions(setKey, questionIds) {
-    return set(`${KEYS.DONE_QUESTIONS_PREFIX}${setKey}`, questionIds || []);
+    const result = setUserScoped(`${KEYS.DONE_QUESTIONS_PREFIX}${setKey}`, questionIds || []);
+    window.dispatchEvent(new CustomEvent("testmaster:data-changed"));
+    return result;
   }
 
   function listUnfinishedExams() {
@@ -225,10 +287,20 @@ window.TestMaster.storage = (function createStorageModule() {
     return key.startsWith(APP_PREFIX) ? key : `${APP_PREFIX}${key}`;
   }
 
+  // Reacts to sign-in/out without app.js needing to know storage.js cares
+  // about auth — same self-subscribing pattern docs.js uses for view-change.
+  window.addEventListener("testmaster:auth-change", (event) => {
+    setCurrentUser(event.detail.user ? event.detail.user.sub : null);
+  });
+
   return {
     get,
     set,
     remove,
+    getUserScoped,
+    setUserScoped,
+    setCurrentUser,
+    getCurrentUser,
     saveSettings,
     loadSettings,
     saveStatistics,

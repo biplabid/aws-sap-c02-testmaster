@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/dark.css">
   <link rel="stylesheet" href="css/docs.css">
+  <link rel="stylesheet" href="css/account.css">
   <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
@@ -34,6 +35,27 @@
       </nav>
 
       <div class="header-actions">
+        <div class="account-control" id="accountControl">
+          <button class="secondary-button account-signin-button" type="button" id="signInButton" title="Sign in with Google to sync your progress" aria-label="Sign in with Google to sync your progress">
+            Sign in
+          </button>
+          <button class="account-avatar-button hidden" type="button" id="accountAvatarButton" aria-haspopup="true" aria-expanded="false">
+            <img class="account-avatar" id="accountAvatarImg" src="" alt="">
+            <span class="account-name" id="accountNameLabel"></span>
+          </button>
+          <div class="account-popover hidden" id="accountPopover" role="menu">
+            <div class="account-popover-header">
+              <img class="account-avatar" id="accountPopoverAvatar" src="" alt="">
+              <div>
+                <strong id="accountPopoverName"></strong>
+                <small id="accountPopoverEmail"></small>
+              </div>
+            </div>
+            <div class="account-sync-status" id="accountSyncStatus" role="status" aria-live="polite">Not connected to Google Drive.</div>
+            <button class="secondary-action" type="button" id="accountChooseFolderButton">Choose Drive Folder</button>
+            <button class="secondary-action" type="button" id="accountSignOutButton">Sign Out</button>
+          </div>
+        </div>
         <button class="icon-button" type="button" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
           <span aria-hidden="true">◐</span>
         </button>
@@ -543,6 +565,7 @@ Explanation: [Detailed explanation text...]
               <a href="#guide-stats">Statistics</a>
               <a href="#guide-sets">Question Sets</a>
               <a href="#guide-upload">Uploading Questions</a>
+              <a href="#guide-sync">Syncing with Google Drive</a>
               <a href="#guide-data">Your Data & Privacy</a>
               <a href="#guide-faq">Troubleshooting</a>
             </nav>
@@ -552,7 +575,7 @@ Explanation: [Detailed explanation text...]
                 <span class="doc-kicker">Start Here</span>
                 <h2>Overview</h2>
                 <p>AWS SAP-C02 TestMaster is a practice platform for the AWS Certified Solutions Architect – Professional exam. It offers three ways to study &mdash; quick one-at-a-time questions, a short timed quiz, and a full-length mock exam &mdash; plus a statistics dashboard that tracks your progress across attempts.</p>
-                <p>The app runs entirely in your browser (or as a desktop app on Windows). There is no account, no sign-in, and no server: your progress, answers, and attempt history are all saved locally on your device.</p>
+                <p>The app runs entirely in your browser (or as a desktop app on Windows), and no account is required: your progress, answers, and attempt history are saved locally on your device by default. You can optionally sign in with Google to sync your completed results to your own Google Drive so they follow you to another device &mdash; see <a href="#guide-sync">Syncing with Google Drive</a>.</p>
               </section>
 
               <section class="doc-section" id="guide-navigation">
@@ -653,10 +676,27 @@ Explanation: [Detailed explanation text...]
                 <p>On success, you'll be asked to pick this project's <code>data</code> folder once; the new set is saved as the next available <code>setN.json</code> and immediately shows up as a selectable set everywhere.</p>
               </section>
 
+              <section class="doc-section" id="guide-sync">
+                <h2>Syncing with Google Drive (Optional)</h2>
+                <p>Signing in with Google is entirely optional &mdash; everything above works with no account at all. If you'd like your <strong>completed attempt history</strong> and <strong>"Mark as Done" flags</strong> to follow you to another device, click <strong>Sign in</strong> in the top-right corner.</p>
+                <ol>
+                  <li><strong>Sign in with Google.</strong> This identifies you and, in the same step, asks for permission to create/edit files it needs in your Drive &mdash; nothing else in your Drive is touched.</li>
+                  <li><strong>Choose Drive Folder</strong> (from the account menu, click your avatar). Pick an existing folder or create a new one in Google's picker &mdash; this is where your data file (<code>testmaster-data.json</code>) will live, fully visible in your normal Drive.</li>
+                  <li>From then on, finishing a Timed Quiz or Mock Exam, or marking a question Done, automatically syncs to that folder in the background. The account menu shows a live "Syncing…" / "Synced" status.</li>
+                </ol>
+                <p>Signing in again later &mdash; on this device or a new one &mdash; and reconnecting the same Drive folder brings your historical results back automatically; nothing is ever silently overwritten, results from every device are merged together.</p>
+                <div class="doc-callout warning">
+                  <span class="doc-callout-icon" aria-hidden="true">&#9888;</span>
+                  <p>On a brand-new device or browser, the app can't automatically rediscover which folder you used before (that's how Google's restricted Drive permission works). Click <strong>Reconnect Drive Folder</strong> in the account menu and pick the same folder again in the picker &mdash; your data is still there, this just re-grants access to it.</p>
+                </div>
+                <p>What does <em>not</em> sync: an in-progress Timed Quiz or Mock Exam only lives on the device you're taking it on. Only completed results sync.</p>
+              </section>
+
               <section class="doc-section" id="guide-data">
                 <h2>Your Data & Privacy</h2>
-                <p>TestMaster doesn't have a backend or an account system. Everything &mdash; your in-progress sessions, saved answers, timer state, "done" flags, attempt history, and theme preference &mdash; is stored locally in your browser's <code>LocalStorage</code>. Nothing is uploaded anywhere.</p>
-                <p>This also means your data is tied to a specific browser profile and device. Clearing your browser's site data for this app (or switching browsers/computers) will reset your progress and statistics.</p>
+                <p>TestMaster doesn't have a backend or a database of its own. Everything &mdash; your in-progress sessions, saved answers, timer state, "done" flags, attempt history, and theme preference &mdash; is stored locally in your browser's <code>LocalStorage</code>. If you never sign in, nothing ever leaves your browser.</p>
+                <p>This also means your local data is tied to a specific browser profile and device. Clearing your browser's site data for this app (or switching browsers/computers) will reset your progress and statistics &mdash; unless you've signed in and connected a Google Drive folder (see above), in which case your completed history can be pulled back down.</p>
+                <p>If you do sign in, TestMaster only ever requests the narrow "app-created files" Drive permission &mdash; it can see and edit the one folder/file you explicitly picked, never your wider Drive. You can revoke access at any time from your <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer">Google Account permissions page</a>.</p>
               </section>
 
               <section class="doc-section" id="guide-faq">
@@ -692,6 +732,7 @@ Explanation: [Detailed explanation text...]
               <a href="#arch-modes">Practice Mode State</a>
               <a href="#arch-storage">LocalStorage Schema</a>
               <a href="#arch-upload">Upload Pipeline</a>
+              <a href="#arch-auth-sync">Google Sign-In &amp; Drive Sync</a>
               <a href="#arch-analytics">Analytics Pipeline</a>
               <a href="#arch-desktop">Desktop Packaging</a>
               <a href="#arch-limitations">Known Limitations</a>
@@ -708,7 +749,7 @@ Explanation: [Detailed explanation text...]
                   <li><strong>In a browser</strong> &mdash; served by any static file server (e.g. <code>python -m http.server</code>), so <code>fetch()</code> can load the bundled question JSON without hitting CORS restrictions.</li>
                   <li><strong>As a Windows desktop app</strong> &mdash; an Electron shell (<code>electron/main.js</code>) starts a local HTTP server over the project root and loads it into a native window, so the exact same code runs unmodified in both contexts.</li>
                 </ul>
-                <p>There is no server-side persistence: all state lives in the browser's <code>LocalStorage</code>, and the only writes to disk happen when the Upload feature saves a new question set file, via the browser's File System Access API.</p>
+                <p>There is still no server-side persistence: all state lives in the browser's <code>LocalStorage</code> by default. The app writes outside <code>LocalStorage</code> in exactly two opt-in cases: the Upload feature saving a new question set file via the File System Access API, and &mdash; if a user signs in with Google and picks a folder &mdash; <code>drive-sync.js</code> syncing completed attempt history to that user's own Google Drive. Neither requires or implies a backend of ours; both talk directly from the browser to the relevant Google/browser API.</p>
               </section>
 
               <section class="doc-section" id="arch-diagram">
@@ -740,6 +781,8 @@ Explanation: [Detailed explanation text...]
                       <div class="arch-box blue"><strong>storage.js</strong><span>LocalStorage API</span></div>
                       <div class="arch-box blue"><strong>timer.js</strong><span>Countdown timer factory</span></div>
                       <div class="arch-box blue"><strong>file-sets.js</strong><span>Uploaded-set discovery/writes</span></div>
+                      <div class="arch-box blue"><strong>auth.js</strong><span>Google sign-in, access token</span></div>
+                      <div class="arch-box blue"><strong>drive-sync.js</strong><span>Drive REST calls, merge logic</span></div>
                     </div>
                   </div>
                   <div class="arch-arrow" aria-hidden="true"></div>
@@ -751,6 +794,7 @@ Explanation: [Detailed explanation text...]
                       <div class="arch-box"><strong>mock.js</strong></div>
                       <div class="arch-box"><strong>analytics.js</strong></div>
                       <div class="arch-box"><strong>upload.js</strong></div>
+                      <div class="arch-box"><strong>account-ui.js</strong></div>
                     </div>
                   </div>
                   <div class="arch-arrow" aria-hidden="true"></div>
@@ -758,8 +802,9 @@ Explanation: [Detailed explanation text...]
                     <div class="arch-tier-label">Data & Persistence</div>
                     <div class="arch-boxes">
                       <div class="arch-box accent"><strong>data/*.json</strong><span>Bundled &amp; uploaded question banks</span></div>
-                      <div class="arch-box accent"><strong>LocalStorage</strong><span>Sessions, answers, stats, theme</span></div>
+                      <div class="arch-box accent"><strong>LocalStorage</strong><span>Sessions, answers, stats (per-user), theme</span></div>
                       <div class="arch-box accent"><strong>File System Access API</strong><span>Writes new setN.json (Chromium only)</span></div>
+                      <div class="arch-box accent"><strong>Google Drive API</strong><span>testmaster-data.json (drive.file scope, optional)</span></div>
                     </div>
                   </div>
                 </div>
@@ -802,6 +847,14 @@ Explanation: [Detailed explanation text...]
                   <div class="doc-card"><h4><code>mock.js</code></h4><p>Mock Exam: 75 questions, 3-hour timer, mark-for-review, a pre-submission review screen, and the same filterable results view as Timed Quiz.</p></div>
                   <div class="doc-card"><h4><code>analytics.js</code></h4><p>Statistics dashboard: renders summary cards and two Chart.js visualizations (domain radar, recent-attempts bar) from attempt history.</p></div>
                   <div class="doc-card"><h4><code>upload.js</code></h4><p>Parses a <code>.docx</code> file (via Mammoth.js) into the canonical question shape and hands it to <code>file-sets.js</code> to persist.</p></div>
+                </div>
+
+                <h3>Auth &amp; Sync Modules</h3>
+                <div class="doc-card-grid">
+                  <div class="doc-card"><h4><code>config.js</code></h4><p>Holds the public Google OAuth Client ID (and optional Picker API key) &mdash; safe to commit, unlike a client secret.</p></div>
+                  <div class="doc-card"><h4><code>auth.js</code></h4><p>Google Identity Services sign-in/out, access-token lifecycle, and the <code>testmaster:auth-change</code> event other modules react to.</p></div>
+                  <div class="doc-card"><h4><code>drive-sync.js</code></h4><p>Plain <code>fetch()</code>-based Drive REST calls, the folder picker, and the id-based merge that reconciles local and cloud history.</p></div>
+                  <div class="doc-card"><h4><code>account-ui.js</code></h4><p>The header sign-in control and account popover: renders identity, sync status, and the folder-picker/sign-out actions.</p></div>
                 </div>
 
                 <h3>Legacy / Unused Modules</h3>
@@ -850,21 +903,23 @@ Explanation: [Detailed explanation text...]
                 <div class="doc-table-wrap">
                   <table>
                     <thead>
-                      <tr><th>Key</th><th>Shape</th><th>Purpose</th></tr>
+                      <tr><th>Key</th><th>Shape</th><th>Purpose</th><th>Scope</th></tr>
                     </thead>
                     <tbody>
-                      <tr><td><code>settings</code></td><td><code>{ theme, updatedAt }</code></td><td>Theme preference</td></tr>
-                      <tr><td><code>statistics</code></td><td>Aggregate counters</td><td>Attempts, average/best score, study time</td></tr>
-                      <tr><td><code>attempt_history</code></td><td>Array of attempt records</td><td>Backs the Statistics page (list, charts)</td></tr>
-                      <tr><td><code>session:&lt;id&gt;</code></td><td><code>{ status, currentIndex, questions, ... }</code></td><td>Resumable in-progress quiz/mock session</td></tr>
-                      <tr><td><code>timer:&lt;id&gt;</code></td><td>Timer state snapshot</td><td>Countdown survives reloads</td></tr>
-                      <tr><td><code>answers:&lt;id&gt;</code></td><td><code>{ [questionId]: string[] }</code></td><td>Selected answers for a session</td></tr>
-                      <tr><td><code>review:&lt;id&gt;</code></td><td><code>{ [questionId]: true }</code></td><td>Mock Exam "marked for review" flags</td></tr>
-                      <tr><td><code>done_questions:&lt;setKey&gt;</code></td><td>Array of question IDs</td><td>Random Test "Mark as Done" per set</td></tr>
+                      <tr><td><code>settings</code></td><td><code>{ theme, updatedAt }</code></td><td>Theme preference</td><td>Shared</td></tr>
+                      <tr><td><code>statistics</code></td><td>Aggregate counters</td><td>Attempts, average/best score, study time</td><td>Per user</td></tr>
+                      <tr><td><code>attempt_history</code></td><td>Array of attempt records</td><td>Backs the Statistics page (list, charts)</td><td>Per user</td></tr>
+                      <tr><td><code>session:&lt;id&gt;</code></td><td><code>{ status, currentIndex, questions, sessionOwner, ... }</code></td><td>Resumable in-progress quiz/mock session</td><td>Shared</td></tr>
+                      <tr><td><code>timer:&lt;id&gt;</code></td><td>Timer state snapshot</td><td>Countdown survives reloads</td><td>Shared</td></tr>
+                      <tr><td><code>answers:&lt;id&gt;</code></td><td><code>{ [questionId]: string[] }</code></td><td>Selected answers for a session</td><td>Shared</td></tr>
+                      <tr><td><code>review:&lt;id&gt;</code></td><td><code>{ [questionId]: true }</code></td><td>Mock Exam "marked for review" flags</td><td>Shared</td></tr>
+                      <tr><td><code>done_questions:&lt;setKey&gt;</code></td><td>Array of question IDs</td><td>Random Test "Mark as Done" per set</td><td>Per user</td></tr>
+                      <tr><td><code>drive:folder</code></td><td><code>{ id, name }</code></td><td>Chosen Google Drive sync folder</td><td>Per user</td></tr>
                     </tbody>
                   </table>
                 </div>
                 <p><code>&lt;id&gt;</code> is the session id (<code>"timed-quiz"</code> or <code>"mock-exam"</code>). <code>storage.clearExamSession()</code> clears the session, answers, review flags, and timer together once an attempt finishes.</p>
+                <p><strong>Per-user scope</strong> means the key is additionally prefixed with the signed-in user's stable Google id (<code>sap-c02-testmaster:&lt;sub&gt;:&lt;key&gt;</code>) via <code>storage.setCurrentUser()</code>, which <code>storage.js</code> itself calls in response to <code>testmaster:auth-change</code> &mdash; only the data that's ever synced to Drive is scoped this way, so two people signed into different Google accounts on the same browser never see each other's history or done-flags. Signed-out ("guest") use keeps today's plain shared prefix. <strong>Shared</strong> keys (in-progress session/timer/answer/review state) are deliberately left un-namespaced: they're excluded from Drive sync entirely (see <a href="#arch-auth-sync">Google Sign-In &amp; Drive Sync</a>), so scoping them would only reintroduce a real bug found during design review &mdash; those modules read from storage <em>synchronously at bootstrap</em>, before Google auth can possibly have resolved (it's always asynchronous), so a signed-in user's very first render would otherwise happen under the wrong prefix. <code>random.js</code> and <code>analytics.js</code> additionally listen for <code>testmaster:user-change</code> to refresh their per-user-scoped displays (done-count, statistics) if sign-in resolves or changes while already on that view.</p>
               </section>
 
               <section class="doc-section" id="arch-upload">
@@ -879,6 +934,19 @@ Explanation: [Detailed explanation text...]
                   <span class="doc-callout-icon" aria-hidden="true">&#9888;</span>
                   <p>Both the directory picker and the write itself depend on the File System Access API, which only Chromium-based browsers implement &mdash; there is no fallback download-a-file path for other browsers.</p>
                 </div>
+              </section>
+
+              <section class="doc-section" id="arch-auth-sync">
+                <h2>Google Sign-In &amp; Drive Sync</h2>
+                <p>Sign-in is fully optional and additive: with no sign-in, the app behaves exactly as described everywhere else in this document. Signing in layers identity and, once a folder is chosen, Drive persistence on top &mdash; via <a href="https://developers.google.com/identity/oauth2/web/guides/overview" target="_blank" rel="noopener noreferrer">Google Identity Services</a>' client-side token flow (the old <code>gapi.auth2</code> library was sunset in 2023). There is no backend, so this is an authorization flow (an access token), not a verified ID-token/JWT identity flow &mdash; acceptable specifically because nothing server-side ever makes a trust decision based on identity; the real access boundary is enforced entirely by Google on the bearer token against Drive itself.</p>
+                <h3>Sign-in</h3>
+                <p><code>auth.js</code> calls <code>google.accounts.oauth2.initTokenClient()</code> requesting <code>openid email profile https://www.googleapis.com/auth/drive.file</code> in one consent step, then calls Google's <code>userinfo</code> endpoint with the resulting token to get <code>{ sub, email, name, picture }</code>. It dispatches <code>testmaster:auth-change</code> on every sign-in/out, which <code>storage.js</code>, <code>drive-sync.js</code>, and <code>account-ui.js</code> all listen for independently.</p>
+                <h3>Folder selection &amp; the <code>drive.file</code> scope</h3>
+                <p>The <code>drive.file</code> scope (deliberately chosen over full Drive access, to avoid Google's formal OAuth verification process) means the app can only ever see files/folders it created or that the user explicitly granted via Google's official <a href="https://developers.google.com/workspace/drive/picker" target="_blank" rel="noopener noreferrer">Picker</a> &mdash; it cannot search or list arbitrary pre-existing folders. <code>drive-sync.js</code>'s <code>chooseFolder()</code> opens the Picker (folder-select mode, which also lets the user create a new folder inline); the chosen <code>{ id, name }</code> is remembered per-user in <code>LocalStorage</code> (<code>drive:folder</code>).</p>
+                <h3>Sync</h3>
+                <p>The synced payload is deliberately narrow: a single <code>testmaster-data.json</code> file in the chosen folder containing <code>attemptHistory</code> and <code>doneQuestions</code> only &mdash; in-progress session/timer/answer state never syncs (see the shared-vs-per-user distinction in <a href="#arch-storage">LocalStorage Schema</a>). <code>statistics</code> isn't synced as its own blob either; it's recomputed from the merged history on every sync, removing a class of reconciliation bugs.</p>
+                <p>Sync is triggered by <code>storage.js</code> dispatching <code>testmaster:data-changed</code> from exactly two places &mdash; <code>recordAttempt()</code> and <code>saveDoneQuestions()</code> &mdash; debounced 3 seconds before <code>drive-sync.js</code> pushes, and it's always fire-and-forget: a write to <code>LocalStorage</code> always completes synchronously and successfully first, regardless of network or auth state, so a result is never lost even if the sync that follows it fails.</p>
+                <p>Because two devices can each add attempts offline before either syncs, merging uses record identity rather than "last write wins" by timestamp (which risks silently discarding a real result): attempt history entries are unioned by their existing unique <code>id</code>, and done-question flags are unioned per set (marking done is monotonic in the UI, so union is always correct, never needs to remove).</p>
               </section>
 
               <section class="doc-section" id="arch-analytics">
@@ -913,6 +981,18 @@ Explanation: [Detailed explanation text...]
                 </div>
                 <div class="doc-callout limitation">
                   <span class="doc-callout-icon" aria-hidden="true">&#9888;</span>
+                  <p><strong>No refresh token, so sign-in doesn't survive a page reload.</strong> Google's client-side token flow never issues a refresh token (those only exist in the server-side auth-code flow, which needs a backend this app doesn't have). The access token lives in memory only; <code>auth.js</code> attempts a silent <code>requestAccessToken({ prompt: '' })</code> renewal on load, which depends on an active Google session and third-party cookies &mdash; expect it to fail outright in Safari (ITP) and intermittently elsewhere, falling back to the visible "Sign in" button. No data is lost either way; only the signed-in session itself needs re-establishing.</p>
+                </div>
+                <div class="doc-callout limitation">
+                  <span class="doc-callout-icon" aria-hidden="true">&#9888;</span>
+                  <p><strong>A lost Drive folder reference needs a manual reconnect.</strong> The <code>drive.file</code> scope can't rediscover an existing folder by searching &mdash; only <code>chooseFolder()</code>'s Picker call has that visibility. If <code>drive:folder</code> is missing (new device, cleared <code>LocalStorage</code>) or stale (folder deleted/unshared, detected as a 404 on the folder's own metadata), <code>drive-sync.js</code> surfaces a "reconnect" status rather than silently syncing nothing; the user re-picks the same folder and the app regains access to it and its existing contents.</p>
+                </div>
+                <div class="doc-callout limitation">
+                  <span class="doc-callout-icon" aria-hidden="true">&#9888;</span>
+                  <p><strong>Google Sign-In does not work in the packaged Electron desktop app.</strong> Google blocks OAuth inside embedded/webview browsers by design (an anti-phishing measure), and Electron's <code>BrowserWindow</code> is exactly that. This was an explicit, confirmed non-goal for this feature &mdash; the desktop build keeps working local-only, exactly as before.</p>
+                </div>
+                <div class="doc-callout limitation">
+                  <span class="doc-callout-icon" aria-hidden="true">&#9888;</span>
                   <p><strong>No automated test suite.</strong> There's no unit, integration, or end-to-end test tooling configured in <code>package.json</code>; correctness currently relies on manual verification.</p>
                 </div>
               </section>
@@ -934,8 +1014,13 @@ Explanation: [Detailed explanation text...]
   <script src="js/utils.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mammoth@1.5.1/mammoth.browser.min.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://apis.google.com/js/api.js" async defer></script>
   <script src="js/storage.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
   <script src="js/file-sets.js"></script>
+  <script src="js/drive-sync.js"></script>
   <script src="js/question-engine.js"></script>
   <script src="js/questions.js"></script>
   <script src="js/ui.js"></script>
@@ -948,6 +1033,7 @@ Explanation: [Detailed explanation text...]
   <script src="js/mock.js"></script>
   <script src="js/upload.js"></script>
   <script src="js/docs.js"></script>
+  <script src="js/account-ui.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

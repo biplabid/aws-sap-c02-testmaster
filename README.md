@@ -18,14 +18,21 @@ The platform is organized into several practice modes, each tailored for a diffe
 
 ### Resources
 
--   **User Guide**: An in-app guide covering every practice mode, keyboard shortcuts, how to read your results, question sets, uploading questions, and data/privacy — no need to leave the app.
--   **Technical Architecture**: An in-app reference for contributors/maintainers: an architecture diagram, a per-module breakdown, the question data pipeline, the `LocalStorage` schema, the upload pipeline, and known limitations.
+-   **User Guide**: An in-app guide covering every practice mode, keyboard shortcuts, how to read your results, question sets, uploading questions, syncing with Google Drive, and data/privacy — no need to leave the app.
+-   **Technical Architecture**: An in-app reference for contributors/maintainers: an architecture diagram, a per-module breakdown, the question data pipeline, the `LocalStorage` schema, the upload pipeline, the Google Sign-In/Drive sync pipeline, and known limitations.
+
+### Google Sign-In & Google Drive Sync (Optional)
+
+-   **Sign In with Google**: A "Sign in" control in the header lets a user optionally identify themselves — everything works with no account at all, this is purely opt-in.
+-   **Sync to Your Own Google Drive**: Once signed in, a user picks (or creates) a Drive folder via Google's official folder picker. From then on, completed Timed Quiz/Mock Exam results and Random Test "Mark as Done" flags sync there automatically in the background.
+-   **Historical Data Follows You**: Signing in again on a new device and reconnecting the same folder brings that history back and merges it with anything already local — nothing is silently overwritten.
+-   **Access is restricted**: intended for a small number of pre-approved Google accounts (configured in Google Cloud Console, not in this app's code — see [Google Sign-In Setup](#google-sign-in-setup-optional) below).
 
 ### Core Functionality
 
 -   **Responsive Design**: Fully responsive UI that adapts to desktop, tablet, and mobile devices, including an off-canvas navigation menu on smaller screens.
 -   **Multiple Question Sets**: The built-in set plus any sets imported via Upload are all selectable from a dropdown in Random Test, Timed Quiz, and Mock Exam.
--   **State Persistence**: Exam/quiz progress, attempt history, statistics, theme preference, and per-question "done" flags are all saved to `LocalStorage`, so nothing is lost on refresh.
+-   **State Persistence**: Exam/quiz progress, attempt history, statistics, theme preference, and per-question "done" flags are all saved to `LocalStorage` (namespaced per signed-in user, where applicable), so nothing is lost on refresh.
 -   **Dynamic Timers**: Each timed mode features a persistent countdown timer with visual cues for low-time warnings.
 -   **Performance Analytics**: Attempt history is aggregated into domain-level scores and recent-attempt trends, visualized with Chart.js.
 -   **Light & Dark Theme**: A toggle in the header switches between light and dark mode; the choice is remembered across sessions.
@@ -36,8 +43,10 @@ The platform is organized into several practice modes, each tailored for a diffe
 -   **Frontend**: HTML5, CSS3, Vanilla JavaScript (ES6)
 -   **Data**: Questions are loaded from JSON files, or imported from `.docx` uploads via [Mammoth.js](https://github.com/mwilliamson/mammoth.js) (extracts raw text for parsing).
 -   **Storage**: `LocalStorage` API for session, statistics, theme, and progress persistence; the [File System Access API](https://developer.mozilla.org/en-US/docs/Web/API/File_System_Access_API) (Chrome/Edge only) for writing newly uploaded question sets to disk.
+-   **Auth & Sync**: [Google Identity Services](https://developers.google.com/identity/oauth2/web/guides/overview) for optional Google Sign-In; the [Google Drive API](https://developers.google.com/workspace/drive/api/guides/about-sdk) (`drive.file` scope, via plain `fetch()`) and the [Google Picker API](https://developers.google.com/workspace/drive/picker) for the folder-based sync, both entirely client-side.
 -   **Analytics**: Chart.js for rendering performance charts.
--   **Desktop Packaging**: [Electron](https://www.electronjs.org/) wraps the app in a native window (backed by a local static server so `fetch()` and the File System Access API work exactly as they do in the browser); [electron-builder](https://www.electron.build/) produces the Windows installer and portable executable.
+-   **Desktop Packaging**: [Electron](https://www.electronjs.org/) wraps the app in a native window (backed by a local static server so `fetch()` and the File System Access API work exactly as they do in the browser); [electron-builder](https://www.electron.build/) produces the Windows installer and portable executable. Google Sign-In does **not** work inside this packaged app (Google blocks OAuth in embedded browsers) — the desktop build is local-only.
+-   **Hosting**: deployed as a static site on [GitHub Pages](https://pages.github.com/) at <https://biplabid.github.io/aws-sap-c02-testmaster/> (no build step; Pages serves the repo root directly).
 
 ## Project Structure
 
@@ -50,6 +59,7 @@ aws-sap-c02-testmaster/
 │   ├── style.css            # Base styles
 │   ├── dark.css             # Dark mode theme
 │   ├── docs.css             # User Guide / Architecture page styling
+│   ├── account.css          # Sign-in control + account/sync popover styling
 │   └── responsive.css       # Responsive design rules
 ├── js/
 │   ├── app.js                # Main application entry point
@@ -61,10 +71,14 @@ aws-sap-c02-testmaster/
 │   ├── question-engine.js    # Loads, normalizes, and shuffles question sets
 │   ├── file-sets.js          # Discovers/writes uploaded setN.json files on disk
 │   ├── upload.js              # Parses .docx uploads into the canonical question shape
-│   ├── storage.js             # LocalStorage abstraction layer
+│   ├── storage.js             # LocalStorage abstraction layer + per-user namespacing
 │   ├── timer.js               # Countdown timer factory
 │   ├── ui.js                   # View navigation, keyboard shortcuts, theme toggle
 │   ├── docs.js                 # Scroll-spy for the User Guide / Architecture table of contents
+│   ├── config.js               # Public Google OAuth Client ID / API key (edit after setup)
+│   ├── auth.js                  # Google Identity Services sign-in/out, access token
+│   ├── drive-sync.js            # Drive REST calls, folder picker, history merge logic
+│   ├── account-ui.js            # Header sign-in control + account/sync popover
 │   ├── utils.js                # General utility functions
 │   ├── view-helpers.js        # Shared question rendering + set-selector helpers
 │   ├── questions.js           # Legacy question-set helper, not currently used
@@ -127,7 +141,19 @@ This produces two artifacts in `dist/`:
 -   **`AWS SAP-C02 TestMaster Setup <version>.exe`** — an installer that installs per-user (no admin rights required) with Desktop and Start Menu shortcuts.
 -   **`AWS SAP-C02 TestMaster <version>.exe`** — a portable build that runs without installing.
 
-The desktop app behaves identically to the browser version — it runs the same `index.html`/`css`/`js`/`data` against a local server inside the Electron window, including the Upload feature's file-write flow.
+The desktop app behaves identically to the browser version — it runs the same `index.html`/`css`/`js`/`data` against a local server inside the Electron window, including the Upload feature's file-write flow. Google Sign-In does **not** work inside it (see Tech Stack).
+
+## Google Sign-In Setup (Optional)
+
+Google Sign-In and Drive sync are entirely optional — skip this section if you're fine with local-only progress. To enable them:
+
+1.  **Google Cloud project**: create one at the [Google Cloud Console](https://console.cloud.google.com/), then enable the **Google Drive API** under APIs & Services → Library.
+2.  **OAuth consent screen** (APIs & Services → OAuth consent screen): User type **External**; leave publishing status as **Testing**; add scopes `drive.file`, `openid`, `userinfo.email`, `userinfo.profile`; add each Google account that should be allowed to sign in under **Test users** (Testing mode supports up to 100 — this is how access is restricted, not app code).
+3.  **OAuth Client ID** (APIs & Services → Credentials → Create Credentials → OAuth client ID): Application type **Web application**; add Authorized JavaScript origins for everywhere this runs, e.g. `https://biplabid.github.io` and `http://localhost:8000` for local testing. No redirect URI is needed — this uses the client-side token flow, not a redirect flow.
+4.  Paste the generated Client ID into `js/config.js` (`GOOGLE_CLIENT_ID`). It's safe to commit — unlike a client secret, an OAuth Client ID is meant to be public.
+5.  (Only if the Drive folder picker doesn't work without it) create an **API key** restricted to the Picker API and your origin, and paste it into `js/config.js` (`GOOGLE_API_KEY`).
+
+Until a real Client ID is set, the "Sign in" button is disabled and the rest of the app is unaffected.
 
 ## How It Works
 
@@ -140,6 +166,8 @@ The desktop app behaves identically to the browser version — it runs the same 
 7.  **Analytics**: `analytics.js` reads attempt history from storage and uses Chart.js to render the domain radar chart and recent-attempts bar chart on the Statistics page.
 8.  **Desktop Shell**: `electron/main.js` starts a local HTTP server over the project root and opens it in an Electron window, so the exact same `index.html` runs unmodified whether launched in a browser or as the packaged desktop app.
 9.  **In-App Documentation**: The User Guide and Technical Architecture pages are regular views like any practice mode, styled by `css/docs.css`; `docs.js` highlights the current section in each page's table of contents as you scroll.
+10. **Google Sign-In**: `auth.js` wraps Google Identity Services' client-side token flow, exposing sign-in/out and dispatching a `testmaster:auth-change` event; `account-ui.js` renders the header control and account popover from it.
+11. **Per-User Data & Drive Sync**: `storage.js` listens for `testmaster:auth-change` and namespaces `statistics`/`attempt_history`/`done_questions` by the signed-in user's Google id (everything else stays shared/guest-scoped, since it's excluded from sync). `drive-sync.js` listens for `testmaster:data-changed` (dispatched from `recordAttempt`/`saveDoneQuestions`), and — once a user has picked a Drive folder via the Google Picker — debounces a background sync that merges local and cloud history by record id rather than overwriting.
 
 ## Question Upload Format
 
@@ -169,7 +197,8 @@ On success, the parsed questions are saved directly to `data/setN.json` (the nex
 ## Future Improvements
 
 -   **Mark as Done for Timed Quiz / Mock Exam**: Extend the Random Test "Mark as Done" progress tracking to the other practice modes.
--   **Cloud-Based Sync**: Option to sync progress and statistics across devices using a backend service.
+-   **Cross-Device In-Progress Sessions**: Drive sync currently covers completed results and "Mark as Done" flags only; a mid-exam Timed Quiz/Mock Exam session still doesn't follow you to a different device.
+-   **Sign-In Session Persistence**: Google's client-side token flow has no refresh token, so a page reload always requires a fresh (often silent, sometimes visible) re-authentication — a backend-based auth-code flow would remove this, at the cost of needing an actual backend.
 
 ---
 
