@@ -57,6 +57,30 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
       startQuiz(appState, elements, true);
     });
 
+    if (elements.correctTile) {
+      elements.correctTile.addEventListener("click", () => {
+        toggleResultFilter(appState, elements, "correct");
+      });
+      elements.correctTile.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          toggleResultFilter(appState, elements, "correct");
+        }
+      });
+    }
+
+    if (elements.incorrectTile) {
+      elements.incorrectTile.addEventListener("click", () => {
+        toggleResultFilter(appState, elements, "incorrect");
+      });
+      elements.incorrectTile.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          toggleResultFilter(appState, elements, "incorrect");
+        }
+      });
+    }
+
     window.addEventListener("testmaster:view-change", (event) => {
       if (event.detail.view === "timed" && !appState.quiz.started && !appState.quiz.completed) {
         if (storage.loadExamSession(SESSION_ID)) {
@@ -94,6 +118,9 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
       resultText: document.querySelector("#quizResultText"),
       score: document.querySelector("#quizScore"),
       correctCount: document.querySelector("#quizCorrectCount"),
+      incorrectCount: document.querySelector("#quizIncorrectCount"),
+      correctTile: document.querySelector("#quizCorrectTile"),
+      incorrectTile: document.querySelector("#quizIncorrectTile"),
       answeredCount: document.querySelector("#quizAnsweredCount"),
       timeUsed: document.querySelector("#quizTimeUsed"),
       resultList: document.querySelector("#quizResultList")
@@ -322,6 +349,10 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
       return {
         index: index + 1,
         prompt: question.prompt,
+        options: question.options,
+        selectedAnswers,
+        correctAnswers: question.correctAnswers,
+        explanation: question.explanation,
         answered,
         correct
       };
@@ -329,6 +360,7 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
 
     return {
       correctCount,
+      incorrectCount: questions.length - correctCount,
       answeredCount,
       score: Math.round((correctCount / questions.length) * 100),
       timeUsedSeconds: DURATION_SECONDS - Math.max(0, appState.quiz.timer.getState().remainingSeconds),
@@ -337,45 +369,177 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
   }
 
   function renderResult(appState, elements, result) {
-    viewHelpers.clearElement(elements.resultList);
+    appState.quiz.result = result;
+    appState.quiz.resultFilter = "all";
 
     elements.resultTitle.textContent = `Score: ${result.score}%`;
     elements.resultText.textContent = `You answered ${result.answeredCount} of ${QUESTION_COUNT} questions and got ${result.correctCount} correct.`;
     elements.score.textContent = `${result.score}%`;
     elements.correctCount.textContent = `${result.correctCount} / ${QUESTION_COUNT}`;
+    elements.incorrectCount.textContent = `${result.incorrectCount} / ${QUESTION_COUNT}`;
     elements.answeredCount.textContent = `${result.answeredCount} / ${QUESTION_COUNT}`;
     elements.timeUsed.textContent = timerFactory.formatTime(result.timeUsedSeconds);
 
-    result.rows.forEach((row) => {
-      const item = document.createElement("div");
-      item.className = "result-row";
+    renderResultList(elements, result, "all", appState);
+  }
 
-      const index = document.createElement("span");
-      index.className = "result-index";
-      index.textContent = `Q${row.index}`;
+  function toggleResultFilter(appState, elements, filter) {
+    if (!appState.quiz.result) {
+      return;
+    }
 
-      const prompt = document.createElement("p");
-      prompt.textContent = row.prompt;
+    const nextFilter = appState.quiz.resultFilter === filter ? "all" : filter;
+    appState.quiz.resultFilter = nextFilter;
+    renderResultList(elements, appState.quiz.result, nextFilter, appState);
+  }
 
-      const badge = document.createElement("span");
-      badge.className = "result-badge";
+  function renderResultList(elements, result, filter, appState) {
+    viewHelpers.clearElement(elements.resultList);
 
-      if (!row.answered) {
-        badge.classList.add("unanswered");
-        badge.textContent = "Unanswered";
-      } else if (row.correct) {
-        badge.classList.add("correct");
-        badge.textContent = "Correct";
-      } else {
-        badge.classList.add("wrong");
-        badge.textContent = "Wrong";
+    if (elements.correctTile) {
+      elements.correctTile.classList.toggle("active", filter === "correct");
+      elements.correctTile.setAttribute("aria-pressed", String(filter === "correct"));
+    }
+
+    if (elements.incorrectTile) {
+      elements.incorrectTile.classList.toggle("active", filter === "incorrect");
+      elements.incorrectTile.setAttribute("aria-pressed", String(filter === "incorrect"));
+    }
+
+    if (filter !== "all") {
+      const clearButton = document.createElement("button");
+      clearButton.type = "button";
+      clearButton.className = "secondary-action result-list-clear";
+      clearButton.textContent = "Show all questions";
+      clearButton.addEventListener("click", () => {
+        if (appState) {
+          appState.quiz.resultFilter = "all";
+        }
+        renderResultList(elements, result, "all", appState);
+      });
+      elements.resultList.appendChild(clearButton);
+    }
+
+    const rows = result.rows.filter((row) => {
+      if (filter === "correct") return row.correct;
+      if (filter === "incorrect") return !row.correct;
+      return true;
+    });
+
+    rows.forEach((row) => {
+      elements.resultList.appendChild(filter === "all" ? buildSimpleRow(row) : buildDetailedRow(row));
+    });
+  }
+
+  function buildSimpleRow(row) {
+    const item = document.createElement("div");
+    item.className = "result-row";
+
+    const index = document.createElement("span");
+    index.className = "result-index";
+    index.textContent = `Q${row.index}`;
+
+    const prompt = document.createElement("p");
+    prompt.textContent = row.prompt;
+
+    const badge = document.createElement("span");
+    badge.className = "result-badge";
+
+    if (!row.answered) {
+      badge.classList.add("unanswered");
+      badge.textContent = "Unanswered";
+    } else if (row.correct) {
+      badge.classList.add("correct");
+      badge.textContent = "Correct";
+    } else {
+      badge.classList.add("wrong");
+      badge.textContent = "Wrong";
+    }
+
+    item.appendChild(index);
+    item.appendChild(prompt);
+    item.appendChild(badge);
+    return item;
+  }
+
+  function buildDetailedRow(row) {
+    const item = document.createElement("div");
+    item.className = "result-row result-row-detail";
+
+    const header = document.createElement("div");
+    header.className = "result-row-header";
+
+    const index = document.createElement("span");
+    index.className = "result-index";
+    index.textContent = `Q${row.index}`;
+
+    const badge = document.createElement("span");
+    badge.className = `result-badge ${row.correct ? "correct" : "wrong"}`;
+    badge.textContent = row.correct ? "Correct" : "Incorrect";
+
+    header.appendChild(index);
+    header.appendChild(badge);
+
+    const prompt = document.createElement("p");
+    prompt.className = "result-row-prompt";
+    prompt.textContent = row.prompt;
+
+    const yourAnswer = document.createElement("p");
+    yourAnswer.className = "result-row-answer";
+    const answerLabel = document.createElement("strong");
+    answerLabel.textContent = "Your answer: ";
+    yourAnswer.appendChild(answerLabel);
+    yourAnswer.append(formatAnswerText(row.selectedAnswers, row.options) || "Not answered");
+
+    item.appendChild(header);
+    item.appendChild(prompt);
+    item.appendChild(yourAnswer);
+
+    if (!row.correct) {
+      const toggle = document.createElement("button");
+      toggle.type = "button";
+      toggle.className = "secondary-action explanation-toggle";
+      toggle.textContent = "Show correct answer & explanation";
+
+      const explanationBox = document.createElement("div");
+      explanationBox.className = "result-explanation hidden";
+
+      const correctAnswerLine = document.createElement("p");
+      const correctLabel = document.createElement("strong");
+      correctLabel.textContent = "Correct answer: ";
+      correctAnswerLine.appendChild(correctLabel);
+      correctAnswerLine.append(formatAnswerText(row.correctAnswers, row.options));
+      explanationBox.appendChild(correctAnswerLine);
+
+      if (row.explanation) {
+        const explanationText = document.createElement("p");
+        explanationText.textContent = row.explanation;
+        explanationBox.appendChild(explanationText);
       }
 
-      item.appendChild(index);
-      item.appendChild(prompt);
-      item.appendChild(badge);
-      elements.resultList.appendChild(item);
-    });
+      toggle.addEventListener("click", () => {
+        const isHidden = explanationBox.classList.toggle("hidden");
+        toggle.textContent = isHidden ? "Show correct answer & explanation" : "Hide correct answer & explanation";
+      });
+
+      item.appendChild(toggle);
+      item.appendChild(explanationBox);
+    }
+
+    return item;
+  }
+
+  function formatAnswerText(answerIds, options) {
+    if (!Array.isArray(answerIds) || answerIds.length === 0) {
+      return "";
+    }
+
+    return answerIds
+      .map((id) => {
+        const option = Array.isArray(options) ? options.find((opt) => opt.id === id) : null;
+        return option ? `${id}) ${option.text}` : id;
+      })
+      .join("; ");
   }
 
   function renderUnavailable(elements) {

@@ -204,7 +204,7 @@
               <h1 id="timedTitle">Timed Quiz</h1>
             </div>
             <div class="exam-header-actions">
-              <div class="timer-display hidden" id="quizTimer" aria-label="Quiz timer" aria-live="polite">40:00</div>
+              <div class="timer-display" id="quizTimer" aria-label="Quiz timer" aria-live="polite">40:00</div>
               <button class="primary-button" type="button" id="timedStart">Start Quiz</button>
             </div>
           </div>
@@ -255,9 +255,13 @@
                 <dt>Score</dt>
                 <dd id="quizScore">0%</dd>
               </dl>
-              <dl class="stat-card">
+              <dl class="stat-card filterable" id="quizCorrectTile" role="button" tabindex="0" aria-pressed="false">
                 <dt>Correct</dt>
                 <dd id="quizCorrectCount">0</dd>
+              </dl>
+              <dl class="stat-card filterable" id="quizIncorrectTile" role="button" tabindex="0" aria-pressed="false">
+                <dt>Incorrect</dt>
+                <dd id="quizIncorrectCount">0</dd>
               </dl>
               <dl class="stat-card">
                 <dt>Answered</dt>
