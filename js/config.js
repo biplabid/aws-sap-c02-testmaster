@@ -6,7 +6,7 @@ window.TestMaster = window.TestMaster || {};
 // Console under APIs & Services > Credentials > OAuth client ID (Web
 // application), then paste it here.
 window.TestMaster.config = {
-  GOOGLE_CLIENT_ID: "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",
+  GOOGLE_CLIENT_ID: "266127504874-1g1j2vt580aoq3907rgsgnprrne76pkc.apps.googleusercontent.com",
   // Optional: only needed if the Google Drive folder picker (Phase 0-B,
   // step 5) requires an API key in your Cloud project. Leave blank to skip.
   GOOGLE_API_KEY: ""
