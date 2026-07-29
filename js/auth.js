@@ -155,6 +155,11 @@ window.TestMaster.auth = (function createAuthModule(storage) {
         tokenExpiresAt = 0;
         currentUser = null;
         storage.remove(CACHED_PROFILE_KEY);
+        // Explicit sign-out only (manual or idle-timeout) — not the silent-
+        // reauth failure path, which can fire on a routine page load (e.g.
+        // Safari ITP blocking third-party cookies) and shouldn't wipe an
+        // in-progress exam just because that happened.
+        storage.clearActiveSessions();
         emitAuthChange();
         resolve();
       };
@@ -169,6 +174,14 @@ window.TestMaster.auth = (function createAuthModule(storage) {
 
   function getUser() {
     return currentUser;
+  }
+
+  // Synchronous read of the last-known profile, for use before init()'s
+  // async GIS/silent-reauth chain has resolved — lets the login gate show
+  // the app immediately on a page refresh instead of flashing "sign in"
+  // while that chain is still in flight.
+  function getCachedUser() {
+    return storage.get(CACHED_PROFILE_KEY, null);
   }
 
   function getAccessToken() {
@@ -187,6 +200,7 @@ window.TestMaster.auth = (function createAuthModule(storage) {
     signIn,
     signOut,
     getUser,
+    getCachedUser,
     getAccessToken,
     isSignedIn,
     isConfigured

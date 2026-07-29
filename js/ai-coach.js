@@ -1,11 +1,13 @@
 window.TestMaster = window.TestMaster || {};
 
 window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
-  const API_KEY_STORAGE_KEY = "ai-coach:gemini-api-key";
+  const API_KEY_STORAGE_KEY = "ai-coach:groq-api-key";
+  const GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions";
 
   let elements = null;
   let currentQuestion = null;
   let initialized = false;
+  let justOpened = false;
 
   function getConfig() {
     return window.TestMaster.config || {};
@@ -24,19 +26,17 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
       backdrop: document.querySelector("#aiPanelBackdrop"),
       panel: document.querySelector("#aiPanel"),
       close: document.querySelector("#aiPanelClose"),
-      question: document.querySelector("#aiPanelQuestion"),
       keySetup: document.querySelector("#aiPanelKeySetup"),
       keyInput: document.querySelector("#aiPanelKeyInput"),
       keySave: document.querySelector("#aiPanelKeySave"),
       loading: document.querySelector("#aiPanelLoading"),
       error: document.querySelector("#aiPanelError"),
       answer: document.querySelector("#aiPanelAnswer"),
-      changeKey: document.querySelector("#aiPanelChangeKey"),
-      openGem: document.querySelector("#aiPanelOpenGem")
+      sidebarKeyLink: document.querySelector("#aiCoachKeyLink")
     };
   }
 
-  function ensureInitialized() {
+  function initAiCoach() {
     if (initialized) {
       return;
     }
@@ -50,10 +50,23 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
     initialized = true;
 
     elements.close.addEventListener("click", closePanel);
-    elements.backdrop.addEventListener("click", closePanel);
 
     window.addEventListener("keydown", (event) => {
       if (event.key === "Escape" && !elements.panel.classList.contains("hidden")) {
+        closePanel();
+      }
+    });
+
+    // The panel reserves its own space rather than covering the page, so
+    // there's no full-screen overlay element to catch "click outside" —
+    // detect it directly. justOpened skips the very click that opened the
+    // panel (still bubbling to document at the point this runs); it's
+    // cleared on the next tick, once that bubble phase has finished.
+    document.addEventListener("click", (event) => {
+      if (justOpened || elements.panel.classList.contains("hidden")) {
+        return;
+      }
+      if (!elements.panel.contains(event.target)) {
         closePanel();
       }
     });
@@ -64,7 +77,16 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
         return;
       }
       setApiKey(key);
-      askGemini();
+
+      if (currentQuestion) {
+        askGroq();
+        return;
+      }
+
+      if (window.TestMaster.ui) {
+        window.TestMaster.ui.showToast("Groq API key saved.");
+      }
+      closePanel();
     });
 
     elements.keyInput.addEventListener("keydown", (event) => {
@@ -73,12 +95,12 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
       }
     });
 
-    elements.changeKey.addEventListener("click", () => {
-      elements.keyInput.value = getApiKey();
-      showOnly("keySetup");
-    });
-
-    elements.openGem.href = getConfig().AI_COACH_GEM_URL || "#";
+    if (elements.sidebarKeyLink) {
+      elements.sidebarKeyLink.addEventListener("click", (event) => {
+        event.preventDefault();
+        openKeySettings();
+      });
+    }
   }
 
   // --- Minimal Markdown renderer -----------------------------------------
@@ -239,26 +261,26 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
   function openPanel() {
     elements.panel.classList.remove("hidden");
     elements.backdrop.classList.remove("hidden");
+    document.body.classList.add("ai-panel-open");
+
+    justOpened = true;
+    window.setTimeout(() => {
+      justOpened = false;
+    }, 0);
   }
 
   function closePanel() {
     elements.panel.classList.add("hidden");
     elements.backdrop.classList.add("hidden");
+    document.body.classList.remove("ai-panel-open");
   }
 
   async function askAboutQuestion(question) {
-    if (!question) {
-      return;
-    }
-
-    ensureInitialized();
-
-    if (!elements || !elements.panel) {
+    if (!question || !elements || !elements.panel) {
       return;
     }
 
     currentQuestion = question;
-    elements.question.textContent = formatQuestionText(question);
     openPanel();
 
     if (!getApiKey()) {
@@ -267,10 +289,21 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
       return;
     }
 
-    await askGemini();
+    await askGroq();
   }
 
-  async function askGemini() {
+  function openKeySettings() {
+    if (!elements || !elements.panel) {
+      return;
+    }
+
+    currentQuestion = null;
+    elements.keyInput.value = getApiKey();
+    openPanel();
+    showOnly("keySetup");
+  }
+
+  async function askGroq() {
     const apiKey = getApiKey();
 
     if (!apiKey || !currentQuestion) {
@@ -281,25 +314,20 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
     showOnly("loading");
 
     const config = getConfig();
-    const model = config.AI_COACH_MODEL || "gemini-2.5-flash";
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+    const model = config.AI_COACH_MODEL || "llama-3.3-70b-versatile";
 
     try {
-      const response = await fetch(url, {
+      const response = await fetch(GROQ_CHAT_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-goog-api-key": apiKey
+          Authorization: `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          system_instruction: {
-            parts: [{ text: config.AI_COACH_SYSTEM_PROMPT || "" }]
-          },
-          contents: [
-            {
-              role: "user",
-              parts: [{ text: formatQuestionText(currentQuestion) }]
-            }
+          model,
+          messages: [
+            { role: "system", content: config.AI_COACH_SYSTEM_PROMPT || "" },
+            { role: "user", content: formatQuestionText(currentQuestion) }
           ]
         })
       });
@@ -310,9 +338,8 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
         throw new Error((data.error && data.error.message) || `Request failed (${response.status}).`);
       }
 
-      const candidate = data.candidates && data.candidates[0];
-      const text = candidate && candidate.content && candidate.content.parts
-        ? candidate.content.parts.map((part) => part.text || "").join("")
+      const text = data.choices && data.choices[0] && data.choices[0].message
+        ? data.choices[0].message.content || ""
         : "";
 
       if (!text) {
@@ -331,6 +358,7 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
   }
 
   return {
+    initAiCoach,
     askAboutQuestion
   };
 })(window.TestMaster.storage);

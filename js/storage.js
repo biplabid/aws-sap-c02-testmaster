@@ -282,6 +282,32 @@ window.TestMaster.storage = (function createStorageModule() {
     return sessions.sort((first, second) => (second.updatedAt || 0) - (first.updatedAt || 0));
   }
 
+  // Clears any in-progress exam session (and its timer/answers/review flags)
+  // on sign-out, so the next person to use this browser doesn't inherit an
+  // unfinished attempt. These keys are deliberately shared/not user-scoped
+  // (see the note near currentUserId above), so "clear on sign-out" is the
+  // mechanism that keeps them from leaking across accounts on the same
+  // device — completed statistics/attempt_history/done_questions are
+  // per-user scoped instead and are NOT touched here; they're the whole
+  // point of "history available on next login" and must survive this.
+  function clearActiveSessions() {
+    const sessionPrefix = getKey(KEYS.SESSION_PREFIX);
+    const sessionIds = [];
+
+    try {
+      for (let index = 0; index < window.localStorage.length; index += 1) {
+        const key = window.localStorage.key(index);
+        if (key && key.startsWith(sessionPrefix)) {
+          sessionIds.push(key.slice(sessionPrefix.length));
+        }
+      }
+    } catch (error) {
+      return;
+    }
+
+    sessionIds.forEach((sessionId) => clearExamSession(sessionId));
+  }
+
   function getKey(key) {
     return key.startsWith(APP_PREFIX) ? key : `${APP_PREFIX}${key}`;
   }
@@ -321,6 +347,7 @@ window.TestMaster.storage = (function createStorageModule() {
     clearExamSession,
     loadDoneQuestions,
     saveDoneQuestions,
-    listUnfinishedExams
+    listUnfinishedExams,
+    clearActiveSessions
   };
 })();

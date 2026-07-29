@@ -34,7 +34,13 @@ window.TestMaster.authGate = (function createAuthGateModule(auth) {
       render(event.detail.user);
     });
 
-    render(auth.getUser());
+    // Use the cached profile (synchronous) rather than auth.getUser() here —
+    // getUser() is still null at this point since auth.init()'s GIS/silent-
+    // reauth chain hasn't resolved yet. Optimistically unlocking on a cached
+    // profile avoids flashing the login screen on every page refresh; if the
+    // background silent reauth then fails, auth.js clears the cache and
+    // re-emits testmaster:auth-change with no user, which re-locks the gate.
+    render(auth.getUser() || auth.getCachedUser());
 
     function render(user) {
       const isAuthenticated = Boolean(user);

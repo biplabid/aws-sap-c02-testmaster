@@ -23,6 +23,10 @@
     window.TestMaster.analytics.initAnalyticsShell(appState);
   }
 
+  if (window.TestMaster.aiCoach) {
+    window.TestMaster.aiCoach.initAiCoach();
+  }
+
   if (window.TestMaster.ui) {
     window.TestMaster.ui.initNavigation();
     window.TestMaster.ui.initTheme({ storage: window.TestMaster.storage });

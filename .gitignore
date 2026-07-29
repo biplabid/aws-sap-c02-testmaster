@@ -5,3 +5,5 @@ node_modules/
 .vscode/
 dist*/
 client_secret*.json
+Key.txt
+*.key

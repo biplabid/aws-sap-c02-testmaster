@@ -1,23 +1,38 @@
-/* Right-side "Ask AI Coach" drawer: question submitted to the Gemini API,
-   answer rendered in-app. Slides in from the right; overlays the app shell
-   rather than reflowing it, so it works the same across every view. */
+/* Right-side "Ask AI Coach" panel: question submitted to Groq's API, answer
+   rendered in-app. Docks below the header as its own column and reserves
+   space by pushing .main-layout over (see the "push" rule near the bottom)
+   rather than overlaying the header or question card. On narrow viewports
+   there's no room to reserve, so it falls back to a full-width overlay
+   below the header, matching the site's existing 68px/62px header-height
+   breakpoints (see .side-nav in style.css/responsive.css). Standard
+   position/transform/margin/CSS-variable properties only — no vendor
+   prefixes or browser-specific behavior. */
+
+:root {
+  --ai-panel-width: 420px;
+  --ai-panel-header-height: 68px;
+}
 
 .ai-panel-backdrop {
   position: fixed;
-  inset: 0;
+  top: var(--ai-panel-header-height);
+  right: 0;
+  bottom: 0;
+  left: 0;
   z-index: 90;
-  background: rgba(15, 23, 42, 0.35);
+  background: transparent;
+  pointer-events: none;
 }
 
 .ai-panel {
   position: fixed;
-  top: 0;
+  top: var(--ai-panel-header-height);
   right: 0;
   bottom: 0;
   z-index: 91;
   display: flex;
   flex-direction: column;
-  width: min(420px, 100vw);
+  width: min(var(--ai-panel-width), 100vw);
   background: var(--surface);
   border-left: 1px solid var(--border);
   box-shadow: -12px 0 40px rgba(15, 23, 42, 0.18);
@@ -27,6 +42,26 @@
 
 .ai-panel:not(.hidden) {
   transform: translateX(0);
+}
+
+/* Reserve room instead of covering content: push .main-layout left by the
+   panel's width whenever it's open. Only on viewports wide enough to have
+   room to spare — see the narrow-viewport fallback at the bottom. */
+@media (min-width: 641px) {
+  .main-layout {
+    transition: margin-right 260ms ease;
+  }
+
+  body.ai-panel-open .main-layout {
+    margin-right: var(--ai-panel-width);
+  }
+}
+
+@media (max-width: 620px) {
+  .ai-panel-backdrop,
+  .ai-panel {
+    top: 62px;
+  }
 }
 
 .ai-panel-header {
@@ -54,18 +89,6 @@
   flex: 1;
   padding: 18px 20px;
   overflow-y: auto;
-}
-
-.ai-panel-question {
-  padding: 12px 14px;
-  margin-bottom: 16px;
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  background: var(--surface-raised);
-  border-left: 3px solid var(--aws-orange);
-  border-radius: 6px;
 }
 
 .ai-panel-key-setup p {
@@ -194,21 +217,16 @@
   font-weight: 800;
 }
 
-.ai-panel-footer {
-  display: flex;
-  gap: 10px;
-  padding: 14px 20px;
-  border-top: 1px solid var(--border);
-  flex-shrink: 0;
-}
-
-.ai-panel-footer .secondary-action {
-  flex: 1;
-  text-align: center;
-}
-
 @media (max-width: 640px) {
   .ai-panel {
     width: 100vw;
+  }
+
+  /* No room to reserve space beside content on a narrow screen, so the
+     panel falls back to covering it below the header; the dim backdrop
+     communicates that here (it's invisible and non-interactive above
+     this breakpoint, see .ai-panel-backdrop above). */
+  .ai-panel-backdrop:not(.hidden) {
+    background: rgba(15, 23, 42, 0.35);
   }
 }

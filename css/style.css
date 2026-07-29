@@ -179,6 +179,25 @@ input {
   border-right: 1px solid var(--border);
 }
 
+.sidebar-ai-key-link {
+  display: block;
+  margin-top: auto;
+  padding: 0 10px 10px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  text-align: center;
+  text-decoration: none;
+}
+
+.sidebar-ai-key-link:hover {
+  color: var(--aws-blue);
+  text-decoration: underline;
+}
+
+.sidebar-ai-key-link + .sidebar-footer {
+  margin-top: 0;
+}
+
 .sidebar-footer {
   margin-top: auto;
   padding: 14px 10px 4px;

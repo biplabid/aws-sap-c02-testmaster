@@ -7,13 +7,11 @@ window.TestMaster = window.TestMaster || {};
 // application), then paste it here.
 window.TestMaster.config = {
   GOOGLE_CLIENT_ID: "266127504874-1g1j2vt580aoq3907rgsgnprrne76pkc.apps.googleusercontent.com",
-  // The shared "AWS SAP-C02 Coach" Gemini Gem — Gems have no public API, so
-  // this is only used for the panel's "Open Full Gem Chat" fallback link.
-  AI_COACH_GEM_URL: "https://gemini.google.com/gem/1S3bQtUSzcI5cwtdTCmz1MWVJVPnUXAyt?usp=sharing",
-  // Gemini API model the "Ask AI Coach" panel calls directly. Flash models
-  // are covered by Google AI Studio's free tier for normal personal use;
-  // see https://ai.google.dev/gemini-api/docs/pricing for current limits.
-  AI_COACH_MODEL: "gemini-2.5-flash",
+  // Open-weight model the "Ask AI Coach" panel calls via Groq's free API
+  // (https://console.groq.com/keys) — no cost, no credit card. 70B gives
+  // more reliable structured-format output than Groq's smaller free models;
+  // see https://console.groq.com/docs/models for the current model list.
+  AI_COACH_MODEL: "llama-3.3-70b-versatile",
   // Recreates the "AWS SAP-C02 Coach" Gem's persona as a system prompt,
   // transcribed verbatim from the Gem's own instructions (Gems have no
   // public API, so this is what actually drives the AI Coach panel).

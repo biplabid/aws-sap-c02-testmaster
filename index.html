@@ -130,6 +130,8 @@
           Architecture
         </a>
 
+        <a href="#" class="sidebar-ai-key-link" id="aiCoachKeyLink">Change AI coach key</a>
+
         <div class="sidebar-footer">
           <p>Created by</p>
           <p><a href="https://www.linkedin.com/in/biplabd" target="_blank" rel="noopener noreferrer">Biplab Das</a> | 2026</p>
@@ -678,18 +680,21 @@ Explanation: [Detailed explanation text...]
                   <li><strong>Random Test</strong> &mdash; next to every question, since Random Test is untimed and has no scoring to protect.</li>
                   <li><strong>Timed Quiz and Mock Exam results</strong> &mdash; only after you submit, on each question in the filtered Correct/Incorrect revision list (see <a href="#guide-results">Reading Your Results</a>). It's not shown while the quiz or exam is still in progress.</li>
                 </ul>
-                <p>Clicking it opens a panel on the right side of the screen, automatically submits the question and its answer options, and shows the AI's explanation right there &mdash; no copying, no switching tabs.</p>
-                <h3>First-time setup: a free Gemini API key</h3>
-                <p>Gemini Gems (the persona you configure at gemini.google.com) don't have a public API, so this panel calls the underlying Gemini API directly with a system prompt written to match the <strong>AWS SAP-C02 Coach</strong> Gem's persona. The first time you click Ask AI Coach, you'll be asked to paste a Gemini API key:</p>
+                <p>Clicking it opens a panel docked to the right, below the header, automatically submits the question and its answer options, and shows the AI's explanation right there &mdash; no copying, no switching tabs. The rest of the page reflows to make room rather than being covered, so the question and header stay fully visible and usable. Click anywhere outside the panel (or press <kbd>Esc</kbd>) to close it.</p>
+                <h3>First-time setup: a free Groq API key</h3>
+                <p>Gemini Gems (the persona you configure at gemini.google.com) don't have a public API, so this panel instead calls <a href="https://groq.com/" target="_blank" rel="noopener noreferrer">Groq's</a> free API, running the open-weight <strong>Llama 3.3 70B</strong> model with a system prompt written to match the <strong>AWS SAP-C02 Coach</strong> Gem's persona. The first time you click Ask AI Coach, you'll be asked to paste a Groq API key:</p>
                 <ol>
-                  <li>Get a free key at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">aistudio.google.com/apikey</a>.</li>
+                  <li>Get a free key at <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer">console.groq.com/keys</a> &mdash; no credit card required.</li>
                   <li>Paste it into the panel and click <strong>Save Key &amp; Ask</strong>.</li>
                 </ol>
                 <div class="doc-callout">
                   <span class="doc-callout-icon" aria-hidden="true">&#9432;</span>
-                  <p>The key is saved only in this browser's <code>LocalStorage</code> and sent only to Google's Gemini API &mdash; never to any server of ours. Google's free tier covers normal personal use (a handful of requests/minute, up to 1,000/day) but may use free-tier prompts to improve their products; use a paid key if that matters to you. Change or replace the key any time with <strong>Change API Key</strong> in the panel footer.</p>
+                  <p>The key is saved only in this browser's <code>LocalStorage</code> and sent only to Groq's API &mdash; never to any server of ours. Groq's free tier (14,400 requests/day, 30/minute) has no cost and no credit card requirement, and easily covers normal personal use. Change or replace the key any time from the <strong>Change AI coach key</strong> link at the bottom of the sidebar.</p>
                 </div>
-                <p>Prefer the full conversational Gem instead? <strong>Open Full Gem Chat</strong> in the panel footer opens the actual <a href="https://gemini.google.com/gem/1S3bQtUSzcI5cwtdTCmz1MWVJVPnUXAyt?usp=sharing" target="_blank" rel="noopener noreferrer">AWS SAP-C02 Coach</a> Gem in a new tab.</p>
+                <div class="doc-callout">
+                  <span class="doc-callout-icon" aria-hidden="true">&#9432;</span>
+                  <p>Llama 3.3 70B is a smaller, open-weight model rather than a proprietary flagship one &mdash; answers may occasionally be less precise or skip part of the requested structure (a table, an ASCII diagram) compared to a larger closed model. This is a deliberate cost/accuracy tradeoff, not a bug.</p>
+                </div>
               </section>
 
               <section class="doc-section" id="guide-results">
@@ -739,10 +744,14 @@ Explanation: [Detailed explanation text...]
                 <p>TestMaster doesn't have a backend or a database of its own. Everything &mdash; your in-progress sessions, saved answers, timer state, "done" flags, attempt history, and theme preference &mdash; is stored locally in your browser's <code>LocalStorage</code>, namespaced to your signed-in Google account so it never leaves your browser.</p>
                 <p>This also means your local data is tied to a specific browser profile and device. Clearing your browser's site data for this app (or switching browsers/computers) will reset your progress and statistics.</p>
                 <p>Sign-in only identifies you &mdash; it requests the minimal <code>openid email profile</code> scopes and nothing else. You can revoke access at any time from your <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer">Google Account permissions page</a>.</p>
+                <h3>Refreshing the page doesn't sign you out</h3>
+                <p>Reloading the page (or reopening the app) picks your session back up automatically as long as your browser still has an active Google session &mdash; you won't be asked to sign in again just for refreshing.</p>
                 <h3>Your history follows you back in</h3>
                 <p>Your statistics and attempt history are tied to your Google account, not to a single sign-in session. Sign out (or get signed out automatically &mdash; see below) and sign back in with the same Google account on the same browser, and your Statistics page, attempt history, and Random Test "done" flags are exactly as you left them.</p>
+                <h3>Signing out clears your in-progress session</h3>
+                <p>Signing out &mdash; whether you click <strong>Sign Out</strong> yourself or get signed out automatically after being idle (see below) &mdash; clears any in-progress Timed Quiz or Mock Exam (including its timer and answers) along with your cached sign-in, so nothing is left behind for the next person to use this browser. This does <strong>not</strong> touch your Statistics, attempt history, "done" flags, or your saved AI Coach API key, which stay put and come right back the next time you sign in.</p>
                 <h3>Automatic sign-out after 10 minutes idle</h3>
-                <p>To protect your session, TestMaster signs you out automatically after <strong>10 minutes with no activity</strong> (no clicks, key presses, scrolling, or mouse movement). You'll land back on the welcome screen with a message explaining why; sign in again to pick up right where your data left off. An in-progress Timed Quiz or Mock Exam isn't lost &mdash; it's saved as you go, so signing back in offers to resume it, same as reopening the app after any other interruption. Its countdown timer keeps counting down against elapsed real time the whole time, exactly as it already does when you switch away from the app, so an idle sign-out still costs you exam time.</p>
+                <p>To protect your session, TestMaster signs you out automatically after <strong>10 minutes with no activity</strong> (no clicks, key presses, scrolling, or mouse movement). You'll land back on the welcome screen with a message explaining why. If you were mid-way through a Timed Quiz or Mock Exam when this happens, that attempt is cleared (see above) rather than resumed &mdash; sign in again to start a fresh one.</p>
               </section>
 
               <section class="doc-section" id="guide-faq">
@@ -795,7 +804,7 @@ Explanation: [Detailed explanation text...]
                   <li><strong>In a browser</strong> &mdash; served by any static file server (e.g. <code>python -m http.server</code>), so <code>fetch()</code> can load the bundled question JSON without hitting CORS restrictions.</li>
                   <li><strong>As a Windows desktop app</strong> &mdash; an Electron shell (<code>electron/main.js</code>) starts a local HTTP server over the project root and loads it into a native window, so the exact same code runs unmodified in both contexts.</li>
                 </ul>
-                <p>There is still no server-side persistence: all state lives in the browser's <code>LocalStorage</code> by default. The one place the app writes outside <code>LocalStorage</code> is the Upload feature, which saves a new question set file via the File System Access API. Access to the app itself is gated behind Google Sign-In (see <a href="#arch-auth">Google Sign-In &amp; the Login Gate</a>). One feature does call an external API with real payload data: <a href="#guide-ai-coach">Ask AI Coach</a> sends the current question's text directly from the browser to the Gemini API.</p>
+                <p>There is still no server-side persistence: all state lives in the browser's <code>LocalStorage</code> by default. The one place the app writes outside <code>LocalStorage</code> is the Upload feature, which saves a new question set file via the File System Access API. Access to the app itself is gated behind Google Sign-In (see <a href="#arch-auth">Google Sign-In &amp; the Login Gate</a>). One feature does call an external API with real payload data: <a href="#guide-ai-coach">Ask AI Coach</a> sends the current question's text directly from the browser to Groq's API.</p>
               </section>
 
               <section class="doc-section" id="arch-diagram">
@@ -892,7 +901,7 @@ Explanation: [Detailed explanation text...]
                   <div class="doc-card"><h4><code>mock.js</code></h4><p>Mock Exam: 75 questions, 3-hour timer, mark-for-review, a pre-submission review screen, and the same filterable results view as Timed Quiz.</p></div>
                   <div class="doc-card"><h4><code>analytics.js</code></h4><p>Statistics dashboard: renders summary cards and two Chart.js visualizations (domain radar, recent-attempts bar) from attempt history.</p></div>
                   <div class="doc-card"><h4><code>upload.js</code></h4><p>Parses a <code>.docx</code> file (via Mammoth.js) into the canonical question shape and hands it to <code>file-sets.js</code> to persist.</p></div>
-                  <div class="doc-card"><h4><code>ai-coach.js</code></h4><p>Backs every "Ask AI Coach" button &mdash; live in <code>random.js</code>, and only in <code>quiz.js</code>/<code>mock.js</code>'s post-submission result rows. Opens a right-side panel, submits the question to the Gemini API (<code>generateContent</code>) with a system prompt recreating the shared Gem's persona, and renders the Markdown answer in-app. Manages the user-supplied API key in <code>LocalStorage</code>.</p></div>
+                  <div class="doc-card"><h4><code>ai-coach.js</code></h4><p>Backs every "Ask AI Coach" button &mdash; live in <code>random.js</code>, and only in <code>quiz.js</code>/<code>mock.js</code>'s post-submission result rows. Opens a right-side panel, submits the question to Groq's OpenAI-compatible chat completions API (open-weight <code>llama-3.3-70b-versatile</code>) with a system prompt recreating the shared Gem's persona, and renders the Markdown answer in-app. Manages the user-supplied API key in <code>LocalStorage</code>.</p></div>
                 </div>
 
                 <h3>Auth Modules</h3>
@@ -961,11 +970,11 @@ Explanation: [Detailed explanation text...]
                       <tr><td><code>answers:&lt;id&gt;</code></td><td><code>{ [questionId]: string[] }</code></td><td>Selected answers for a session</td><td>Shared</td></tr>
                       <tr><td><code>review:&lt;id&gt;</code></td><td><code>{ [questionId]: true }</code></td><td>Mock Exam "marked for review" flags</td><td>Shared</td></tr>
                       <tr><td><code>done_questions:&lt;setKey&gt;</code></td><td>Array of question IDs</td><td>Random Test "Mark as Done" per set</td><td>Per user</td></tr>
-                      <tr><td><code>ai-coach:gemini-api-key</code></td><td>String</td><td>User-supplied Gemini API key for Ask AI Coach</td><td>Shared</td></tr>
+                      <tr><td><code>ai-coach:groq-api-key</code></td><td>String</td><td>User-supplied Groq API key for Ask AI Coach</td><td>Shared</td></tr>
                     </tbody>
                   </table>
                 </div>
-                <p><code>&lt;id&gt;</code> is the session id (<code>"timed-quiz"</code> or <code>"mock-exam"</code>). <code>storage.clearExamSession()</code> clears the session, answers, review flags, and timer together once an attempt finishes.</p>
+                <p><code>&lt;id&gt;</code> is the session id (<code>"timed-quiz"</code> or <code>"mock-exam"</code>). <code>storage.clearExamSession()</code> clears the session, answers, review flags, and timer together once an attempt finishes. <code>storage.clearActiveSessions()</code> scans for and clears every <code>session:*</code> key this way in one pass; <code>auth.js</code> calls it on explicit sign-out (manual or idle-timeout) so an in-progress attempt never lingers for the next person to sign into this browser &mdash; it deliberately leaves per-user statistics/attempt_history/done_questions untouched.</p>
                 <p><strong>Per-user scope</strong> means the key is additionally prefixed with the signed-in user's stable Google id (<code>sap-c02-testmaster:&lt;sub&gt;:&lt;key&gt;</code>) via <code>storage.setCurrentUser()</code>, which <code>storage.js</code> itself calls in response to <code>testmaster:auth-change</code> &mdash; so two people signed into different Google accounts on the same browser never see each other's history or done-flags. <strong>Shared</strong> keys (in-progress session/timer/answer/review state) are deliberately left un-namespaced: those modules read from storage <em>synchronously at bootstrap</em>, before Google auth can possibly have resolved (it's always asynchronous), so a signed-in user's very first render would otherwise happen under the wrong prefix. <code>random.js</code> and <code>analytics.js</code> additionally listen for <code>testmaster:user-change</code> to refresh their per-user-scoped displays (done-count, statistics) if sign-in resolves or changes while already on that view.</p>
               </section>
 
@@ -990,7 +999,7 @@ Explanation: [Detailed explanation text...]
                 <p><code>auth.js</code> calls <code>google.accounts.oauth2.initTokenClient()</code> requesting the minimal <code>openid email profile</code> scopes, then calls Google's <code>userinfo</code> endpoint with the resulting token to get <code>{ sub, email, name, picture }</code>. It dispatches <code>testmaster:auth-change</code> on every sign-in/out, which <code>storage.js</code>, <code>auth-gate.js</code>, and <code>account-ui.js</code> all listen for independently.</p>
                 <h3>The gate</h3>
                 <p><code>auth-gate.js</code> renders the branded welcome screen (<code>#authGate</code> in <code>index.html</code>) with a "Sign in with Google" button and toggles two CSS classes based on the current user: the gate is shown and <code>.app-shell</code> stays hidden while signed out; once <code>testmaster:auth-change</code> reports a user, the gate hides and the app shell (defaulting to the Home view) becomes visible. No view, route, or feature module needs to know about the gate itself &mdash; it sits entirely outside <code>.app-shell</code> and only ever toggles that one element's visibility.</p>
-                <p>Because Google's client-side token flow has no refresh token, a page reload always re-runs this check: <code>auth.js</code> optimistically shows the last cached profile while it attempts a silent renewal in the background, falling back to the gate if that fails (expired Google session, blocked third-party cookies, etc.) &mdash; see <a href="#arch-limitations">Known Limitations</a>.</p>
+                <p>Because Google's client-side token flow has no refresh token, a page reload always re-runs this check in the background: <code>auth.js</code>'s <code>init()</code> waits for Google Identity Services to load, then attempts a silent <code>requestAccessToken({ prompt: "" })</code> renewal. That round trip takes a moment, so the gate's very first render (before <code>init()</code> has resolved) uses <code>auth.getCachedUser()</code> &mdash; a synchronous read of the last-known profile from <code>LocalStorage</code> &mdash; to optimistically unlock the app immediately instead of flashing the sign-in screen on every refresh. If the silent renewal then fails in the background (expired Google session, blocked third-party cookies, etc.), <code>auth.js</code> clears the cached profile and re-emits <code>testmaster:auth-change</code> with no user, and the gate re-locks &mdash; see <a href="#arch-limitations">Known Limitations</a>.</p>
               </section>
 
               <section class="doc-section" id="arch-analytics">
@@ -1025,7 +1034,7 @@ Explanation: [Detailed explanation text...]
                 </div>
                 <div class="doc-callout limitation">
                   <span class="doc-callout-icon" aria-hidden="true">&#9888;</span>
-                  <p><strong>No refresh token, so sign-in doesn't survive a page reload.</strong> Google's client-side token flow never issues a refresh token (those only exist in the server-side auth-code flow, which needs a backend this app doesn't have). The access token lives in memory only; <code>auth.js</code> attempts a silent <code>requestAccessToken({ prompt: '' })</code> renewal on load, which depends on an active Google session and third-party cookies &mdash; expect it to fail outright in Safari (ITP) and intermittently elsewhere, falling back to the visible "Sign in" button. No data is lost either way; only the signed-in session itself needs re-establishing.</p>
+                  <p><strong>No refresh token, so the app optimistically trusts a cached profile rather than truly persisting sign-in.</strong> Google's client-side token flow never issues a refresh token (those only exist in the server-side auth-code flow, which needs a backend this app doesn't have). The access token lives in memory only; a page reload unlocks the app immediately from the cached profile (see <a href="#arch-auth">The gate</a>) while <code>auth.js</code> attempts a silent <code>requestAccessToken({ prompt: '' })</code> renewal in the background, which depends on an active Google session and third-party cookies &mdash; expect it to fail outright in Safari (ITP) and intermittently elsewhere. Deliberately, a failed silent renewal only re-locks the gate; it does <strong>not</strong> clear an in-progress Timed Quiz/Mock Exam the way an explicit sign-out does (see <a href="#guide-data">Your Data &amp; Privacy</a>), since this path can fire incidentally on a routine reload and shouldn't cost you exam progress you didn't choose to abandon.</p>
                 </div>
                 <div class="doc-callout limitation">
                   <span class="doc-callout-icon" aria-hidden="true">&#9888;</span>
@@ -1033,11 +1042,11 @@ Explanation: [Detailed explanation text...]
                 </div>
                 <div class="doc-callout limitation">
                   <span class="doc-callout-icon" aria-hidden="true">&#9888;</span>
-                  <p><strong>Ask AI Coach's system prompt is a re-implementation, not the literal Gem.</strong> Gemini Gems have no public API, so <code>config.js</code>'s <code>AI_COACH_SYSTEM_PROMPT</code> approximates the shared Gem's persona rather than calling it directly. Answers may drift from what the Gem itself would say; keep the two in sync manually if the Gem's instructions change.</p>
+                  <p><strong>Ask AI Coach's system prompt is a re-implementation, not the literal Gem, running on a different (smaller, open-weight) model.</strong> Gemini Gems have no public API, so <code>config.js</code>'s <code>AI_COACH_SYSTEM_PROMPT</code> approximates the shared Gem's persona rather than calling it directly, and it's answered by Groq's free <code>llama-3.3-70b-versatile</code> rather than Gemini. Answers may drift from what the Gem itself would say, and may less consistently include every requested section (table, ASCII diagram) than a larger model would &mdash; an accepted cost/accuracy tradeoff. Keep the prompt in sync manually if the Gem's instructions change.</p>
                 </div>
                 <div class="doc-callout limitation">
                   <span class="doc-callout-icon" aria-hidden="true">&#9888;</span>
-                  <p><strong>The Gemini API key is visible to whoever holds it, by nature of a backend-less app.</strong> It's stored in <code>LocalStorage</code> and sent directly from the browser to Google, never through a server of ours &mdash; but that also means it's visible in that browser's dev tools/network tab like any client-side credential. Restricting the key by API (Generative Language API only) in Google Cloud/AI Studio limits the blast radius if it ever leaks.</p>
+                  <p><strong>The Groq API key is visible to whoever holds it, by nature of a backend-less app.</strong> It's stored in <code>LocalStorage</code> and sent directly from the browser to Groq, never through a server of ours &mdash; but that also means it's visible in that browser's dev tools/network tab like any client-side credential. Groq's free tier has no billing attached to a leaked key, which limits the downside compared to a paid API key.</p>
                 </div>
                 <div class="doc-callout limitation">
                   <span class="doc-callout-icon" aria-hidden="true">&#9888;</span>
@@ -1068,11 +1077,9 @@ Explanation: [Detailed explanation text...]
       </div>
 
       <div class="ai-panel-body" id="aiPanelBody">
-        <div class="ai-panel-question" id="aiPanelQuestion"></div>
-
         <div class="ai-panel-key-setup hidden" id="aiPanelKeySetup">
-          <p>Paste a Gemini API key to enable AI Coach answers in this browser. Get a free key at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">aistudio.google.com/apikey</a> &mdash; it's saved only in this browser's storage, never sent anywhere but Google's API.</p>
-          <input type="password" id="aiPanelKeyInput" placeholder="Gemini API key" autocomplete="off">
+          <p>Paste a free Groq API key to enable AI Coach answers in this browser. Get one at <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer">console.groq.com/keys</a> (no credit card needed) &mdash; it's saved only in this browser's storage, never sent anywhere but Groq's API.</p>
+          <input type="password" id="aiPanelKeyInput" placeholder="Groq API key" autocomplete="off">
           <button class="primary-button" type="button" id="aiPanelKeySave">Save Key &amp; Ask</button>
         </div>
 
@@ -1083,11 +1090,6 @@ Explanation: [Detailed explanation text...]
         <div class="ai-panel-error hidden" id="aiPanelError"></div>
 
         <div class="ai-panel-answer hidden" id="aiPanelAnswer"></div>
-      </div>
-
-      <div class="ai-panel-footer">
-        <button class="secondary-action" type="button" id="aiPanelChangeKey">Change API Key</button>
-        <a class="secondary-action" id="aiPanelOpenGem" href="#" target="_blank" rel="noopener noreferrer">Open Full Gem Chat</a>
       </div>
     </aside>
   </div>
