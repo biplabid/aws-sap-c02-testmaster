@@ -1,6 +1,6 @@
 {
   "name": "aws-sap-c02-testmaster",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "AWS SAP-C02 TestMaster - desktop practice exam app for the AWS Certified Solutions Architect Professional exam",
   "author": "Biplab Das",
   "license": "UNLICENSED",

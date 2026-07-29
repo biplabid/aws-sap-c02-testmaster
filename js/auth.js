@@ -96,38 +96,21 @@ window.TestMaster.auth = (function createAuthModule(storage) {
     tokenClient = window.google.accounts.oauth2.initTokenClient({
       client_id: getClientId(),
       scope: SCOPES,
-      callback: () => {} // overridden per-call in signIn()/attemptSilentSignIn()
+      callback: () => {} // overridden per-call in signIn()
     });
 
+    // Trust the cached profile as-is — no silent requestAccessToken() check
+    // on load. That call is meant to be invisible, but Google can still
+    // surface its own account-chooser popup for it (multiple signed-in
+    // Google accounts, third-party-cookie restrictions, etc.), which is
+    // exactly the "asks me to log in again on refresh" behavior this
+    // avoids. Nothing in this app calls a Google API with the access token
+    // anymore (Drive sync is gone), so there's nothing that actually needs
+    // a fresh one just from loading the page. The session ends only via an
+    // explicit sign-out — manual, or idle-logout.js's timeout.
     const cachedProfile = storage.get(CACHED_PROFILE_KEY, null);
     if (cachedProfile) {
-      // Show the last-known identity optimistically while a silent renewal
-      // is attempted in the background; falls back to signed-out UI if it
-      // fails (expired Google session, blocked third-party cookies, etc.).
       currentUser = cachedProfile;
-      emitAuthChange();
-      attemptSilentSignIn();
-    }
-  }
-
-  function attemptSilentSignIn() {
-    if (!tokenClient) {
-      return;
-    }
-
-    tokenClient.callback = (tokenResponse) => {
-      handleTokenResponse(tokenResponse).catch(() => {
-        currentUser = null;
-        storage.remove(CACHED_PROFILE_KEY);
-        emitAuthChange();
-      });
-    };
-
-    try {
-      tokenClient.requestAccessToken({ prompt: "" });
-    } catch (error) {
-      currentUser = null;
-      storage.remove(CACHED_PROFILE_KEY);
       emitAuthChange();
     }
   }
@@ -155,10 +138,9 @@ window.TestMaster.auth = (function createAuthModule(storage) {
         tokenExpiresAt = 0;
         currentUser = null;
         storage.remove(CACHED_PROFILE_KEY);
-        // Explicit sign-out only (manual or idle-timeout) — not the silent-
-        // reauth failure path, which can fire on a routine page load (e.g.
-        // Safari ITP blocking third-party cookies) and shouldn't wipe an
-        // in-progress exam just because that happened.
+        // This only ever runs for an explicit sign-out (the user's own
+        // click, or idle-logout.js's timeout) — init() no longer attempts
+        // any background reauth that could reach here on a routine load.
         storage.clearActiveSessions();
         emitAuthChange();
         resolve();
@@ -177,9 +159,9 @@ window.TestMaster.auth = (function createAuthModule(storage) {
   }
 
   // Synchronous read of the last-known profile, for use before init()'s
-  // async GIS/silent-reauth chain has resolved — lets the login gate show
-  // the app immediately on a page refresh instead of flashing "sign in"
-  // while that chain is still in flight.
+  // async GIS-loading wait has resolved — lets the login gate show the app
+  // immediately on a page refresh instead of flashing "sign in" while
+  // that's still in flight.
   function getCachedUser() {
     return storage.get(CACHED_PROFILE_KEY, null);
   }
