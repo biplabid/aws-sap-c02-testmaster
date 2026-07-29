@@ -53,13 +53,6 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
       finishQuiz(appState, elements);
     });
 
-    if (elements.aiButton) {
-      elements.aiButton.addEventListener("click", () => {
-        const question = appState.quiz.questions[appState.quiz.currentIndex];
-        window.TestMaster.aiCoach.askAboutQuestion(question);
-      });
-    }
-
     elements.restart.addEventListener("click", () => {
       startQuiz(appState, elements, true);
     });
@@ -115,7 +108,6 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
       palette: document.querySelector("#quizPalette"),
       meta: document.querySelector("#quizQuestionMeta"),
       type: document.querySelector("#quizQuestionType"),
-      aiButton: document.querySelector("#quizAiButton"),
       prompt: document.querySelector("#quizQuestionPrompt"),
       form: document.querySelector("#quizAnswerForm"),
       previous: document.querySelector("#quizPrevious"),
@@ -439,6 +431,27 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
     });
   }
 
+  function buildAiCoachButton(row) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "ai-coach-button";
+    button.title = "Ask the AWS SAP-C02 Coach about this question";
+
+    const icon = document.createElement("span");
+    icon.className = "ai-coach-icon";
+    icon.setAttribute("aria-hidden", "true");
+    icon.textContent = "AI";
+
+    button.appendChild(icon);
+    button.append(" Ask AI Coach");
+
+    button.addEventListener("click", () => {
+      window.TestMaster.aiCoach.askAboutQuestion({ prompt: row.prompt, options: row.options });
+    });
+
+    return button;
+  }
+
   function buildSimpleRow(row) {
     const item = document.createElement("div");
     item.className = "result-row";
@@ -477,6 +490,9 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
     const header = document.createElement("div");
     header.className = "result-row-header";
 
+    const headerLeft = document.createElement("span");
+    headerLeft.className = "result-row-header-left";
+
     const index = document.createElement("span");
     index.className = "result-index";
     index.textContent = `Q${row.index}`;
@@ -485,8 +501,10 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
     badge.className = `result-badge ${row.correct ? "correct" : "wrong"}`;
     badge.textContent = row.correct ? "Correct" : "Incorrect";
 
-    header.appendChild(index);
-    header.appendChild(badge);
+    headerLeft.appendChild(index);
+    headerLeft.appendChild(badge);
+    header.appendChild(headerLeft);
+    header.appendChild(buildAiCoachButton(row));
 
     const prompt = document.createElement("p");
     prompt.className = "result-row-prompt";
@@ -556,9 +574,6 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
     elements.previous.disabled = true;
     elements.next.disabled = true;
     elements.finish.disabled = true;
-    if (elements.aiButton) {
-      elements.aiButton.disabled = true;
-    }
   }
 
   return {

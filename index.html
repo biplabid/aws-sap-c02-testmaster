@@ -305,12 +305,7 @@
             </aside>
             <div class="question-card quiz-card">
               <div class="question-meta" id="quizQuestionMeta"></div>
-              <div class="question-type-row">
-                <div class="question-type" id="quizQuestionType"></div>
-                <button class="ai-coach-button" type="button" id="quizAiButton" title="Ask the AWS SAP-C02 Coach about this question">
-                  <span class="ai-coach-icon" aria-hidden="true">AI</span> Ask AI Coach
-                </button>
-              </div>
+              <div class="question-type" id="quizQuestionType"></div>
               <h2 class="question-prompt" id="quizQuestionPrompt">Loading quiz...</h2>
               <form class="answer-list" id="quizAnswerForm" aria-labelledby="quizQuestionPrompt"></form>
               <div class="question-actions">
@@ -388,12 +383,7 @@
             <div class="mock-layout">
               <div class="question-card mock-card">
                 <div class="question-meta" id="mockQuestionMeta"></div>
-                <div class="question-type-row">
-                  <div class="question-type" id="mockQuestionType"></div>
-                  <button class="ai-coach-button" type="button" id="mockAiButton" title="Ask the AWS SAP-C02 Coach about this question">
-                    <span class="ai-coach-icon" aria-hidden="true">AI</span> Ask AI Coach
-                  </button>
-                </div>
+                <div class="question-type" id="mockQuestionType"></div>
                 <h2 class="question-prompt" id="mockQuestionPrompt">Loading exam...</h2>
                 <form class="answer-list" id="mockAnswerForm" aria-labelledby="mockQuestionPrompt"></form>
                 <div class="question-actions exam-actions">
@@ -683,7 +673,12 @@ Explanation: [Detailed explanation text...]
 
               <section class="doc-section" id="guide-ai-coach">
                 <h2>Ask AI Coach</h2>
-                <p>Every question in Random Test, Timed Quiz, and Mock Exam has an <strong>Ask AI Coach</strong> button next to the question type. Clicking it opens a panel on the right side of the screen, automatically submits the question and its answer options, and shows the AI's explanation right there &mdash; no copying, no switching tabs.</p>
+                <p><strong>Ask AI Coach</strong> is available in two places, deliberately not during a timed/graded attempt itself:</p>
+                <ul>
+                  <li><strong>Random Test</strong> &mdash; next to every question, since Random Test is untimed and has no scoring to protect.</li>
+                  <li><strong>Timed Quiz and Mock Exam results</strong> &mdash; only after you submit, on each question in the filtered Correct/Incorrect revision list (see <a href="#guide-results">Reading Your Results</a>). It's not shown while the quiz or exam is still in progress.</li>
+                </ul>
+                <p>Clicking it opens a panel on the right side of the screen, automatically submits the question and its answer options, and shows the AI's explanation right there &mdash; no copying, no switching tabs.</p>
                 <h3>First-time setup: a free Gemini API key</h3>
                 <p>Gemini Gems (the persona you configure at gemini.google.com) don't have a public API, so this panel calls the underlying Gemini API directly with a system prompt written to match the <strong>AWS SAP-C02 Coach</strong> Gem's persona. The first time you click Ask AI Coach, you'll be asked to paste a Gemini API key:</p>
                 <ol>
@@ -704,6 +699,7 @@ Explanation: [Detailed explanation text...]
                 <ul>
                   <li>The answer you selected (or "Not answered").</li>
                   <li>A <strong>Show correct answer &amp; explanation</strong> button (for incorrect questions) that reveals the correct answer and the full explanation, so you can understand exactly why an answer was right or wrong.</li>
+                  <li>An <strong>Ask AI Coach</strong> button (see <a href="#guide-ai-coach">Ask AI Coach</a>) to dig deeper into any question, correct or incorrect.</li>
                 </ul>
                 <p>Click the tile again, or the <strong>Show all questions</strong> button, to return to the full list.</p>
               </section>
@@ -743,6 +739,10 @@ Explanation: [Detailed explanation text...]
                 <p>TestMaster doesn't have a backend or a database of its own. Everything &mdash; your in-progress sessions, saved answers, timer state, "done" flags, attempt history, and theme preference &mdash; is stored locally in your browser's <code>LocalStorage</code>, namespaced to your signed-in Google account so it never leaves your browser.</p>
                 <p>This also means your local data is tied to a specific browser profile and device. Clearing your browser's site data for this app (or switching browsers/computers) will reset your progress and statistics.</p>
                 <p>Sign-in only identifies you &mdash; it requests the minimal <code>openid email profile</code> scopes and nothing else. You can revoke access at any time from your <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer">Google Account permissions page</a>.</p>
+                <h3>Your history follows you back in</h3>
+                <p>Your statistics and attempt history are tied to your Google account, not to a single sign-in session. Sign out (or get signed out automatically &mdash; see below) and sign back in with the same Google account on the same browser, and your Statistics page, attempt history, and Random Test "done" flags are exactly as you left them.</p>
+                <h3>Automatic sign-out after 10 minutes idle</h3>
+                <p>To protect your session, TestMaster signs you out automatically after <strong>10 minutes with no activity</strong> (no clicks, key presses, scrolling, or mouse movement). You'll land back on the welcome screen with a message explaining why; sign in again to pick up right where your data left off. An in-progress Timed Quiz or Mock Exam isn't lost &mdash; it's saved as you go, so signing back in offers to resume it, same as reopening the app after any other interruption. Its countdown timer keeps counting down against elapsed real time the whole time, exactly as it already does when you switch away from the app, so an idle sign-out still costs you exam time.</p>
               </section>
 
               <section class="doc-section" id="guide-faq">
@@ -892,7 +892,7 @@ Explanation: [Detailed explanation text...]
                   <div class="doc-card"><h4><code>mock.js</code></h4><p>Mock Exam: 75 questions, 3-hour timer, mark-for-review, a pre-submission review screen, and the same filterable results view as Timed Quiz.</p></div>
                   <div class="doc-card"><h4><code>analytics.js</code></h4><p>Statistics dashboard: renders summary cards and two Chart.js visualizations (domain radar, recent-attempts bar) from attempt history.</p></div>
                   <div class="doc-card"><h4><code>upload.js</code></h4><p>Parses a <code>.docx</code> file (via Mammoth.js) into the canonical question shape and hands it to <code>file-sets.js</code> to persist.</p></div>
-                  <div class="doc-card"><h4><code>ai-coach.js</code></h4><p>Backs the "Ask AI Coach" button in every practice mode: opens a right-side panel, submits the current question to the Gemini API (<code>generateContent</code>) with a system prompt recreating the shared Gem's persona, and renders the answer in-app. Manages the user-supplied API key in <code>LocalStorage</code>.</p></div>
+                  <div class="doc-card"><h4><code>ai-coach.js</code></h4><p>Backs every "Ask AI Coach" button &mdash; live in <code>random.js</code>, and only in <code>quiz.js</code>/<code>mock.js</code>'s post-submission result rows. Opens a right-side panel, submits the question to the Gemini API (<code>generateContent</code>) with a system prompt recreating the shared Gem's persona, and renders the Markdown answer in-app. Manages the user-supplied API key in <code>LocalStorage</code>.</p></div>
                 </div>
 
                 <h3>Auth Modules</h3>
@@ -901,6 +901,7 @@ Explanation: [Detailed explanation text...]
                   <div class="doc-card"><h4><code>auth.js</code></h4><p>Google Identity Services sign-in/out, access-token lifecycle, and the <code>testmaster:auth-change</code> event other modules react to.</p></div>
                   <div class="doc-card"><h4><code>auth-gate.js</code></h4><p>Full-screen welcome/sign-in overlay that hides the entire app shell until <code>auth.js</code> reports a signed-in user.</p></div>
                   <div class="doc-card"><h4><code>account-ui.js</code></h4><p>The header sign-in control and account popover: renders identity and the sign-out action.</p></div>
+                  <div class="doc-card"><h4><code>idle-logout.js</code></h4><p>Tracks user activity (clicks, keys, scroll, mouse movement) and calls <code>auth.signOut()</code> after 10 minutes with none, while a user is signed in.</p></div>
                 </div>
 
                 <h3>Legacy / Unused Modules</h3>
@@ -1099,6 +1100,7 @@ Explanation: [Detailed explanation text...]
   <script src="js/config.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/auth-gate.js"></script>
+  <script src="js/idle-logout.js"></script>
   <script src="js/file-sets.js"></script>
   <script src="js/question-engine.js"></script>
   <script src="js/questions.js"></script>

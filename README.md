@@ -18,7 +18,7 @@ The platform is organized into several practice modes, each tailored for a diffe
 
 ### AI Study Coach
 
--   **Ask AI Coach button**: Every question in Random Test, Timed Quiz, and Mock Exam has an **Ask AI Coach** button. Clicking it opens a panel on the right side of the screen, automatically submits the question and its answer options, and shows the answer right there — no copying, no tab switching.
+-   **Ask AI Coach button**: available in Random Test (next to every question, since it's untimed) and, for Timed Quiz and Mock Exam, only on the results screen's Correct/Incorrect revision list after you submit — never during a timed attempt itself. Clicking it opens a panel on the right side of the screen, automatically submits the question and its answer options, and shows the answer right there — no copying, no tab switching.
 -   **Requires a free Gemini API key**: Gemini Gems (like the shared [AWS SAP-C02 Coach](https://gemini.google.com/gem/1S3bQtUSzcI5cwtdTCmz1MWVJVPnUXAyt?usp=sharing) Gem) have no public API, so the panel calls the real Gemini API directly with a system prompt written to match the Gem's persona. The first click prompts you to paste a key from [aistudio.google.com/apikey](https://aistudio.google.com/apikey) (free tier covers normal personal use); it's saved only in your browser's `LocalStorage`.
 -   **Full Gem still one click away**: the panel's "Open Full Gem Chat" link opens the actual Gem in a new tab for anyone who prefers that experience.
 
@@ -32,6 +32,7 @@ The platform is organized into several practice modes, each tailored for a diffe
 -   **Animated welcome/login gate**: The app opens on a full-screen, branded welcome screen. The rest of the app — every practice mode, statistics, upload, and the docs — stays hidden until you sign in.
 -   **Sign In with Google**: Click **Sign in with Google** on the welcome screen (or the header's account control once signed in) to identify yourself and unlock the app.
 -   **Access is restricted**: intended for a small number of pre-approved Google accounts (configured in Google Cloud Console, not in this app's code — see [Google Sign-In Setup](#google-sign-in-setup) below).
+-   **10-minute idle auto sign-out**: with no clicks, key presses, scrolling, or mouse movement for 10 minutes, you're signed out automatically and returned to the welcome screen. Signing back in with the same account restores your statistics, attempt history, and any in-progress Timed Quiz/Mock Exam session exactly as you left them.
 -   **Per-account data**: progress, answers, and attempt history are saved locally in your browser, namespaced to your signed-in Google account.
 
 ### Core Functionality
@@ -89,6 +90,7 @@ aws-sap-c02-testmaster/
 │   ├── config.js               # Public Google OAuth Client ID + AI Coach model/prompt/Gem URL
 │   ├── auth.js                  # Google Identity Services sign-in/out, access token
 │   ├── auth-gate.js             # Full-screen welcome/login gate shown until signed in
+│   ├── idle-logout.js           # Signs out automatically after 10 minutes of inactivity
 │   ├── account-ui.js            # Header sign-in control + account popover
 │   ├── utils.js                # General utility functions
 │   ├── view-helpers.js        # Shared question rendering + set-selector helpers
@@ -181,7 +183,8 @@ Until a real Client ID is set, the welcome screen's "Sign in with Google" button
 10. **Google Sign-In**: `auth.js` wraps Google Identity Services' client-side token flow, exposing sign-in/out and dispatching a `testmaster:auth-change` event; `account-ui.js` renders the header control and account popover from it.
 11. **Login Gate**: `auth-gate.js` listens for `testmaster:auth-change` and shows a full-screen animated welcome screen over the entire app shell until a user is signed in, at which point the gate hides and the app becomes usable.
 12. **Per-User Data**: `storage.js` listens for `testmaster:auth-change` and namespaces `statistics`/`attempt_history`/`done_questions` by the signed-in user's Google id (everything else stays shared/guest-scoped).
-13. **AI Study Coach**: each practice mode's "Ask AI Coach" button calls `aiCoach.askAboutQuestion()`, which opens the right-side panel and POSTs the current question to the Gemini API's `generateContent` endpoint with a system prompt (`config.js`'s `AI_COACH_SYSTEM_PROMPT`) written to match the shared Gem's persona — Gemini Gems themselves have no public API. The user's own API key is stored in `LocalStorage` and sent directly from the browser to Google.
+13. **AI Study Coach**: "Ask AI Coach" (live in `random.js`; only in `quiz.js`/`mock.js`'s post-submission result rows) calls `aiCoach.askAboutQuestion()`, which opens the right-side panel and POSTs the question to the Gemini API's `generateContent` endpoint with a system prompt (`config.js`'s `AI_COACH_SYSTEM_PROMPT`) written to match the shared Gem's persona — Gemini Gems themselves have no public API. The user's own API key is stored in `LocalStorage` and sent directly from the browser to Google.
+14. **Idle Auto Sign-Out**: `idle-logout.js` tracks activity events on `window` and polls every 15 seconds; after 10 minutes with no activity while signed in, it calls `auth.signOut()` and sets a message on the login gate. Since attempt history/statistics are namespaced per Google user id (not per session), signing back in as the same user immediately shows the same data.
 
 ## Question Upload Format
 

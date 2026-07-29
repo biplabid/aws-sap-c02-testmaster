@@ -1025,7 +1025,18 @@ input:disabled {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   margin-bottom: 8px;
+}
+
+.result-row-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.result-row-header .ai-coach-button {
+  flex-shrink: 0;
 }
 
 .result-row-prompt {

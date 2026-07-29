@@ -44,5 +44,9 @@
     window.TestMaster.authGate.initAuthGate();
   }
 
+  if (window.TestMaster.idleLogout) {
+    window.TestMaster.idleLogout.init();
+  }
+
   window.TestMaster.appState = appState;
 })();
