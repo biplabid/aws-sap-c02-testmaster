@@ -36,36 +36,14 @@ window.TestMaster.accountUi = (function createAccountUiModule(auth) {
       closePopover(elements);
       elements.signOutButton.disabled = true;
       elements.signOutButton.textContent = "Signing out…";
-      await waitForSyncToSettle();
       await auth.signOut();
       elements.signOutButton.disabled = false;
       elements.signOutButton.textContent = "Sign Out";
       window.TestMaster.ui.showToast("Signed out.");
     });
 
-    elements.chooseFolderButton.addEventListener("click", async () => {
-      const driveSync = window.TestMaster.driveSync;
-      if (!driveSync) {
-        return;
-      }
-      try {
-        await driveSync.chooseFolder();
-      } catch (error) {
-        console.error(error);
-        window.TestMaster.ui.showToast("Couldn't open the Google Drive folder picker.");
-      }
-    });
-
     window.addEventListener("testmaster:auth-change", (event) => {
       renderUser(elements, event.detail.user);
-    });
-
-    window.addEventListener("testmaster:sync-status", (event) => {
-      elements.syncStatus.textContent = event.detail.message;
-      elements.syncStatus.classList.toggle("sync-error", Boolean(event.detail.isError));
-      elements.chooseFolderButton.textContent = event.detail.folderName
-        ? "Change Drive Folder"
-        : "Choose Drive Folder";
     });
 
     renderUser(elements, auth.getUser());
@@ -82,8 +60,6 @@ window.TestMaster.accountUi = (function createAccountUiModule(auth) {
       popoverAvatar: document.querySelector("#accountPopoverAvatar"),
       popoverName: document.querySelector("#accountPopoverName"),
       popoverEmail: document.querySelector("#accountPopoverEmail"),
-      syncStatus: document.querySelector("#accountSyncStatus"),
-      chooseFolderButton: document.querySelector("#accountChooseFolderButton"),
       signOutButton: document.querySelector("#accountSignOutButton")
     };
   }
@@ -92,9 +68,6 @@ window.TestMaster.accountUi = (function createAccountUiModule(auth) {
     if (!user) {
       elements.signInButton.classList.remove("hidden");
       elements.avatarButton.classList.add("hidden");
-      elements.syncStatus.textContent = "Not connected to Google Drive.";
-      elements.syncStatus.classList.remove("sync-error");
-      elements.chooseFolderButton.textContent = "Choose Drive Folder";
       closePopover(elements);
       return;
     }
@@ -114,25 +87,6 @@ window.TestMaster.accountUi = (function createAccountUiModule(auth) {
 
   function firstName(fullName) {
     return (fullName || "").split(" ")[0];
-  }
-
-  function waitForSyncToSettle(timeoutMs = 5000) {
-    const driveSync = window.TestMaster.driveSync;
-    if (!driveSync || !driveSync.isSyncing()) {
-      return Promise.resolve();
-    }
-
-    return new Promise((resolve) => {
-      const startedAt = Date.now();
-      const check = () => {
-        if (!driveSync.isSyncing() || Date.now() - startedAt > timeoutMs) {
-          resolve();
-          return;
-        }
-        window.setTimeout(check, 200);
-      };
-      check();
-    });
   }
 
   function togglePopover(elements) {

@@ -40,8 +40,8 @@
     window.TestMaster.accountUi.initAccountUi();
   }
 
-  if (window.TestMaster.driveSync) {
-    window.TestMaster.driveSync.init();
+  if (window.TestMaster.authGate) {
+    window.TestMaster.authGate.initAuthGate();
   }
 
   window.TestMaster.appState = appState;

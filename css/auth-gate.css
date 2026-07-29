@@ -1,0 +1,264 @@
+/* Full-screen animated welcome / login gate shown until the user signs in
+   with Google. Deliberately self-contained (its own dark, branded look)
+   rather than following the app's light/dark toggle, since the toggle
+   itself lives inside the gated header. */
+
+.auth-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(255, 153, 0, 0.22), transparent 42%),
+    radial-gradient(circle at 82% 78%, rgba(9, 114, 211, 0.28), transparent 46%),
+    linear-gradient(160deg, #0a0d13 0%, #161b24 48%, #1d2531 100%);
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 480ms ease, visibility 480ms ease;
+}
+
+.auth-gate.auth-gate-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.auth-gate-backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.auth-gate-grid {
+  position: absolute;
+  inset: -1px;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 46px 46px;
+  -webkit-mask-image: radial-gradient(circle at 50% 40%, #000 0%, transparent 72%);
+          mask-image: radial-gradient(circle at 50% 40%, #000 0%, transparent 72%);
+  animation: gate-grid-drift 26s linear infinite;
+}
+
+@keyframes gate-grid-drift {
+  from { background-position: 0 0; }
+  to { background-position: 92px 92px; }
+}
+
+.auth-gate-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 620px;
+  height: 620px;
+  margin: -310px 0 0 -310px;
+  border: 1px solid rgba(255, 153, 0, 0.16);
+  border-radius: 50%;
+  animation: gate-orbit-spin 34s linear infinite;
+}
+
+.auth-gate-orbit::before,
+.auth-gate-orbit::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: var(--aws-orange, #ff9900);
+  border-radius: 50%;
+  box-shadow: 0 0 16px 4px rgba(255, 153, 0, 0.55);
+  top: -5px;
+  left: calc(50% - 5px);
+}
+
+.auth-gate-orbit::after {
+  top: auto;
+  bottom: -5px;
+  background: #0972d3;
+  box-shadow: 0 0 16px 4px rgba(9, 114, 211, 0.55);
+}
+
+.auth-gate-orbit.orbit-2 {
+  width: 880px;
+  height: 880px;
+  margin: -440px 0 0 -440px;
+  border-color: rgba(9, 114, 211, 0.14);
+  animation-duration: 52s;
+  animation-direction: reverse;
+}
+
+@keyframes gate-orbit-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.auth-gate-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 520px;
+  height: 520px;
+  margin: -260px 0 0 -260px;
+  background: radial-gradient(circle, rgba(255, 153, 0, 0.16) 0%, transparent 68%);
+  animation: gate-glow-pulse 6s ease-in-out infinite;
+}
+
+@keyframes gate-glow-pulse {
+  0%, 100% { transform: scale(0.94); opacity: 0.75; }
+  50% { transform: scale(1.06); opacity: 1; }
+}
+
+.auth-gate-spark {
+  position: absolute;
+  bottom: -12px;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 50%;
+  animation: gate-spark-rise linear infinite;
+}
+
+.auth-gate-spark.s1 { left: 12%; animation-duration: 9s; animation-delay: 0s; }
+.auth-gate-spark.s2 { left: 28%; animation-duration: 12s; animation-delay: 1.5s; background: rgba(255, 153, 0, 0.8); }
+.auth-gate-spark.s3 { left: 52%; animation-duration: 10s; animation-delay: 3s; }
+.auth-gate-spark.s4 { left: 71%; animation-duration: 14s; animation-delay: 0.8s; background: rgba(9, 114, 211, 0.85); }
+.auth-gate-spark.s5 { left: 88%; animation-duration: 11s; animation-delay: 4s; }
+
+@keyframes gate-spark-rise {
+  0% { transform: translateY(0) scale(1); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 0.6; }
+  100% { transform: translateY(-100vh) scale(0.4); opacity: 0; }
+}
+
+.auth-gate-panel {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 460px;
+  padding: 48px 40px;
+  text-align: center;
+  color: #f4f6f8;
+  background: rgba(20, 25, 33, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(14px);
+  animation: gate-panel-in 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes gate-panel-in {
+  from { transform: translateY(18px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.auth-gate-mark {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 44px;
+  margin-bottom: 20px;
+  color: #111827;
+  font-weight: 800;
+  font-size: 1rem;
+  background: var(--aws-orange, #ff9900);
+  border-radius: 6px;
+  box-shadow: 0 0 24px rgba(255, 153, 0, 0.45);
+}
+
+.auth-gate-eyebrow {
+  color: #ff9900;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.auth-gate-title {
+  margin: 10px 0 4px;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.auth-gate-tagline {
+  margin: 0 0 28px;
+  color: #c4ccd5;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.auth-gate-signin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 20px;
+  color: #16191f;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: #ffffff;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.28);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.auth-gate-signin:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.34);
+}
+
+.auth-gate-signin:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.auth-gate-google-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.auth-gate-status {
+  min-height: 1.2em;
+  margin: 16px 0 0;
+  color: #ff9d7a;
+  font-size: 0.82rem;
+}
+
+.auth-gate-footnote {
+  margin: 20px 0 0;
+  color: #7c8798;
+  font-size: 0.76rem;
+}
+
+@media (max-width: 520px) {
+  .auth-gate-panel {
+    padding: 36px 26px;
+  }
+
+  .auth-gate-title {
+    font-size: 1.6rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-gate-grid,
+  .auth-gate-orbit,
+  .auth-gate-glow,
+  .auth-gate-spark,
+  .auth-gate-panel {
+    animation: none;
+  }
+}

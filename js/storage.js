@@ -26,9 +26,8 @@ window.TestMaster.storage = (function createStorageModule() {
   };
 
   // Only statistics/attempt_history/done_questions are namespaced per signed-in
-  // user (they're the data synced to Drive). Settings, sessions, timers,
-  // answers, and review flags intentionally stay on the shared/guest prefix
-  // below — they're excluded from sync, so namespacing them would only
+  // user. Settings, sessions, timers, answers, and review flags intentionally
+  // stay on the shared/guest prefix below — namespacing them would only
   // reintroduce the bootstrap-ordering problem (auth resolves after these
   // modules' first synchronous reads) for no benefit.
   let currentUserId = null;

@@ -1,7 +1,7 @@
 window.TestMaster = window.TestMaster || {};
 
 window.TestMaster.auth = (function createAuthModule(storage) {
-  const SCOPES = "openid email profile https://www.googleapis.com/auth/drive.file";
+  const SCOPES = "openid email profile";
   const CACHED_PROFILE_KEY = "auth:last-profile";
   const GIS_POLL_INTERVAL_MS = 100;
   const GIS_POLL_TIMEOUT_MS = 10000;

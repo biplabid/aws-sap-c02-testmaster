@@ -77,20 +77,6 @@
   font-size: 0.76rem;
 }
 
-.account-sync-status {
-  margin-bottom: 12px;
-  padding: 8px 10px;
-  color: var(--text-muted);
-  font-size: 0.78rem;
-  line-height: 1.4;
-  background: var(--surface-raised);
-  border-radius: 6px;
-}
-
-.account-sync-status.sync-error {
-  color: var(--aws-red);
-}
-
 .account-popover .secondary-action {
   width: 100%;
   margin-top: 8px;
