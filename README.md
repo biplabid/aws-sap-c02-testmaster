@@ -16,6 +16,12 @@ The platform is organized into several practice modes, each tailored for a diffe
 -   **Statistics**: A dashboard with a radar chart of your score by domain, a bar chart of your most recent attempts, summary cards (attempts, average score, best score, study time), and a full attempt history table.
 -   **Upload**: Import a custom question bank from a formatted `.docx` file. The file is parsed in the browser and written directly into the project's `data/` folder as a new `setN.json` file, which then appears as a selectable question set in every practice mode.
 
+### AI Study Coach
+
+-   **Ask AI Coach button**: Every question in Random Test, Timed Quiz, and Mock Exam has an **Ask AI Coach** button. Clicking it opens a panel on the right side of the screen, automatically submits the question and its answer options, and shows the answer right there — no copying, no tab switching.
+-   **Requires a free Gemini API key**: Gemini Gems (like the shared [AWS SAP-C02 Coach](https://gemini.google.com/gem/1S3bQtUSzcI5cwtdTCmz1MWVJVPnUXAyt?usp=sharing) Gem) have no public API, so the panel calls the real Gemini API directly with a system prompt written to match the Gem's persona. The first click prompts you to paste a key from [aistudio.google.com/apikey](https://aistudio.google.com/apikey) (free tier covers normal personal use); it's saved only in your browser's `LocalStorage`.
+-   **Full Gem still one click away**: the panel's "Open Full Gem Chat" link opens the actual Gem in a new tab for anyone who prefers that experience.
+
 ### Resources
 
 -   **User Guide**: An in-app guide covering every practice mode, keyboard shortcuts, how to read your results, question sets, uploading questions, and data/privacy — no need to leave the app.
@@ -45,6 +51,7 @@ The platform is organized into several practice modes, each tailored for a diffe
 -   **Data**: Questions are loaded from JSON files, or imported from `.docx` uploads via [Mammoth.js](https://github.com/mwilliamson/mammoth.js) (extracts raw text for parsing).
 -   **Storage**: `LocalStorage` API for session, statistics, theme, and progress persistence; the [File System Access API](https://developer.mozilla.org/en-US/docs/Web/API/File_System_Access_API) (Chrome/Edge only) for writing newly uploaded question sets to disk.
 -   **Auth**: [Google Identity Services](https://developers.google.com/identity/oauth2/web/guides/overview) client-side token flow, required to sign in and unlock the app.
+-   **AI Coach**: [Gemini API](https://ai.google.dev/gemini-api/docs) (`generateContent`), called directly from the browser with a user-supplied API key — free tier covers normal personal use.
 -   **Analytics**: Chart.js for rendering performance charts.
 -   **Desktop Packaging**: [Electron](https://www.electronjs.org/) wraps the app in a native window (backed by a local static server so `fetch()` and the File System Access API work exactly as they do in the browser); [electron-builder](https://www.electron.build/) produces the Windows installer and portable executable. Google Sign-In does **not** work inside this packaged app (Google blocks OAuth in embedded browsers), which means the desktop build currently cannot get past the login gate — see Known Limitations in the in-app Architecture page.
 -   **Hosting**: deployed as a static site on [GitHub Pages](https://pages.github.com/) at <https://biplabid.github.io/aws-sap-c02-testmaster/> (no build step; Pages serves the repo root directly).
@@ -62,6 +69,7 @@ aws-sap-c02-testmaster/
 │   ├── docs.css             # User Guide / Architecture page styling
 │   ├── account.css          # Sign-in control + account popover styling
 │   ├── auth-gate.css        # Animated welcome/login-gate screen styling
+│   ├── ai-panel.css         # Right-side "Ask AI Coach" panel styling
 │   └── responsive.css       # Responsive design rules
 ├── js/
 │   ├── app.js                # Main application entry point
@@ -77,7 +85,8 @@ aws-sap-c02-testmaster/
 │   ├── timer.js               # Countdown timer factory
 │   ├── ui.js                   # View navigation, keyboard shortcuts, theme toggle
 │   ├── docs.js                 # Scroll-spy for the User Guide / Architecture table of contents
-│   ├── config.js               # Public Google OAuth Client ID (edit after setup)
+│   ├── ai-coach.js             # "Ask AI Coach" panel: calls the Gemini API, manages the user's API key
+│   ├── config.js               # Public Google OAuth Client ID + AI Coach model/prompt/Gem URL
 │   ├── auth.js                  # Google Identity Services sign-in/out, access token
 │   ├── auth-gate.js             # Full-screen welcome/login gate shown until signed in
 │   ├── account-ui.js            # Header sign-in control + account popover
@@ -172,6 +181,7 @@ Until a real Client ID is set, the welcome screen's "Sign in with Google" button
 10. **Google Sign-In**: `auth.js` wraps Google Identity Services' client-side token flow, exposing sign-in/out and dispatching a `testmaster:auth-change` event; `account-ui.js` renders the header control and account popover from it.
 11. **Login Gate**: `auth-gate.js` listens for `testmaster:auth-change` and shows a full-screen animated welcome screen over the entire app shell until a user is signed in, at which point the gate hides and the app becomes usable.
 12. **Per-User Data**: `storage.js` listens for `testmaster:auth-change` and namespaces `statistics`/`attempt_history`/`done_questions` by the signed-in user's Google id (everything else stays shared/guest-scoped).
+13. **AI Study Coach**: each practice mode's "Ask AI Coach" button calls `aiCoach.askAboutQuestion()`, which opens the right-side panel and POSTs the current question to the Gemini API's `generateContent` endpoint with a system prompt (`config.js`'s `AI_COACH_SYSTEM_PROMPT`) written to match the shared Gem's persona — Gemini Gems themselves have no public API. The user's own API key is stored in `LocalStorage` and sent directly from the browser to Google.
 
 ## Question Upload Format
 
@@ -203,6 +213,7 @@ On success, the parsed questions are saved directly to `data/setN.json` (the nex
 -   **Mark as Done for Timed Quiz / Mock Exam**: Extend the Random Test "Mark as Done" progress tracking to the other practice modes.
 -   **Sign-In Session Persistence**: Google's client-side token flow has no refresh token, so a page reload always requires a fresh (often silent, sometimes visible) re-authentication — a backend-based auth-code flow would remove this, at the cost of needing an actual backend.
 -   **Desktop Sign-In**: Find a way for the packaged Electron app to complete Google OAuth (e.g. opening the system browser for the auth step) so the login gate doesn't leave the desktop build permanently locked out.
+-   **AI Coach persona sync**: `AI_COACH_SYSTEM_PROMPT` in `config.js` is a hand-written approximation of the shared Gem's instructions; it'll drift if the Gem is edited. A backend proxy would also let the API key stay off the client entirely.
 
 ---
 

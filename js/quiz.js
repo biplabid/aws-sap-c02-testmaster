@@ -53,6 +53,13 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
       finishQuiz(appState, elements);
     });
 
+    if (elements.aiButton) {
+      elements.aiButton.addEventListener("click", () => {
+        const question = appState.quiz.questions[appState.quiz.currentIndex];
+        window.TestMaster.aiCoach.askAboutQuestion(question);
+      });
+    }
+
     elements.restart.addEventListener("click", () => {
       startQuiz(appState, elements, true);
     });
@@ -108,6 +115,7 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
       palette: document.querySelector("#quizPalette"),
       meta: document.querySelector("#quizQuestionMeta"),
       type: document.querySelector("#quizQuestionType"),
+      aiButton: document.querySelector("#quizAiButton"),
       prompt: document.querySelector("#quizQuestionPrompt"),
       form: document.querySelector("#quizAnswerForm"),
       previous: document.querySelector("#quizPrevious"),
@@ -548,6 +556,9 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
     elements.previous.disabled = true;
     elements.next.disabled = true;
     elements.finish.disabled = true;
+    if (elements.aiButton) {
+      elements.aiButton.disabled = true;
+    }
   }
 
   return {

@@ -1,0 +1,214 @@
+/* Right-side "Ask AI Coach" drawer: question submitted to the Gemini API,
+   answer rendered in-app. Slides in from the right; overlays the app shell
+   rather than reflowing it, so it works the same across every view. */
+
+.ai-panel-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(15, 23, 42, 0.35);
+}
+
+.ai-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 91;
+  display: flex;
+  flex-direction: column;
+  width: min(420px, 100vw);
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  box-shadow: -12px 0 40px rgba(15, 23, 42, 0.18);
+  transform: translateX(100%);
+  transition: transform 260ms ease;
+}
+
+.ai-panel:not(.hidden) {
+  transform: translateX(0);
+}
+
+.ai-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #7c3aed, #0972d3);
+  flex-shrink: 0;
+}
+
+.ai-panel-title {
+  font-weight: 800;
+  font-size: 0.98rem;
+}
+
+.ai-panel-close {
+  width: 32px;
+  height: 32px;
+  font-size: 1.1rem;
+}
+
+.ai-panel-body {
+  flex: 1;
+  padding: 18px 20px;
+  overflow-y: auto;
+}
+
+.ai-panel-question {
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  background: var(--surface-raised);
+  border-left: 3px solid var(--aws-orange);
+  border-radius: 6px;
+}
+
+.ai-panel-key-setup p {
+  margin: 0 0 12px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.ai-panel-key-setup input {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 12px;
+  margin-bottom: 10px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.ai-panel-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.ai-panel-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border);
+  border-top-color: #7c3aed;
+  border-radius: 50%;
+  animation: ai-panel-spin 800ms linear infinite;
+}
+
+@keyframes ai-panel-spin {
+  to { transform: rotate(360deg); }
+}
+
+.ai-panel-error {
+  padding: 10px 12px;
+  color: var(--aws-red);
+  font-size: 0.85rem;
+  background: var(--surface-raised);
+  border-left: 3px solid var(--aws-red);
+  border-radius: 6px;
+}
+
+.ai-panel-answer {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  overflow-wrap: break-word;
+}
+
+.ai-panel-answer > *:first-child {
+  margin-top: 0;
+}
+
+.ai-panel-answer p {
+  margin: 0 0 12px;
+}
+
+.ai-panel-answer h4 {
+  margin: 18px 0 8px;
+  color: var(--aws-blue);
+  font-size: 0.86rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.ai-panel-answer ul,
+.ai-panel-answer ol {
+  margin: 0 0 12px;
+  padding-left: 20px;
+}
+
+.ai-panel-answer li {
+  margin-bottom: 6px;
+}
+
+.ai-panel-answer strong {
+  color: var(--text);
+}
+
+.ai-panel-answer code {
+  padding: 1px 5px;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 0.85em;
+  background: var(--surface-raised);
+  border-radius: 4px;
+}
+
+.ai-panel-answer pre {
+  padding: 12px;
+  margin: 0 0 14px;
+  overflow-x: auto;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.ai-panel-answer pre code {
+  padding: 0;
+  background: none;
+  white-space: pre;
+}
+
+.ai-panel-answer table {
+  width: 100%;
+  margin: 0 0 14px;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.ai-panel-answer th,
+.ai-panel-answer td {
+  padding: 6px 8px;
+  text-align: left;
+  border: 1px solid var(--border);
+}
+
+.ai-panel-answer th {
+  background: var(--surface-raised);
+  font-weight: 800;
+}
+
+.ai-panel-footer {
+  display: flex;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.ai-panel-footer .secondary-action {
+  flex: 1;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .ai-panel {
+    width: 100vw;
+  }
+}

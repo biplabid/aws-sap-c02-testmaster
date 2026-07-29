@@ -41,6 +41,13 @@ window.TestMaster.random = (function createRandomModule(viewHelpers, questionEng
       });
     }
 
+    if (elements.aiButton) {
+      elements.aiButton.addEventListener("click", () => {
+        const question = appState.random.pool[appState.random.currentIndex];
+        window.TestMaster.aiCoach.askAboutQuestion(question);
+      });
+    }
+
     if (elements.setSelector) {
       elements.setSelector.addEventListener("change", () => {
         updateDoneStatus(elements);
@@ -82,6 +89,7 @@ window.TestMaster.random = (function createRandomModule(viewHelpers, questionEng
       next: document.querySelector("#randomNext"),
       nextTop: document.querySelector("#randomNextTop"),
       markDone: document.querySelector("#randomMarkDone"),
+      aiButton: document.querySelector("#randomAiButton"),
       resetDone: document.querySelector("#randomResetDone"),
       doneStatus: document.querySelector("#randomDoneStatusText")
     };

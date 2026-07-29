@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="css/docs.css">
   <link rel="stylesheet" href="css/account.css">
   <link rel="stylesheet" href="css/auth-gate.css">
+  <link rel="stylesheet" href="css/ai-panel.css">
   <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
@@ -249,7 +250,12 @@
             </div>
             <div class="question-meta" id="randomQuestionMeta"></div>
             <div class="question-card">
-              <div class="question-type" id="randomQuestionType"></div>
+              <div class="question-type-row">
+                <div class="question-type" id="randomQuestionType"></div>
+                <button class="ai-coach-button" type="button" id="randomAiButton" title="Ask the AWS SAP-C02 Coach about this question">
+                  <span class="ai-coach-icon" aria-hidden="true">AI</span> Ask AI Coach
+                </button>
+              </div>
               <h2 class="question-prompt" id="randomQuestionPrompt">Loading question...</h2>
               <form class="answer-list" id="randomAnswerForm" aria-labelledby="randomQuestionPrompt"></form>
               <div class="feedback-panel hidden" id="randomFeedback" role="status"></div>
@@ -299,7 +305,12 @@
             </aside>
             <div class="question-card quiz-card">
               <div class="question-meta" id="quizQuestionMeta"></div>
-              <div class="question-type" id="quizQuestionType"></div>
+              <div class="question-type-row">
+                <div class="question-type" id="quizQuestionType"></div>
+                <button class="ai-coach-button" type="button" id="quizAiButton" title="Ask the AWS SAP-C02 Coach about this question">
+                  <span class="ai-coach-icon" aria-hidden="true">AI</span> Ask AI Coach
+                </button>
+              </div>
               <h2 class="question-prompt" id="quizQuestionPrompt">Loading quiz...</h2>
               <form class="answer-list" id="quizAnswerForm" aria-labelledby="quizQuestionPrompt"></form>
               <div class="question-actions">
@@ -377,7 +388,12 @@
             <div class="mock-layout">
               <div class="question-card mock-card">
                 <div class="question-meta" id="mockQuestionMeta"></div>
-                <div class="question-type" id="mockQuestionType"></div>
+                <div class="question-type-row">
+                  <div class="question-type" id="mockQuestionType"></div>
+                  <button class="ai-coach-button" type="button" id="mockAiButton" title="Ask the AWS SAP-C02 Coach about this question">
+                    <span class="ai-coach-icon" aria-hidden="true">AI</span> Ask AI Coach
+                  </button>
+                </div>
                 <h2 class="question-prompt" id="mockQuestionPrompt">Loading exam...</h2>
                 <form class="answer-list" id="mockAnswerForm" aria-labelledby="mockQuestionPrompt"></form>
                 <div class="question-actions exam-actions">
@@ -591,6 +607,7 @@ Explanation: [Detailed explanation text...]
               <a href="#guide-random">Random Test</a>
               <a href="#guide-timed">Timed Quiz</a>
               <a href="#guide-mock">Mock Exam</a>
+              <a href="#guide-ai-coach">Ask AI Coach</a>
               <a href="#guide-results">Reading Your Results</a>
               <a href="#guide-stats">Statistics</a>
               <a href="#guide-sets">Question Sets</a>
@@ -662,6 +679,22 @@ Explanation: [Detailed explanation text...]
                   <li><strong>Review Screen</strong> &mdash; before submitting, see a full breakdown of answered, unanswered, and marked questions, with the remaining time.</li>
                   <li><strong>Submit confirmation</strong> &mdash; you'll be warned if you have unanswered or marked questions before the exam locks in your answers.</li>
                 </ul>
+              </section>
+
+              <section class="doc-section" id="guide-ai-coach">
+                <h2>Ask AI Coach</h2>
+                <p>Every question in Random Test, Timed Quiz, and Mock Exam has an <strong>Ask AI Coach</strong> button next to the question type. Clicking it opens a panel on the right side of the screen, automatically submits the question and its answer options, and shows the AI's explanation right there &mdash; no copying, no switching tabs.</p>
+                <h3>First-time setup: a free Gemini API key</h3>
+                <p>Gemini Gems (the persona you configure at gemini.google.com) don't have a public API, so this panel calls the underlying Gemini API directly with a system prompt written to match the <strong>AWS SAP-C02 Coach</strong> Gem's persona. The first time you click Ask AI Coach, you'll be asked to paste a Gemini API key:</p>
+                <ol>
+                  <li>Get a free key at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">aistudio.google.com/apikey</a>.</li>
+                  <li>Paste it into the panel and click <strong>Save Key &amp; Ask</strong>.</li>
+                </ol>
+                <div class="doc-callout">
+                  <span class="doc-callout-icon" aria-hidden="true">&#9432;</span>
+                  <p>The key is saved only in this browser's <code>LocalStorage</code> and sent only to Google's Gemini API &mdash; never to any server of ours. Google's free tier covers normal personal use (a handful of requests/minute, up to 1,000/day) but may use free-tier prompts to improve their products; use a paid key if that matters to you. Change or replace the key any time with <strong>Change API Key</strong> in the panel footer.</p>
+                </div>
+                <p>Prefer the full conversational Gem instead? <strong>Open Full Gem Chat</strong> in the panel footer opens the actual <a href="https://gemini.google.com/gem/1S3bQtUSzcI5cwtdTCmz1MWVJVPnUXAyt?usp=sharing" target="_blank" rel="noopener noreferrer">AWS SAP-C02 Coach</a> Gem in a new tab.</p>
               </section>
 
               <section class="doc-section" id="guide-results">
@@ -762,7 +795,7 @@ Explanation: [Detailed explanation text...]
                   <li><strong>In a browser</strong> &mdash; served by any static file server (e.g. <code>python -m http.server</code>), so <code>fetch()</code> can load the bundled question JSON without hitting CORS restrictions.</li>
                   <li><strong>As a Windows desktop app</strong> &mdash; an Electron shell (<code>electron/main.js</code>) starts a local HTTP server over the project root and loads it into a native window, so the exact same code runs unmodified in both contexts.</li>
                 </ul>
-                <p>There is still no server-side persistence: all state lives in the browser's <code>LocalStorage</code> by default. The one place the app writes outside <code>LocalStorage</code> is the Upload feature, which saves a new question set file via the File System Access API. Access to the app itself is gated behind Google Sign-In (see <a href="#arch-auth">Google Sign-In &amp; the Login Gate</a>), but no data is sent to Google beyond the identity check.</p>
+                <p>There is still no server-side persistence: all state lives in the browser's <code>LocalStorage</code> by default. The one place the app writes outside <code>LocalStorage</code> is the Upload feature, which saves a new question set file via the File System Access API. Access to the app itself is gated behind Google Sign-In (see <a href="#arch-auth">Google Sign-In &amp; the Login Gate</a>). One feature does call an external API with real payload data: <a href="#guide-ai-coach">Ask AI Coach</a> sends the current question's text directly from the browser to the Gemini API.</p>
               </section>
 
               <section class="doc-section" id="arch-diagram">
@@ -859,11 +892,12 @@ Explanation: [Detailed explanation text...]
                   <div class="doc-card"><h4><code>mock.js</code></h4><p>Mock Exam: 75 questions, 3-hour timer, mark-for-review, a pre-submission review screen, and the same filterable results view as Timed Quiz.</p></div>
                   <div class="doc-card"><h4><code>analytics.js</code></h4><p>Statistics dashboard: renders summary cards and two Chart.js visualizations (domain radar, recent-attempts bar) from attempt history.</p></div>
                   <div class="doc-card"><h4><code>upload.js</code></h4><p>Parses a <code>.docx</code> file (via Mammoth.js) into the canonical question shape and hands it to <code>file-sets.js</code> to persist.</p></div>
+                  <div class="doc-card"><h4><code>ai-coach.js</code></h4><p>Backs the "Ask AI Coach" button in every practice mode: opens a right-side panel, submits the current question to the Gemini API (<code>generateContent</code>) with a system prompt recreating the shared Gem's persona, and renders the answer in-app. Manages the user-supplied API key in <code>LocalStorage</code>.</p></div>
                 </div>
 
                 <h3>Auth Modules</h3>
                 <div class="doc-card-grid">
-                  <div class="doc-card"><h4><code>config.js</code></h4><p>Holds the public Google OAuth Client ID &mdash; safe to commit, unlike a client secret.</p></div>
+                  <div class="doc-card"><h4><code>config.js</code></h4><p>Holds the public Google OAuth Client ID and the AI Coach Gem URL &mdash; both safe to commit, unlike a client secret.</p></div>
                   <div class="doc-card"><h4><code>auth.js</code></h4><p>Google Identity Services sign-in/out, access-token lifecycle, and the <code>testmaster:auth-change</code> event other modules react to.</p></div>
                   <div class="doc-card"><h4><code>auth-gate.js</code></h4><p>Full-screen welcome/sign-in overlay that hides the entire app shell until <code>auth.js</code> reports a signed-in user.</p></div>
                   <div class="doc-card"><h4><code>account-ui.js</code></h4><p>The header sign-in control and account popover: renders identity and the sign-out action.</p></div>
@@ -926,6 +960,7 @@ Explanation: [Detailed explanation text...]
                       <tr><td><code>answers:&lt;id&gt;</code></td><td><code>{ [questionId]: string[] }</code></td><td>Selected answers for a session</td><td>Shared</td></tr>
                       <tr><td><code>review:&lt;id&gt;</code></td><td><code>{ [questionId]: true }</code></td><td>Mock Exam "marked for review" flags</td><td>Shared</td></tr>
                       <tr><td><code>done_questions:&lt;setKey&gt;</code></td><td>Array of question IDs</td><td>Random Test "Mark as Done" per set</td><td>Per user</td></tr>
+                      <tr><td><code>ai-coach:gemini-api-key</code></td><td>String</td><td>User-supplied Gemini API key for Ask AI Coach</td><td>Shared</td></tr>
                     </tbody>
                   </table>
                 </div>
@@ -997,6 +1032,14 @@ Explanation: [Detailed explanation text...]
                 </div>
                 <div class="doc-callout limitation">
                   <span class="doc-callout-icon" aria-hidden="true">&#9888;</span>
+                  <p><strong>Ask AI Coach's system prompt is a re-implementation, not the literal Gem.</strong> Gemini Gems have no public API, so <code>config.js</code>'s <code>AI_COACH_SYSTEM_PROMPT</code> approximates the shared Gem's persona rather than calling it directly. Answers may drift from what the Gem itself would say; keep the two in sync manually if the Gem's instructions change.</p>
+                </div>
+                <div class="doc-callout limitation">
+                  <span class="doc-callout-icon" aria-hidden="true">&#9888;</span>
+                  <p><strong>The Gemini API key is visible to whoever holds it, by nature of a backend-less app.</strong> It's stored in <code>LocalStorage</code> and sent directly from the browser to Google, never through a server of ours &mdash; but that also means it's visible in that browser's dev tools/network tab like any client-side credential. Restricting the key by API (Generative Language API only) in Google Cloud/AI Studio limits the blast radius if it ever leaks.</p>
+                </div>
+                <div class="doc-callout limitation">
+                  <span class="doc-callout-icon" aria-hidden="true">&#9888;</span>
                   <p><strong>No automated test suite.</strong> There's no unit, integration, or end-to-end test tooling configured in <code>package.json</code>; correctness currently relies on manual verification.</p>
                 </div>
               </section>
@@ -1013,6 +1056,39 @@ Explanation: [Detailed explanation text...]
         </section>
       </section>
     </main>
+
+    <div class="ai-panel-backdrop hidden" id="aiPanelBackdrop"></div>
+    <aside class="ai-panel hidden" id="aiPanel" aria-label="AWS SAP-C02 Coach" role="dialog" aria-modal="true">
+      <div class="ai-panel-header">
+        <span class="ai-panel-title">AWS SAP-C02 Coach</span>
+        <button class="icon-button ai-panel-close" type="button" id="aiPanelClose" aria-label="Close AI Coach">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="ai-panel-body" id="aiPanelBody">
+        <div class="ai-panel-question" id="aiPanelQuestion"></div>
+
+        <div class="ai-panel-key-setup hidden" id="aiPanelKeySetup">
+          <p>Paste a Gemini API key to enable AI Coach answers in this browser. Get a free key at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">aistudio.google.com/apikey</a> &mdash; it's saved only in this browser's storage, never sent anywhere but Google's API.</p>
+          <input type="password" id="aiPanelKeyInput" placeholder="Gemini API key" autocomplete="off">
+          <button class="primary-button" type="button" id="aiPanelKeySave">Save Key &amp; Ask</button>
+        </div>
+
+        <div class="ai-panel-loading hidden" id="aiPanelLoading">
+          <span class="ai-panel-spinner" aria-hidden="true"></span> Asking AWS SAP-C02 Coach&hellip;
+        </div>
+
+        <div class="ai-panel-error hidden" id="aiPanelError"></div>
+
+        <div class="ai-panel-answer hidden" id="aiPanelAnswer"></div>
+      </div>
+
+      <div class="ai-panel-footer">
+        <button class="secondary-action" type="button" id="aiPanelChangeKey">Change API Key</button>
+        <a class="secondary-action" id="aiPanelOpenGem" href="#" target="_blank" rel="noopener noreferrer">Open Full Gem Chat</a>
+      </div>
+    </aside>
   </div>
 
   <script src="js/utils.js"></script>
@@ -1028,6 +1104,7 @@ Explanation: [Detailed explanation text...]
   <script src="js/questions.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/view-helpers.js"></script>
+  <script src="js/ai-coach.js"></script>
   <script src="js/exam.js"></script>
   <script src="js/timer.js"></script>
   <script src="js/analytics.js"></script>

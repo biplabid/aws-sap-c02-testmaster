@@ -57,6 +57,13 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
       toggleMarkForReview(appState, elements);
     });
 
+    if (elements.aiButton) {
+      elements.aiButton.addEventListener("click", () => {
+        const question = appState.mockExam.questions[appState.mockExam.currentIndex];
+        window.TestMaster.aiCoach.askAboutQuestion(question);
+      });
+    }
+
     elements.reviewButton.addEventListener("click", () => {
       openReviewScreen(appState, elements);
     });
@@ -126,6 +133,7 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
       palette: document.querySelector("#mockPalette"),
       meta: document.querySelector("#mockQuestionMeta"),
       type: document.querySelector("#mockQuestionType"),
+      aiButton: document.querySelector("#mockAiButton"),
       prompt: document.querySelector("#mockQuestionPrompt"),
       form: document.querySelector("#mockAnswerForm"),
       previous: document.querySelector("#mockPrevious"),
@@ -726,6 +734,9 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
     elements.next.disabled = true;
     elements.markReview.disabled = true;
     elements.reviewButton.disabled = true;
+    if (elements.aiButton) {
+      elements.aiButton.disabled = true;
+    }
   }
 
   return {
