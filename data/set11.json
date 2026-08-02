@@ -1,0 +1,1458 @@
+[
+  {
+    "id": 1,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A user has created a VPC with CIDR 20.0.0.0/16 and has created one subnet with CIDR 20.0.0.0/16 in this VPC. The user is trying to create another subnet with the same VPC for CIDR 20.0.0.1/24. What will happen in this scenario?",
+    "options": [
+      {
+        "id": "A",
+        "text": "It is not possible to create a subnet with the same CIDR as the VPC."
+      },
+      {
+        "id": "B",
+        "text": "The second subnet will be created."
+      },
+      {
+        "id": "C",
+        "text": "It will throw a CIDR overlap error."
+      },
+      {
+        "id": "D",
+        "text": "The VPC will modify the first subnet to allow this IP range."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Subnet CIDR blocks within a VPC must not overlap. Since the first subnet already consumes the entire 20.0.0.0/16 range, creating a second subnet inside that range produces a CIDR overlap error. A subnet may have the same CIDR as the VPC when it is the only subnet."
+  },
+  {
+    "id": 2,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "Your company has just set up a new central server in a VPC. There is a requirement for other teams who have their servers located in different VPCs in the same region to connect to the central server. Which of the below options is best suited to achieve this requirement?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Set up an IPSec Tunnel between the central server VPC and each of the teams' VPCs."
+      },
+      {
+        "id": "B",
+        "text": "Set up VPC Peering between the central server VPC and each of the teams' VPCs."
+      },
+      {
+        "id": "C",
+        "text": "Set up AWS DirectConnect between the central server VPC and each of the teams' VPCs."
+      },
+      {
+        "id": "D",
+        "text": "None of these options will work."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "A VPC peering connection is a networking connection between two VPCs that enables you to route traffic between them using private IPv4 or IPv6 addresses, so instances in either VPC can communicate as if they were on the same network. Direct Connect connects on-premises networks to AWS, not VPC to VPC."
+  },
+  {
+    "id": 3,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "You've been hired to enhance the overall security posture for a very large e-commerce site. They have a well architected multi-tier application running in a VPC that uses ELBs in front of both the web and the app tier with static assets served directly from S3. They are using a combination of RDS and DynamoDB for their dynamic data and then archiving nightly into S3 for further processing with EMR. They are concerned because they found questionable log entries and suspect someone is attempting to gain unauthorized access. Which approach provides a cost-effective scalable mitigation to this kind of attack?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Recommend that they lease space at a DirectConnect partner location and establish a 1G DirectConnect connection to their VPC. Then they would establish Internet connectivity into their space, filter the traffic in a hardware Web Application Firewall (WAF) and then pass the traffic through the DirectConnect connection into their application running in their VPC."
+      },
+      {
+        "id": "B",
+        "text": "Add previously identified host file source IPs as an explicit INBOUND DENY NACL to the web tier subnet."
+      },
+      {
+        "id": "C",
+        "text": "Remove all but TLS 1 and 2 from the web tier ELB and enable Advanced Protocol Filtering. This will enable the ELB itself to perform WAF functionality."
+      },
+      {
+        "id": "D",
+        "text": "Add a WAF tier by creating a new ELB and an AutoScaling group of EC2 instances running a host-based WAF. They would redirect Route 53 to resolve to the new WAF tier ELB. The WAF tier would pass the traffic to the current web tier. The web tier Security Groups would be updated to only allow traffic from the WAF tier Security Group."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "A WAF tier acts as the first line of defense, filtering out known sources of attack and blocking common attack patterns such as SQL injection or cross-site scripting, and the application ELB is no longer exposed. This is the WAF sandwich pattern. The DirectConnect option is complex and not cost effective, IP-based NACL denies can be circumvented by changing source IPs, and there is no Advanced Protocol Filtering feature for ELB."
+  },
+  {
+    "id": 4,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "As an IT administrator, you have created a VPC with CIDR block 10.0.0.0/24. What is the maximum allowed number of IP addresses and the minimum allowed number of IP addresses according to AWS, and what is the number of IP addresses supported by the VPC you created?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Maximum is 256 and the minimum is 16 and the one created supports 24 IP addresses."
+      },
+      {
+        "id": "B",
+        "text": "Maximum is 28 and the minimum is 16 and the one created supports 24 IP addresses."
+      },
+      {
+        "id": "C",
+        "text": "Maximum is 65,536 and the minimum is 24 and the one created supports 28 IP addresses."
+      },
+      {
+        "id": "D",
+        "text": "Maximum is 65,536 and the minimum is 16 and the one created supports 256 IP addresses."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "A /24 CIDR block leaves 8 host bits, so 2^(32-24) = 256 addresses. The largest allowed VPC block is /16, giving 2^(32-16) = 65,536 addresses, and the smallest allowed block is /28, giving 2^(32-28) = 16 addresses."
+  },
+  {
+    "id": 5,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "There is a requirement for a web-based application hosted on AWS to talk to Redshift tables. Which of the below options is best suited to have this in place from a security standpoint?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an IAM user and generate encryption keys for that user. Create a policy for Redshift read-only access. Embed the keys in the application."
+      },
+      {
+        "id": "B",
+        "text": "Create an HSM client certificate in Redshift and authenticate using this certificate."
+      },
+      {
+        "id": "C",
+        "text": "Create a Redshift read-only access policy in IAM and embed those credentials in the application."
+      },
+      {
+        "id": "D",
+        "text": "Use roles that allow a web identity federated user to assume a role that allows access to the Redshift table by providing temporary credentials."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "An IAM role provides least-privileged access to the AWS resource, web identity federation verifies the identity of the user, and STS issues temporary credentials so no long-term keys are embedded in the application."
+  },
+  {
+    "id": 6,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "An AWS customer is deploying an application composed of an AutoScaling group of EC2 instances. The customer's security policy requires that every outbound connection from these instances to any other service within the customer's VPC must be authenticated using a unique x.509 certificate that contains the specific instance ID. In addition, the x.509 certificates must be signed by the customer's Key Management Service in order to be trusted for authentication. Which of the following configurations will support these requirements?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Embed a certificate into the Amazon Machine Image that is used by the Auto Scaling group. Have the launched instances generate a certificate signature request with the instance's assigned instance-id to the Key Management Service for signature."
+      },
+      {
+        "id": "B",
+        "text": "Configure an IAM Role that grants access to an Amazon S3 object containing a signed certificate and configure the Auto Scaling group to launch instances with this role. Have the instances bootstrap and get the certificate from Amazon S3 upon first boot."
+      },
+      {
+        "id": "C",
+        "text": "Configure the Auto Scaling group to send an SNS notification of the launch of a new instance to the trusted key management service. Have the Key Management service generate a signed certificate and send it directly to the newly launched instance."
+      },
+      {
+        "id": "D",
+        "text": "Configure the launched instances to generate a new certificate upon first boot. Have the Key Management service poll the AutoScaling group for associated instances and send new instances a certificate signature that contains the specific instance-id."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Once an instance is launched in the Auto Scaling group, an SNS notification informs the trusted key management service, which generates a signed certificate containing the instance ID and sends it directly to the newly created instance. This workflow keeps the signing authority with the trusted KMS and produces a unique per-instance certificate. Embedding a certificate in the AMI would not be unique per instance, and polling is inefficient and unreliable."
+  },
+  {
+    "id": 7,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "You require the ability to analyze a customer's clickstream data on a website so they can do behavioral analysis. Your customer needs to know what sequence of pages and ads their customers clicked on. This data will be used in real time to modify the page layouts as customers click through the site to increase stickiness and advertising click-through. Which option meets the requirements for capturing and analyzing this data?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Write click events directly to Amazon Redshift and then analyze with SQL."
+      },
+      {
+        "id": "B",
+        "text": "Publish web clicks by session to an Amazon SQS queue and periodically drain these events to Amazon RDS and analyze with SQL."
+      },
+      {
+        "id": "C",
+        "text": "Log clicks in weblogs by URL and store it in Amazon S3, and then analyze with Elastic MapReduce."
+      },
+      {
+        "id": "D",
+        "text": "Push web clicks by session to Amazon Kinesis and analyze behavior using Kinesis workers."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "Whenever an application needs analysis on massive real-time data such as clickstream, Amazon Kinesis is the best option. Kinesis Streams collects and processes large streams of data records in real time, and Kinesis Client Library applications running on EC2 can process records to generate alerts and dynamically change pricing and advertising strategies."
+  },
+  {
+    "id": 8,
+    "type": "multiple",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "What should you consider when you try to implement an IDS infrastructure on AWS? (Choose 2)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Implement a reverse proxy layer in front of web servers and configure IDS/IPS agents on each reverse proxy server."
+      },
+      {
+        "id": "B",
+        "text": "Configure an instance in each subnet to switch its network interface card to promiscuous mode and analyze network traffic."
+      },
+      {
+        "id": "C",
+        "text": "Implement IDS/IPS agents on each instance running in the VPC."
+      },
+      {
+        "id": "D",
+        "text": "Implement Elastic Load Balancing with SSL listeners in front of the web applications."
+      }
+    ],
+    "answer": [
+      "A",
+      "C"
+    ],
+    "explanation": "There are a few well-known ways to set up IDS/IPS in a VPC: install IDS/IPS agents on the EC2 instances themselves so their activity can be monitored, or set up IDS/IPS on a proxy or NAT layer through which the network traffic flows. Promiscuous mode packet capture is not supported by AWS, and ELB with SSL listeners provides no intrusion detection or prevention capability."
+  },
+  {
+    "id": 9,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "An internal auditor has been assigned to view your company's internal AWS services. As an AWS administrator, what is the best solution to provide the auditor so that he can carry out the required auditing services?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an IAM user with full VPC access but set a condition that will not allow him to modify anything if the request is from any IP other than his own."
+      },
+      {
+        "id": "B",
+        "text": "Give the auditor root access to your AWS Infrastructure."
+      },
+      {
+        "id": "C",
+        "text": "Create an IAM user tied to an administrator role. Also, provide an additional level of security with MFA."
+      },
+      {
+        "id": "D",
+        "text": "Create an IAM Role with read only permissions to access the AWS VPC infrastructure and assign that role to the auditor."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "You should refrain from giving high-level permissions and grant only the required permissions. An IAM Role with read-only permissions gives the minimum access needed to audit the infrastructure, which satisfies the principle of least privilege."
+  },
+  {
+    "id": 10,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "An auditor has been assigned to view all the logs of your AWS environment. Which of the below options would be the best solution for the auditor to ensure that they can view the logs in the AWS environment?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an SNS notification that sends the CloudTrail log files to the auditor's email when CloudTrail delivers the logs to S3, but do not allow the auditor access to the AWS environment."
+      },
+      {
+        "id": "B",
+        "text": "Enable CloudTrail logging and create an IAM user who has read-only permissions to the required AWS resources, including the bucket containing the CloudTrail logs."
+      },
+      {
+        "id": "C",
+        "text": "The company should contact AWS as part of the shared responsibility model, and AWS will grant required access to the third-party auditor."
+      },
+      {
+        "id": "D",
+        "text": "Create a role that has the required permissions for the auditor."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "CloudTrail logging must be enabled to generate the record of all activities related to the AWS account and resources, and the auditor needs an identity with read-only permissions to those resources and to the S3 bucket where the trail is delivered. CloudTrail records API calls made through the console, SDKs, command line tools and other AWS services."
+  },
+  {
+    "id": 11,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "A benefits enrollment company is hosting a 3-tier web application running in a VPC on AWS which includes a NAT instance in the public web tier. There is enough provisioned capacity for the expected workload for the new fiscal year benefit enrollment period plus some extra overhead. Enrollment proceeds nicely for two days and then the web tier becomes unresponsive. Upon investigation using CloudWatch and other monitoring tools, it is discovered that there is an extremely large and unanticipated amount of inbound traffic coming from a set of 15 specific IP addresses over port 80 from a country where the benefits company has no customers. The web tier instances are so overloaded that benefit enrollment administrators cannot even SSH into them. Which activity would be useful in defending against this attack?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create 15 Security Group rules to block the attacking IP addresses over port 80."
+      },
+      {
+        "id": "B",
+        "text": "Change the EIP (Elastic IP Address) of the NAT instance in the web tier subnet and update the Main Route Table with the new EIP."
+      },
+      {
+        "id": "C",
+        "text": "Create a custom route table associated with the web tier and block the attacking IP addresses from the IGW (Internet Gateway)."
+      },
+      {
+        "id": "D",
+        "text": "Create an inbound NACL (Network Access Control List) associated with the web tier subnet with deny rules to block the attacking IP addresses."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "Network ACLs support explicit deny rules, so an inbound NACL on the web tier subnet can block the 15 known attacking IP addresses. Security groups only support allow rules and cannot deny specific sources, and route tables have no filtering capability."
+  },
+  {
+    "id": 12,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "Your company has recently extended its datacenter into a VPC on AWS. There is a requirement for on-premise users to manage AWS resources from the AWS console. You don't want to create IAM users for them again. Which of the below options will fit your needs for authentication?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use your on-premises SAML 2.0-compliant identity provider (IdP) to grant the members federated access to the AWS Management Console via the AWS single sign-on (SSO) endpoint."
+      },
+      {
+        "id": "B",
+        "text": "Use web Identity Federation to retrieve AWS temporary security credentials to enable your members to sign in to the AWS Management Console."
+      },
+      {
+        "id": "C",
+        "text": "Use OAuth 2.0 to retrieve temporary AWS security credentials to enable your members to sign in to the AWS Management Console."
+      },
+      {
+        "id": "D",
+        "text": "Use your on-premises SAML 2.0-compliant identity provider (IdP) to retrieve temporary security credentials to enable members to sign in to the AWS Management Console."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "SAML 2.0 federation gives on-premise users access to AWS resources using their existing corporate identities, and the AWS single sign-on endpoint authenticates them and issues console access tokens without any IAM users being created. Web identity federation is intended for public identity providers used by mobile and web application users."
+  },
+  {
+    "id": 13,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "There is a requirement for an application hosted on AWS to work with DynamoDB tables. Which of the following is the best option for the application hosted on an EC2 instance to work with the data in the DynamoDB table?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an IAM user and assign the IAM user to a group with proper permissions to communicate with DynamoDB."
+      },
+      {
+        "id": "B",
+        "text": "Create an IAM group that only gives access to your application and to the DynamoDB tables. Then, when writing to DynamoDB, simply include the unique device ID to associate the data with that specific user."
+      },
+      {
+        "id": "C",
+        "text": "Create an IAM role with the proper permission policy to communicate with the DynamoDB table. Use web identity federation, which assumes the IAM role using AssumeRoleWithWebIdentity when the user signs in, granting temporary security credentials using STS."
+      },
+      {
+        "id": "D",
+        "text": "Create an Active Directory server and an AD user for each mobile application user. When the user signs in to the AD sign-on, allow the AD server to federate using SAML 2.0 to IAM and assign a role to the AD user which is then assumed with AssumeRoleWithSAML."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "The recommended pattern creates an IAM role with the needed permissions to connect to DynamoDB, authenticates users with web identity federation, and lets the application access DynamoDB with temporary credentials issued by STS. Long-term IAM user credentials should not be embedded in applications."
+  },
+  {
+    "id": 14,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "Your firm has uploaded a large amount of aerial image data to S3. In the past, in your on-premises environment, you used a dedicated group of servers to process this data and used RabbitMQ, an open source messaging system, to get job information to the servers. Once processed, the data would go to tape and be shipped offsite. Your manager told you to stay with the current design and leverage AWS archival storage and messaging services to minimize cost. Which of the following options is correct?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Change the storage class of the S3 objects to Reduced Redundancy Storage. Set up Auto-Scaled workers triggered by queue depth that use spot instances to process messages in SQS. Once data is processed, change the storage class of the S3 objects to Glacier."
+      },
+      {
+        "id": "B",
+        "text": "Use SNS to pass job messages, use CloudWatch alarms to terminate spot worker instances when they become idle. Once data is processed, change the storage class of the S3 object to Glacier."
+      },
+      {
+        "id": "C",
+        "text": "Set up Auto-Scaled workers triggered by queue depth that use spot instances to process messages in SQS. Once data is processed, change the storage class of the S3 objects to Glacier."
+      },
+      {
+        "id": "D",
+        "text": "Use SQS for passing job messages. Use CloudWatch alarms to terminate EC2 worker instances when they become idle. Once data is processed, change the storage class of the S3 objects to Reduced Redundancy Storage."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "The requirement is to leverage AWS archival storage and messaging services, which points to Glacier and SQS. SQS replaces RabbitMQ for job distribution, Auto Scaling triggered by queue depth with spot instances replaces the dedicated servers cost-effectively, and Glacier replaces the offsite tape as the archival tier. RRS is not an archival storage class and SNS cannot replace a work queue."
+  },
+  {
+    "id": 15,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "There is a requirement to change the DHCP options set with a VPC. Which of the following options do you need to take to achieve this?",
+    "options": [
+      {
+        "id": "A",
+        "text": "You can modify the options from the console or the CLI."
+      },
+      {
+        "id": "B",
+        "text": "You need to stop all the instances in the VPC. You can then change the options, and they will take effect when you start the instances."
+      },
+      {
+        "id": "C",
+        "text": "You can modify the options from the CLI only, not from the console."
+      },
+      {
+        "id": "D",
+        "text": "You must create a new set of DHCP options and associate them with your VPC."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "Once you create a set of DHCP options you cannot modify them. To change the settings you create a new DHCP options set and associate it with your VPC, then optionally delete the old set."
+  },
+  {
+    "id": 16,
+    "type": "multiple",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "A corporate web application is deployed within an Amazon VPC and is connected to the corporate data center via an IPsec VPN. The application must authenticate against the on-premises LDAP server. After authentication, each logged-in user can only access an Amazon S3 keyspace specific to that user. Which two approaches can satisfy these objectives? (Choose 2)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Develop an identity broker that authenticates against LDAP and then calls IAM Security Token Service (STS) to get IAM federated user credentials. The application calls the identity broker to get IAM federated user credentials with access to the appropriate S3 bucket."
+      },
+      {
+        "id": "B",
+        "text": "Develop an identity broker that authenticates against IAM Security Token Service (STS) to assume an IAM role in order to get temporary AWS security credentials. The application calls the identity broker to get AWS temporary security credentials with access to the appropriate S3 bucket."
+      },
+      {
+        "id": "C",
+        "text": "The application authenticates against LDAP, the application then calls the AWS Identity and Access Management (IAM) Security service to log in to IAM using the LDAP credentials. The application can use the IAM temporary credentials to access the appropriate S3 bucket."
+      },
+      {
+        "id": "D",
+        "text": "The application authenticates against LDAP and retrieves the name of an IAM role associated with the user. The application then calls the IAM Security Token Service (STS) to assume that IAM role. The application can use the temporary credentials to access the appropriate S3 bucket."
+      }
+    ],
+    "answer": [
+      "A",
+      "D"
+    ],
+    "explanation": "The correct sequence is to authenticate the users against LDAP first, then obtain temporary credentials from STS, and finally access S3 with those credentials. Both the identity broker approach using STS federated user credentials and the approach where the application retrieves the IAM role name from LDAP and calls AssumeRole follow this sequence. Users cannot authenticate to STS first, and LDAP credentials cannot be used to log in to IAM."
+  },
+  {
+    "id": 17,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "An administrator in your company has created a VPC with an IPv4 CIDR block 10.0.0.0/24. Now they want to expand the VPC CIDR because there is a requirement to host more resources in that VPC. Which of the below options can be used to accomplish this?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a new VPC with a greater range and then connect the older VPC to the newer one."
+      },
+      {
+        "id": "B",
+        "text": "You cannot change a VPC's size. Currently, to change the size of a VPC you must terminate your existing VPC and create a new one."
+      },
+      {
+        "id": "C",
+        "text": "Expand your existing VPC by adding four (4) secondary IPv4 IP ranges (CIDRs) to your VPC."
+      },
+      {
+        "id": "D",
+        "text": "Delete all the subnets in the VPC and expand the VPC."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "In AWS, the address space of a VPC can be modified after its creation by associating additional secondary IPv4 CIDR blocks. You can add up to four secondary CIDRs to expand the VPC without recreating it or deleting subnets."
+  },
+  {
+    "id": 18,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "An AWS customer runs a public blogging website. The site users upload two million blog entries a month. The average blog entry size is 200 KB. The access rate to blog entries drops to negligible 6 months after publication and users rarely access a blog entry 1 year after publication. Additionally, blog entries have a high update rate during the first 3 months following publication; this drops to no updates after 6 months. The customer wants to use CloudFront to improve his users' load times. Which of the following recommendations would you make to the customer?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a CloudFront distribution with Restrict Viewer Access Forward Query string set to true and minimum TTL of 0."
+      },
+      {
+        "id": "B",
+        "text": "Duplicate entries into two different buckets and create two separate CloudFront distributions where S3 access is restricted only to the CloudFront identity."
+      },
+      {
+        "id": "C",
+        "text": "Create a CloudFront distribution with S3 access restricted only to the CloudFront identity and partition the blog entry's location in S3 according to the month it was uploaded to be used with CloudFront behaviors."
+      },
+      {
+        "id": "D",
+        "text": "Create a CloudFront distribution with a \"US/Europe\" price class for US/Europe users and a different CloudFront distribution with \"All Edge Locations\" for the remaining users."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Partitioning content in S3 by upload month lets you define different CloudFront cache behaviours per path, so recently published and frequently updated content can be cached appropriately while older content that is rarely accessed is not held in the cache. Restricting S3 access to the CloudFront identity ensures content is only served through CloudFront. A minimum TTL of 0 would force an origin fetch on every request even for content that has not changed in six months, and duplicating buckets or splitting by price class does not improve load times."
+  },
+  {
+    "id": 19,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "An enterprise wants to use a third-party SaaS application. The SaaS application needs to have access to issue several API commands to discover Amazon EC2 resources running within the enterprise's account. The enterprise has internal security policies that require any outside access to their environment must conform to the principles of least privilege and there must be controls in place to ensure that the credentials used by the SaaS vendor cannot be used by any other third party. Which of the following options would meet all of these conditions?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an IAM role for EC2 instances, assign it a policy which allows only the actions required for the SaaS application to work, provide the role ARN to the SaaS provider to be used when launching their application instances."
+      },
+      {
+        "id": "B",
+        "text": "Create an IAM user within the enterprise account, assign a user policy to the IAM user that allows only the actions required by the SaaS application. Create a new access and secret key for the user and provide these credentials to the SaaS provider."
+      },
+      {
+        "id": "C",
+        "text": "From the AWS Management Console, navigate to the Security Credentials page and retrieve the access and secret key for your account."
+      },
+      {
+        "id": "D",
+        "text": "Create an IAM role for cross-account access that allows the SaaS provider's account to assume the role and assign it a policy that allows only the actions required by the SaaS application."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "A cross-account role whose trust policy names only the SaaS provider's account ensures no other third party can assume it, and the attached policy limits the permissions to only the actions the SaaS application needs. Sharing access and secret keys violates least privilege and offers no control over who uses them, and an EC2 instance role applies to instances rather than to the external account."
+  },
+  {
+    "id": 20,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "As an AWS Administrator you are given the following requirements: MP4 files need to be streamed publicly on the company's new video website; the streaming needs to be done on-demand; the video files are archived and are expected to be streamed globally, primarily on mobile devices. Given the above requirements, which of the below options will fulfill them?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Provision streaming EC2 instances which use S3 as the source for the HLS on-demand transcoding on the servers. Provision a new CloudFront streaming distribution with the streaming server as the origin."
+      },
+      {
+        "id": "B",
+        "text": "Upload the MP4 files to S3 and create an Elastic Transcoder job that transcodes the MP4 source into HLS chunks. Store the HLS output in S3 and configure the Amazon CloudFront distribution with a streaming option to stream the video contents."
+      },
+      {
+        "id": "C",
+        "text": "Provision streaming EC2 instances which use S3 as the source for the HLS on-demand transcoding on the servers. Provision a new CloudFront download distribution with the WOWZA streaming server as the origin."
+      },
+      {
+        "id": "D",
+        "text": "Upload the MP4 files to S3 and create an Elastic Transcoder job that transcodes the MP4 source into HLS chunks. Store the HLS output in S3 and configure the Amazon CloudFront distribution with a download option to stream the video contents."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "Elastic Transcoder converts the media to HLS without managing transcoding infrastructure, S3 keeps costs low as the origin, and a CloudFront download distribution is the correct choice for HLS on-demand delivery to mobile devices. A streaming distribution uses RTMP and is intended for live or Adobe Flash streaming, not on-demand HLS."
+  },
+  {
+    "id": 21,
+    "type": "multiple",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "You are designing an SSL/TLS solution that requires HTTPS clients to be authenticated by the Web server using client certificate authentication. The solution must be resilient. Which of the following options would you consider for configuring the web server infrastructure? (Choose 2)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Configure ELB with HTTPS listeners, and place the Web servers behind it."
+      },
+      {
+        "id": "B",
+        "text": "Configure your web servers as the origins for a CloudFront distribution. Use custom SSL certificates on your CloudFront distribution."
+      },
+      {
+        "id": "C",
+        "text": "Configure ELB with TCP listeners on TCP/443 and place the Web servers behind it."
+      },
+      {
+        "id": "D",
+        "text": "Configure your Web servers with EIPs. Place the Web servers in a Route 53 Record Set and configure health checks against all Web servers."
+      }
+    ],
+    "answer": [
+      "C",
+      "D"
+    ],
+    "explanation": "Client certificate authentication requires that the TLS session terminate on the web server, not on the load balancer. A TCP listener on port 443 passes the encrypted connection through the ELB to the instances. Alternatively, placing the web servers with EIPs in a Route 53 record set with health checks routes clients directly to the servers while retaining resilience. An HTTPS listener would require a server certificate on the ELB and does not support client certificate authentication."
+  },
+  {
+    "id": 22,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "As a solutions architect professional you have been requested to ensure that monitoring can be carried out for EC2 instances which are located in different AWS regions. Which of the below options can be used to accomplish this?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create separate dashboards in every region."
+      },
+      {
+        "id": "B",
+        "text": "Register instances running on different regions to CloudWatch."
+      },
+      {
+        "id": "C",
+        "text": "Have one single dashboard to report metrics to CloudWatch from different regions."
+      },
+      {
+        "id": "D",
+        "text": "This is not possible."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "You can monitor AWS resources in multiple regions using a single CloudWatch cross-region dashboard. For example, a dashboard can show CPU utilization for an EC2 instance located in us-west-2 alongside billing metrics which are located in us-east-1. No explicit registration of instances is required."
+  },
+  {
+    "id": 23,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "As an AWS Administrator, you have set up an ELB within a couple of Availability Zones and have set up a web application on this setup. You notice that the traffic is not being evenly distributed across the AZs. What can be done to alleviate this issue?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Recreate the ELB again."
+      },
+      {
+        "id": "B",
+        "text": "Reduce the frequency of the health checks."
+      },
+      {
+        "id": "C",
+        "text": "Increase the amount of instances hosting the web application in each AZ."
+      },
+      {
+        "id": "D",
+        "text": "Disable sticky sessions on the ELB."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "Uneven distribution across instances typically occurs when either the instances not receiving traffic are unhealthy or the instances receiving traffic are holding onto sessions. Since no unhealthy instances are mentioned, the cause is most likely sticky sessions or session affinity, which should be disabled so the load balancer can distribute requests evenly."
+  },
+  {
+    "id": 24,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "Your company has an on-premises multi-tier PHP web application, which recently experienced downtime due to a large burst in web traffic due to a company announcement. Over the coming days, you are expecting similar announcements to drive similar unpredictable bursts, and are looking to find ways to quickly improve your infrastructure's ability to handle unexpected increases in traffic. The application currently consists of a 2-tier web tier which consists of a load balancer and several Linux Apache web servers as well as a database tier which hosts a Linux server hosting a MySQL database. Which of the below scenarios will provide full site functionality, while helping to improve the ability of your application in the short timeframe required?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Offload traffic from the on-premises environment by setting up a CloudFront distribution and configure CloudFront to cache objects from a custom origin. Choose to customize your object cache behaviour, and select a TTL that objects should exist in cache."
+      },
+      {
+        "id": "B",
+        "text": "Create an S3 bucket and configure it for website hosting. Migrate your DNS to Route 53 using zone import and leverage Route 53 DNS failover to failover to the S3 hosted website."
+      },
+      {
+        "id": "C",
+        "text": "Migrate to AWS. Use VM Import/Export to quickly convert an on-premises web server to an AMI, create an Auto Scaling group which uses the imported AMI to scale the web tier based on incoming traffic. Create an RDS read replica and set up replication between the RDS instance and on-premises MySQL server to migrate the database."
+      },
+      {
+        "id": "D",
+        "text": "Create an AMI which can be used to launch web servers in EC2. Create an Auto Scaling group which uses the AMIs to scale the web tier based on incoming traffic. Leverage Elastic Load Balancing to balance traffic between on-premises web servers and those hosted in AWS."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "Because the timeframe is short, the fastest improvement is to put CloudFront in front of the existing on-premise environment using the on-premise load balancer as a custom origin. CloudFront absorbs unpredictable bursts by serving from its edge caches, removing load from the on-premise web servers, with no migration required. ELB cannot balance between AWS and on-premise instances, S3 cannot host a dynamic PHP site, and a full migration takes too long."
+  },
+  {
+    "id": 25,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "As an AWS professional, you have been told to ensure that traffic to an application is evenly balanced. The application has multiple web servers that host the application. Choose an answer from the below options which will fulfill the above requirement.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Configure a CloudFront distribution and configure the origin to point to the private IP addresses of your web servers. Configure a Route 53 ALIAS record to your CloudFront distribution."
+      },
+      {
+        "id": "B",
+        "text": "Configure ELB with an EIP. Place all your web servers behind ELB. Configure a Route 53 A record that points to the EIP."
+      },
+      {
+        "id": "C",
+        "text": "Place all your web servers behind ELB. Configure a Route 53 ALIAS to point to the ELB DNS name."
+      },
+      {
+        "id": "D",
+        "text": "Configure a NAT instance in your VPC. Create a default route via the NAT instance and associate it with all subnets. Configure a DNS A record that points to the NAT instance public IP address."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "With the web servers behind an ELB, load is uniformly distributed and traffic is routed away from any server that becomes unresponsive, making the application highly available. Route 53 ALIAS records can point directly at the ELB endpoint. An ELB cannot be assigned an Elastic IP, and CloudFront cannot use private IP addresses as an origin."
+  },
+  {
+    "id": 26,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "You're building a mobile application game. The application needs permissions for each user to communicate and store data in DynamoDB tables. What is the best method for granting each mobile device that installs your application to access DynamoDB tables for storage when required?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an Active Directory server and an AD user for each mobile application user. When the user signs in to the AD sign-on, allow the AD server to federate using SAML 2.0 to IAM and assign a role to the AD user which is then assumed with AssumeRoleWithSAML."
+      },
+      {
+        "id": "B",
+        "text": "Create an IAM group that only gives access to your application and to the DynamoDB tables. Then, when writing to DynamoDB, simply include the unique device ID to associate the data with that specific user."
+      },
+      {
+        "id": "C",
+        "text": "During the install and game configuration process, have each user create an IAM credential and assign the IAM user to a group with proper permissions to communicate with DynamoDB."
+      },
+      {
+        "id": "D",
+        "text": "Create an IAM role with the proper permission policy to communicate with the DynamoDB table. Use web identity federation, which assumes the IAM role using AssumeRoleWithWebIdentity, when the user signs in, granting temporary security credentials using STS."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "The correct mobile pattern creates an IAM role with the needed DynamoDB permissions, authenticates users with web identity federation, and has the application access DynamoDB with temporary credentials issued by STS. Creating IAM users or AD accounts per mobile user does not scale to a large game user base."
+  },
+  {
+    "id": 27,
+    "type": "multiple",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "You have multiple EC2 instances in three availability zones (AZs), with a load balancer configured for your application. You observe that only one of those AZs is receiving all the traffic. How can you ensure that all the AZs receive balanced traffic? (Choose 2)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Enable cross zone load balancing."
+      },
+      {
+        "id": "B",
+        "text": "Disable sticky sessions."
+      },
+      {
+        "id": "C",
+        "text": "Reduce the frequency of the health checks."
+      },
+      {
+        "id": "D",
+        "text": "Amazon recommends using two availability zones behind an ELB."
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "explanation": "Cross-zone load balancing must be enabled on the ELB so that requests are distributed evenly across the registered instances in all Availability Zones rather than evenly across zones. Sticky sessions bind users to particular instances and prevent even distribution, so they should be disabled."
+  },
+  {
+    "id": 28,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "You have just developed a new mobile application that handles analytics workloads on large-scale datasets that are stored on Amazon Redshift. Consequently, the application needs to access Amazon Redshift tables. Which of the following methods would be the best, both practically and security-wise, to access the tables?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an HSM client certificate in Redshift and authenticate using this certificate."
+      },
+      {
+        "id": "B",
+        "text": "Create a Redshift read-only access policy in IAM and embed those credentials in the application."
+      },
+      {
+        "id": "C",
+        "text": "Use roles that allow a web identity federated user to assume a role that allows access to the Redshift table by providing temporary credentials."
+      },
+      {
+        "id": "D",
+        "text": "Create an IAM user and generate encryption keys for that user. Create a policy for Redshift read-only access. Embed the keys in the application."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "An IAM role gives least-privileged access to the AWS resource, web identity federation verifies the identity of the user, and the user is given short-lived temporary credentials. Embedding any long-term credentials in a mobile application is insecure."
+  },
+  {
+    "id": 29,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "Your final task to complete a cloud migration for a customer is to set up an Active Directory service so that he can use Microsoft Active Directory with the newly-deployed AWS services. The customer tells you he has 1,000 users on his AD service and wants to be able to use his existing on-premises directory with AWS services. Which of the following options would be the most appropriate to set up the AWS Directory Service for your customer?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Simple AD"
+      },
+      {
+        "id": "B",
+        "text": "Any of these options are acceptable as long as they are configured correctly for 1,000 customers."
+      },
+      {
+        "id": "C",
+        "text": "AWS Directory Service for Microsoft Active Directory (Enterprise Edition)"
+      },
+      {
+        "id": "D",
+        "text": "AD Connector"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "AD Connector is a directory proxy service that connects your existing on-premises Microsoft Active Directory to the AWS cloud without caching directory information in the cloud. Simple AD is a standalone directory and AWS Managed Microsoft AD is hosted in AWS; neither connects an existing on-premises directory."
+  },
+  {
+    "id": 30,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "You have created a temporary application that accepts image uploads, stores them in S3, and records information about the image in RDS. After accepting images for the duration required, it's time to delete the CloudFormation template. However, your manager has informed you that for archival reasons the RDS data needs to be stored and the S3 bucket with the images needs to remain. Your manager has also instructed you to ensure that the application can be restored by a CloudFormation template and run next year during the same period. Knowing that when a CloudFormation template is deleted it will remove the resources it created, what is the best method to achieve the desired goals?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Set the DeletionPolicy on the S3 resource to snapshot and the DeletionPolicy on the RDS resource to snapshot."
+      },
+      {
+        "id": "B",
+        "text": "For both the RDS and S3 resource types on the CloudFormation template, set the DeletionPolicy to Retain."
+      },
+      {
+        "id": "C",
+        "text": "Set the DeletionPolicy on the S3 resource declaration in the CloudFormation template to Retain, and set the RDS resource declaration DeletionPolicy to Snapshot."
+      },
+      {
+        "id": "D",
+        "text": "Enable S3 bucket replication on the source bucket to a destination bucket to maintain a copy of all the S3 objects, and set the deletion policy for the RDS instance to snapshot."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "DeletionPolicy options are Retain (the resource remains after stack deletion), Snapshot (a snapshot is taken before deletion, available only for resources that support snapshots), and Delete (the default). S3 buckets do not support snapshots, so Retain is required to keep the bucket and images, while Snapshot preserves the RDS data for restoration next year."
+  },
+  {
+    "id": 31,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "You work for a large university that has grown its AWS infrastructure significantly over the last few years, and consequently the IT department has hired four new AWS System Administrators who will each manage a different Availability Zone in your infrastructure. You have 4 AZs. You have been given the task of providing access to the new staff, to be able to launch and manage instances in their zone only, and they should not be able to modify any of the other administrators' zones. Which of the following options is the best solution to accomplish your task?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a VPC with four subnets, and allow access to each subnet for the individual IAM user."
+      },
+      {
+        "id": "B",
+        "text": "Create four IAM users and four VPCs, allow each IAM user to have access to separate VPCs."
+      },
+      {
+        "id": "C",
+        "text": "Create an IAM user, and allow them permission to launch an instance of a different size only."
+      },
+      {
+        "id": "D",
+        "text": "Create four AWS accounts, and give each user access to a separate account."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "A single VPC with one subnet per Availability Zone, combined with IAM policies that restrict each administrator to resources in their own subnet, gives each administrator control of their zone without allowing them to modify the others. Separate VPCs or accounts add unnecessary management overhead for this requirement."
+  },
+  {
+    "id": 32,
+    "type": "multiple",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "In an attempt to cut costs, your accounts manager tells you that he thinks that if the company starts to use consolidated billing it will save some money. He also wants the billing set up in such a way that it is relatively simple and gives insights into the environment regarding utilization of resources. Which of the following consolidated billing setups would satisfy your account manager's needs? (Choose 2)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use one master account and no linked accounts."
+      },
+      {
+        "id": "B",
+        "text": "Use one account but multiple VPCs to break out environments."
+      },
+      {
+        "id": "C",
+        "text": "Use one master account and many linked accounts."
+      },
+      {
+        "id": "D",
+        "text": "Use roles for IAM account simplicity across multiple AWS linked accounts."
+      }
+    ],
+    "answer": [
+      "B",
+      "C"
+    ],
+    "explanation": "Linked accounts under a master payer account allow consolidated billing, giving a combined view of AWS charges incurred by all accounts as well as a cost report per account. Using separate VPCs to segregate environments or departments lets the account owner see the cost of resources within each logical grouping. A master account with no linked accounts provides no consolidation benefit."
+  },
+  {
+    "id": 33,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "A company is managing a customer's application which currently includes a three-tier application configuration. The first tier manages the web instances and is configured in a public subnet. The second layer is the application layer. As part of the application code, the application instances upload large amounts of data to Amazon S3. Currently, the private subnets that the application instances are running on have a route to a single NAT t2.micro instance. The application, during peak loads, becomes slow and customer uploads from the application to S3 are not completing and are taking a long time. Which steps might you take to solve the issue using the most cost-efficient method?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Launch an additional NAT instance in another subnet and replace one of the routes in a subnet to the new instance."
+      },
+      {
+        "id": "B",
+        "text": "Increase the NAT instance size; network throughput increases with an increase in instance size."
+      },
+      {
+        "id": "C",
+        "text": "Create a VPC S3 endpoint."
+      },
+      {
+        "id": "D",
+        "text": "Configure Auto Scaling for the NAT instance in order to handle the increase in load."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "With an S3 VPC endpoint, instances in the private subnets can connect to S3 privately and securely without traversing the NAT instance. No additional infrastructure such as a larger NAT instance or gateway needs to be provisioned, so the bottleneck is removed at the lowest cost."
+  },
+  {
+    "id": 34,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "You are excited that your company has just purchased a Direct Connect link from AWS. Your company is based in Sydney, Australia, so the Direct Connect link to AWS goes into the Asia Pacific (Sydney) region. Your first job after the new link purchase is to create a multi-region design across the Asia Pacific (Sydney) region and the US West (N. California) region. You soon discover that all the infrastructure you deploy in the Asia Pacific (Sydney) region is extremely fast and reliable, however the infrastructure you deploy in the US West (N. California) region is much slower and unreliable. Which of the following would be the best option to make the US West (N. California) region a more reliable connection?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a private virtual interface to the Asia Pacific region's public end points and use VPN over the public virtual interface to protect the data."
+      },
+      {
+        "id": "B",
+        "text": "Create a private virtual interface to the US West region's public end points and use VPN over the public virtual interface to protect the data."
+      },
+      {
+        "id": "C",
+        "text": "Create a public virtual interface to the US West region's public end points and use VPN over the public virtual interface to protect the data."
+      },
+      {
+        "id": "D",
+        "text": "Create a public virtual interface to the Asia Pacific region's public end points and use VPN over the public virtual interface to protect the data."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "A public virtual interface on the Direct Connect connection lets you reach AWS public endpoints in any public AWS region, including US West, over the dedicated link. Layering a VPN over that public virtual interface protects the data in transit. Private virtual interfaces connect to a VPC and cannot be used to reach public endpoints."
+  },
+  {
+    "id": 35,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A company has a library of on-demand MP4 files needing to be streamed publicly on their new video webinar website. The video files are archived and are expected to be streamed globally, primarily on mobile devices. Given the requirements, what would be the best architecture for the company to design?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Provision streaming EC2 instances which use S3 as the source for the HLS on-demand transcoding on the servers. Provision a new CloudFront streaming distribution with the streaming server as the origin."
+      },
+      {
+        "id": "B",
+        "text": "Upload the MP4 files to S3 and create an Elastic Transcoder job that transcodes the MP4 source into HLS chunks. Store the HLS output in S3 and configure the Amazon CloudFront distribution with a streaming option to stream the video contents."
+      },
+      {
+        "id": "C",
+        "text": "Upload the MP4 files to S3 and create an Elastic Transcoder job that transcodes the MP4 source into HLS chunks. Store the HLS output in S3 and create a media streaming CloudFront distribution with download option to serve the HLS files to end users."
+      },
+      {
+        "id": "D",
+        "text": "Provision streaming EC2 instances which use S3 as the source for the HLS on-demand transcoding on the servers. Provision a new CloudFront download distribution with the WOWZA streaming server as the origin."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Elastic Transcoder converts the videos into HLS without managing transcoding servers, S3 as origin keeps the cost low, and a CloudFront distribution with the download option is the correct configuration for delivering HLS on-demand content to mobile devices globally."
+  },
+  {
+    "id": 36,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "A company has a Redshift cluster for petabyte-scale data warehousing. The data within the cluster is easily reproducible from additional data stored on Amazon S3. The company wants to reduce the overall total cost of running this Redshift cluster. Which scenario would best meet the needs of the running cluster, while still reducing total overall ownership cost of the cluster?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Enable automated snapshots but set the retention period to a lower number to reduce storage costs."
+      },
+      {
+        "id": "B",
+        "text": "Instead of implementing automatic daily backups, write a CLI script that creates manual snapshots every few days. Copy the manual snapshot to a secondary AWS region for disaster recovery situations."
+      },
+      {
+        "id": "C",
+        "text": "Disable automated and manual snapshots on the cluster."
+      },
+      {
+        "id": "D",
+        "text": "Implement daily backups, but do not enable multi-region copy to save data transfer costs."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Because the data in the cluster is easily reproducible from the source data already held in S3, snapshots provide no additional recovery value. Disabling both automated and manual snapshots removes the snapshot storage cost entirely while the cluster can still be rebuilt from S3."
+  },
+  {
+    "id": 37,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "While implementing cost-cutting measures in your organization, you have been told that you need to migrate some of your existing resources to another region. The first task you have been given is to copy all of your Amazon Machine Images from Asia Pacific (Sydney) to US West (Oregon). One of the things that you are unsure of is how the PEM keys on your Amazon Machine Images need to be migrated. Which of the following best describes how your PEM keys are affected when AMIs are migrated between regions?",
+    "options": [
+      {
+        "id": "A",
+        "text": "The PEM keys will also be copied across so you don't need to do anything except launch the new instance."
+      },
+      {
+        "id": "B",
+        "text": "The PEM keys will also be copied across; however, they will only work for users who have already accessed them in the old region. If you need new users to access the instances then new keys will need to be generated."
+      },
+      {
+        "id": "C",
+        "text": "The PEM keys will not be copied to the new region but the authorization keys will still be in the operating system of the AMI. You need to ensure that when the new AMI is launched it is launched with the same PEM key name."
+      },
+      {
+        "id": "D",
+        "text": "Neither the PEM key nor the authorized key is copied and consequently you need to create new keys when you launch the new instance."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "The authorized key is stored inside the operating system of the AMI and is therefore copied across with the image. However, key pairs are region-scoped resources and are not copied, so the PEM key must be imported explicitly into the destination region using the same key pair name before launching."
+  },
+  {
+    "id": 38,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "You are building a large-scale confidential documentation web server on AWS, and all of the documentation for it will be stored on S3. One of the requirements is that it cannot be publicly accessible from S3 directly, and you will need to use CloudFront to accomplish this. Which of the methods listed below would satisfy the requirements as outlined?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an Identity and Access Management (IAM) user for CloudFront and grant access to the objects in your S3 bucket to that IAM user."
+      },
+      {
+        "id": "B",
+        "text": "Create individual policies for each bucket that stores documents and in that policy grant access to only CloudFront."
+      },
+      {
+        "id": "C",
+        "text": "Create an S3 bucket policy that lists the CloudFront distribution ID as the Principal and the target bucket as the Amazon Resource Name (ARN)."
+      },
+      {
+        "id": "D",
+        "text": "Create an Origin Access Identity (OAI) for CloudFront and grant access to the objects in your S3 bucket to that OAI."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "An Origin Access Identity is a special CloudFront user that is granted read access to the S3 objects through the bucket policy. This gives CloudFront exclusive access to the bucket and prevents other users from accessing the content directly via S3 URLs."
+  },
+  {
+    "id": 39,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "There are 2 companies that have their own AWS accounts. How can they connect to a central VPC for identity validation? How would you best design this solution?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an OpenVPN instance in the central VPC and establish an IPSec tunnel between VPCs."
+      },
+      {
+        "id": "B",
+        "text": "Migrate each VPC's resources to the central VPC using migration tools such as Import/Export, Snapshot, AMI Copy, and S3 sharing."
+      },
+      {
+        "id": "C",
+        "text": "Create a VPC peering connection with the central VPC."
+      },
+      {
+        "id": "D",
+        "text": "Create a Direct Connect connection from each VPC endpoint to the central VPC."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "VPC peering allows the resources in peer VPCs to communicate with each other using private IP addresses, so in this case they can reach the central VPC to validate identities. Peering connections can be created between VPCs in different AWS accounts, and across regions using inter-region VPC peering."
+  },
+  {
+    "id": 40,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "An auditor needs access to logs that record all the API events on AWS. The auditor only needs read-only access to the log files and does not need access to each AWS account. The company has multiple AWS accounts, and the auditor needs access to all the logs for all the accounts. What is the best way to configure access for the auditor to view event logs from all accounts?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Configure the CloudTrail service in each AWS account and have the logs delivered to a single AWS bucket in the primary account and grant the auditor access to that single bucket in the primary account."
+      },
+      {
+        "id": "B",
+        "text": "Configure the CloudTrail service in each AWS account and enable consolidated logging inside of CloudTrail."
+      },
+      {
+        "id": "C",
+        "text": "Configure the CloudTrail service in each AWS account, and have the logs delivered to an AWS bucket on each account, while granting the auditor permissions to the bucket via roles in the secondary accounts and a single primary IAM account that can assume a read-only role in the secondary AWS accounts."
+      },
+      {
+        "id": "D",
+        "text": "Configure the CloudTrail service in the primary AWS account and configure consolidated billing for all the secondary accounts. Then grant the auditor access to the S3 bucket that receives the CloudTrail log files."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "CloudTrail in each account can be configured to deliver its log files to a single central S3 bucket in the primary account. The auditor then needs read-only access to just that one bucket, with no access to any of the individual AWS accounts. Consolidated billing aggregates charges, not logs."
+  },
+  {
+    "id": 41,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "The company you work for has a huge amount of infrastructure built on AWS. However, there have been some concerns recently about the security of this infrastructure, and an external auditor has been given the task of running a thorough check of all of your company's AWS assets. The auditor will be in the USA while your company's infrastructure resides in the Asia Pacific (Sydney) region on AWS. Initially, he needs to check all of your VPC assets, specifically security groups and NACLs. You have been assigned the task of providing the auditor with a login to be able to do this. Which of the following would be the best and most secure solution to provide the auditor with so he can begin his initial investigations?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Give him root access to your AWS Infrastructure, because he is an auditor he will need access to every service."
+      },
+      {
+        "id": "B",
+        "text": "Create an IAM user with full VPC access but set a condition that will not allow him to modify anything if the request is from any IP other than his own."
+      },
+      {
+        "id": "C",
+        "text": "Create an IAM user tied to an administrator role. Also provide an additional level of security with MFA."
+      },
+      {
+        "id": "D",
+        "text": "Create an IAM Role with read only permissions to access the AWS VPC infrastructure and assign that role to the auditor."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "An IAM Role with read-only permissions gives just the minimum required access to audit the VPC infrastructure, including security groups and NACLs. Root access, administrator roles and IP-conditioned full access all grant far more privilege than the audit task requires."
+  },
+  {
+    "id": 42,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A company runs their current application entirely on-premise. However, they are expecting a big boost in traffic and need to figure out a way to decrease the load to handle the scale. Unfortunately, they cannot migrate their application to AWS in the period required. What could they do with their current on-premise application to help offload some of the traffic and scale to meet the demand expected in 24 hours in a cost-effective way?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a CloudFront CDN, enable query string forwarding and a TTL of zero on the origin. Offload the DNS to AWS to handle CloudFront CDN traffic but use on-premise load balancers as the origin."
+      },
+      {
+        "id": "B",
+        "text": "Deploy OpsWorks on-premise to manage the instances in order to configure on-premise auto scaling to meet the demand."
+      },
+      {
+        "id": "C",
+        "text": "Duplicate half your web infrastructure on AWS, offload the DNS to Route 53 and configure weighted based DNS routing to send half the traffic to AWS."
+      },
+      {
+        "id": "D",
+        "text": "Upload all static files to Amazon S3 and create a CloudFront distribution serving those static files."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "CloudFront is an AWS managed, highly available and scalable service that can use the on-premises load balancer as a custom origin, so it can be put in place within 24 hours without migrating the application. Setting the TTL to zero ensures dynamic content is delivered from the origin as soon as it changes, while the edge network absorbs the traffic burst."
+  },
+  {
+    "id": 43,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "You have two different groups to analyze data of a petabyte-scale data warehouse using Redshift. Each query issued by the first group takes approximately 1-2 hours to analyze the data while the second group's queries only take between 5-10 minutes. You don't want the second group's queries to wait until the first group's queries are finished. Which of the following will be the best and cheapest solution to solve this dilemma?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a read replica of Redshift and run the second team's queries on the read replica."
+      },
+      {
+        "id": "B",
+        "text": "Create two separate workload management groups and assign them to the respective groups."
+      },
+      {
+        "id": "C",
+        "text": "Start another Redshift cluster from a snapshot for the second team if the current Redshift cluster is busy processing long queries."
+      },
+      {
+        "id": "D",
+        "text": "Pause the long queries when necessary and resume them when no query is running."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Redshift Workload Management lets you define separate query queues with their own concurrency and memory allocation, so the short queries from the second group run in their own queue and are not stuck behind the long-running queries. This requires no additional cluster and therefore no additional cost."
+  },
+  {
+    "id": 44,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "You have created a mobile application that serves data stored in an Amazon DynamoDB table. Your primary concern is scalability of the application and being able to handle millions of visitors and data requests. As part of your application, the customer needs access to the data located in the DynamoDB table. Given the application requirements, what would be the best method to design the application?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Configure an on-premise AD server utilizing SAML 2.0 to manage the application users inside the on-premise AD server and write code that authenticates against the LDAP servers. Grant a role assigned to the STS token to allow the end-user to access the required data in the DynamoDB table."
+      },
+      {
+        "id": "B",
+        "text": "Let the users sign into the app using a third party identity provider such as Amazon, Google, or Facebook. Use the AssumeRole API call to assume the role containing the proper permissions to communicate with the DynamoDB table. Write the application in JavaScript and host the JavaScript interface in an S3 bucket."
+      },
+      {
+        "id": "C",
+        "text": "Let the users sign into the app using a third party identity provider such as Amazon, Google, or Facebook. Use the AssumeRoleWithWebIdentity API call to assume the role containing the proper permissions to communicate with the DynamoDB table. Write the application in a server-side language using the AWS SDK and host the application in an S3 bucket for scalability."
+      },
+      {
+        "id": "D",
+        "text": "Let the users sign in to the app using a third party identity provider such as Amazon, Google, or Facebook. Use the AssumeRoleWithWebIdentity API call to assume the role containing the proper permissions to communicate with the DynamoDB table. Write the application in JavaScript and host the JavaScript interface in an S3 bucket."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "AssumeRoleWithWebIdentity returns temporary security credentials for users authenticated with a web identity provider such as Amazon Cognito, Login with Amazon, Facebook, Google, or any OpenID Connect-compatible provider. A static JavaScript front end hosted in S3 scales to millions of users; server-side code cannot be hosted in an S3 bucket."
+  },
+  {
+    "id": 45,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "A company is running a data application on-premise that requires large amounts of data to be transferred to a VPC containing EC2 instances in an AWS region. The company is concerned about the total overall transfer costs required for this application. Given that the data transferred to AWS is new data every time, what suggestions could you make to the company to help reduce the overall cost of data transfer to AWS?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Suggest using AWS Import/Export to transfer the TBs of data while synchronizing the new data as it arrives."
+      },
+      {
+        "id": "B",
+        "text": "Suggest leaving the data required for the application on-premise and use a VPN to query the on-premise database data from EC2 when required."
+      },
+      {
+        "id": "C",
+        "text": "Suggest provisioning a Direct Connect connection between the on-premise data center and the AWS region."
+      },
+      {
+        "id": "D",
+        "text": "Provision a VPN connection between the on-premise data center and the AWS region using the VPN section of a VPC."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Because Direct Connect is a dedicated connection from the on-premises data center to AWS, it removes the unpredictable nature of the internet from the equation, and its high bandwidth transfers large amounts of data far more quickly than a VPN connection. Its lower per-GB data transfer rate reduces the overall transfer cost for a workload that continually sends new data."
+  },
+  {
+    "id": 46,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "You have a legacy application running that uses an m4.large instance size and cannot scale with Auto Scaling, but only has peak performance 5% of the time. This is a huge waste of resources and money so your Senior Technical Manager has set you the task of trying to reduce costs while still keeping the legacy application running as it should. Which of the following will best accomplish the task your manager has assigned you?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use two t2.nano instances that have Single Root I/O Virtualization."
+      },
+      {
+        "id": "B",
+        "text": "Use a c4.large instance with enhanced networking."
+      },
+      {
+        "id": "C",
+        "text": "Use a T2 burstable performance instance."
+      },
+      {
+        "id": "D",
+        "text": "Use a t2.nano instance and add spot instances when they are required."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "T2 instances provide a baseline level of CPU performance with the ability to burst above the baseline, accumulating CPU credits when idle. AWS documentation recommends T2 instance types for workloads that do not use the CPU often but occasionally need more performance, which exactly matches an application that peaks only 5% of the time."
+  },
+  {
+    "id": 47,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "Your supervisor gave you a brief of a client who needs a web application set up on AWS. The most important requirement is that MySQL must be used as the database, and this database must not be hosted in the public cloud, rather at the client's data center due to security risks. Which of the following solutions would be the best to assure that the client's requirements are met?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use the public subnet for the application server and use RDS with a storage gateway to access and synchronize the data securely from the local data center."
+      },
+      {
+        "id": "B",
+        "text": "Build the application server on a public subnet and build the database in a private subnet with a secure SSH connection to the private subnet from the client's data center."
+      },
+      {
+        "id": "C",
+        "text": "Build the application server on a public subnet and the database on a private subnet with a NAT instance between them."
+      },
+      {
+        "id": "D",
+        "text": "Build the application server on a public subnet and the database at the client's data center. Connect them with a VPN connection which uses IPsec."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "The requirement is explicit that the database must not reside in the public cloud. Only this option keeps the MySQL database at the client's data center while the application servers run in a public subnet on AWS, with the two connected securely by an IPsec VPN."
+  },
+  {
+    "id": 48,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "You have been tasked with creating file level restore on your EC2 instances. You already have access to all the frequent snapshots of the EBS volume. You need to be able to restore an individual lost file on an EC2 instance within 15 minutes of a reported loss of information. The acceptable RPO is several hours. How would you perform this on an EC2 instance?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Enable auto snapshots on Amazon EC2 and restore the EC2 instance upon single file failure."
+      },
+      {
+        "id": "B",
+        "text": "Turn off the frequent snapshots of EBS volumes. Create a volume from an EBS snapshot, attach the EBS volume to the EC2 instance at a different mount location, cut over the application to look at the new backup volume and remove the old volume."
+      },
+      {
+        "id": "C",
+        "text": "Create a volume from an EBS snapshot, attach the EBS volume to the EC2 instance at a different mount location, browse the file system to the file that needs to be restored on the new mount, and copy from the new volume to the original volume."
+      },
+      {
+        "id": "D",
+        "text": "Set up a cron that runs aws s3 cp on the files and copy the files from the EBS volume to S3."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "This mounts the EBS snapshot containing the file as a separate volume and copies just the required file back to the already attached volume, so the live volume stays up to date and the application is never cut over. Once the file is copied, the temporary volume can be removed. Restoring the whole instance is far slower than a 15-minute RTO for a single file."
+  },
+  {
+    "id": 49,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "After having created a VPC with CIDR block 10.0.0.0/24 and launching it as a working network, a few weeks later you decide that it is too small and you want to make it larger. Which of the below options would accomplish this successfully?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Expand your existing VPC by adding four (4) secondary IPv4 IP ranges (CIDRs) to your VPC."
+      },
+      {
+        "id": "B",
+        "text": "Re-allocate the VPC with CIDR 10.0.0.0/16."
+      },
+      {
+        "id": "C",
+        "text": "You cannot change a VPC's size. To change the size of a VPC you must terminate your existing VPC and create a new one."
+      },
+      {
+        "id": "D",
+        "text": "Peer with another VPC with CIDR 10.0.0.0/28 to this VPC. This will ensure that the IPs do not overlap."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "You can expand an existing VPC by associating up to four secondary IPv4 CIDR blocks with it, without terminating or recreating the VPC. The primary CIDR block itself cannot be modified, and peering does not extend a VPC's address space."
+  },
+  {
+    "id": 50,
+    "type": "multiple",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "An employee keeps terminating EC2 instances on the production environment. You've determined the best way to ensure this doesn't happen is to add an extra layer of defense against terminating the instances. What is the best method to ensure that the employee does not terminate the production instances? (Choose 2)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Tag the instance with a production-identifying tag and add resource-level permissions to the employee user with an explicit deny on the terminate API call to instances with the production tag."
+      },
+      {
+        "id": "B",
+        "text": "Modify the IAM policy on the user to require MFA before deleting EC2 instances and disable MFA access to the employee."
+      },
+      {
+        "id": "C",
+        "text": "Tag the instance with a production-identifying tag and modify the employee's group to allow only start, stop, and reboot API calls and not the terminate instance call."
+      },
+      {
+        "id": "D",
+        "text": "Modify the IAM policy on the user to require MFA before deleting EC2 instances."
+      }
+    ],
+    "answer": [
+      "A",
+      "C"
+    ],
+    "explanation": "To stop users from manipulating AWS resources you can either create resource-level permissions with an explicit deny and apply them to those users, or create a group policy that only allows the permitted actions and apply it to the group containing the employees. Both options depend on identifying the production instances with a tag so the policy condition can match them."
+  }
+]
