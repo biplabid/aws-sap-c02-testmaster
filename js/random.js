@@ -1,7 +1,7 @@
 window.TestMaster = window.TestMaster || {};
 
 window.TestMaster.random = (function createRandomModule(viewHelpers, questionEngine, storage) {
-  function initRandomShell(appState) {
+  async function initRandomShell(appState) {
     const elements = getElements();
 
     if (!elements.intro || !elements.panel || !elements.form) {
@@ -16,7 +16,7 @@ window.TestMaster.random = (function createRandomModule(viewHelpers, questionEng
       doneIds: new Set()
     };
 
-    populateSetSelector(elements);
+    await populateSetSelector(elements);
     updateDoneStatus(elements);
 
     elements.start.addEventListener("click", () => {
@@ -96,7 +96,7 @@ window.TestMaster.random = (function createRandomModule(viewHelpers, questionEng
   }
 
   function populateSetSelector(elements) {
-    viewHelpers.populateSetSelector(elements.setSelector);
+    return viewHelpers.populateSetSelector(elements.setSelector);
   }
 
   function updateDoneStatus(elements) {
@@ -126,12 +126,12 @@ window.TestMaster.random = (function createRandomModule(viewHelpers, questionEng
     }
   }
 
-  function resetToIntro(appState, elements) {
+  async function resetToIntro(appState, elements) {
     elements.intro.classList.remove("hidden");
     elements.panel.classList.add("hidden");
     elements.feedback.classList.add("hidden");
     elements.feedback.innerHTML = "";
-    populateSetSelector(elements);
+    await populateSetSelector(elements);
     updateDoneStatus(elements);
   }
 

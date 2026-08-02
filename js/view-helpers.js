@@ -103,51 +103,74 @@ window.TestMaster.viewHelpers = (function createViewHelpersModule() {
     }
   }
 
+  // Bundled sets are discovered by probing data/set1.json, data/set2.json,
+  // ... in order and stopping at the first one that doesn't exist. Dropping
+  // a new data/setN.json file into the project (continuing the sequence)
+  // is enough to make it show up here — no code change needed.
+  let builtInSetsPromise = null;
+
+  async function fileExists(path) {
+    try {
+      const response = await fetch(path, { method: "HEAD" });
+      return response.ok;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  async function discoverBuiltInSets() {
+    const sets = [];
+    let index = 1;
+
+    while (await fileExists(`data/set${index}.json`)) {
+      sets.push({
+        key: `set${index}`,
+        name: index === 1 ? "Official AWS Practice Questions" : `Practice Set ${index}`
+      });
+      index += 1;
+    }
+
+    return sets;
+  }
+
   /**
    * The question banks bundled in data/ and shipped with the app, shown to
-   * every user regardless of upload history.
+   * every user regardless of upload history. Discovered once per page load
+   * and cached.
    */
-  const BUILT_IN_SETS = [
-    { key: "set1", name: "Official AWS Practice Questions" },
-    { key: "set2", name: "Practice Set 2" },
-    { key: "set3", name: "Practice Set 3" },
-    { key: "set4", name: "Practice Set 4" },
-    { key: "set5", name: "Practice Set 5" },
-    { key: "set6", name: "Practice Set 6" },
-    { key: "set7", name: "Practice Set 7" },
-    { key: "set8", name: "Practice Set 8" },
-    { key: "set9", name: "Practice Set 9" },
-    { key: "set10", name: "Practice Set 10" },
-    { key: "set11", name: "Practice Set 11" },
-    { key: "set12", name: "Practice Set 12" },
-    { key: "set13", name: "Practice Set 13" }
-  ];
+  function getBuiltInSets() {
+    if (!builtInSetsPromise) {
+      builtInSetsPromise = discoverBuiltInSets();
+    }
+    return builtInSetsPromise;
+  }
 
   /**
    * Lists the bundled question banks plus any sets that have been written
    * to data/ via the Upload feature's File System Access flow.
    */
-  function getAvailableQuestionSets() {
+  async function getAvailableQuestionSets() {
+    const builtInSets = await getBuiltInSets();
     const fileSets = window.TestMaster.fileSets;
     const knownFiles = fileSets ? fileSets.getKnownSets() : [];
-    const builtInKeys = new Set(BUILT_IN_SETS.map((set) => set.key));
+    const builtInKeys = new Set(builtInSets.map((set) => set.key));
 
     const uploadedSets = knownFiles
       .map((fileName) => fileName.replace(/\.json$/i, ""))
       .filter((key) => !builtInKeys.has(key))
       .map((key) => ({ key, name: `Uploaded Set (${key}.json)` }));
 
-    return [...BUILT_IN_SETS, ...uploadedSets];
+    return [...builtInSets, ...uploadedSets];
   }
 
   /**
    * Fills a <select> element with the available question sets, preserving
    * the previously selected value when it's still a valid option.
    */
-  function populateSetSelector(selectElement) {
+  async function populateSetSelector(selectElement) {
     if (!selectElement) return;
 
-    const sets = getAvailableQuestionSets();
+    const sets = await getAvailableQuestionSets();
     const previousValue = selectElement.value;
 
     clearElement(selectElement);
