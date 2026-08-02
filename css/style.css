@@ -14,6 +14,7 @@
   --text-muted: #5f6b7a;
   --shadow: 0 14px 34px rgba(15, 23, 42, 0.12);
   --radius: 8px;
+  --page-menu-height: 68px;
 }
 
 * {
@@ -63,6 +64,14 @@ input {
   color: #ffffff;
   background: var(--aws-squid);
   border-bottom: 3px solid var(--aws-orange);
+}
+
+.content table thead th {
+  position: sticky;
+  top: var(--page-menu-height);
+  z-index: 5;
+  background: var(--surface);
+  box-shadow: 0 1px 0 var(--border);
 }
 
 .brand {

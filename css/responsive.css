@@ -90,6 +90,10 @@
 }
 
 @media (max-width: 620px) {
+  :root {
+    --page-menu-height: 62px;
+  }
+
   .topbar {
     min-height: 62px;
   }

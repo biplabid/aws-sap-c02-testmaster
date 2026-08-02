@@ -56,8 +56,8 @@
   function parseDocxText(text) {
     const questionBlocks = text.split('---').map(b => b.trim()).filter(b => b);
 
-    if (questionBlocks.length < 50) {
-      setStatus(`Error: The file must contain at least 50 questions. Found ${questionBlocks.length}.`, true);
+    if (questionBlocks.length < 20) {
+      setStatus(`Error: The file must contain at least 20 questions. Found ${questionBlocks.length}.`, true);
       return null;
     }
 
