@@ -1,0 +1,1330 @@
+[
+  {
+    "id": 1,
+    "type": "single",
+    "domain": "Configuration Management and Infrastructure as Code",
+    "difficulty": "Professional",
+    "question": "Robert wants to have a snapshot of the current configuration of the resources in the AWS account. Select the AWS service to accomplish it.",
+    "options": [
+      {
+        "id": "A",
+        "text": "None of these"
+      },
+      {
+        "id": "B",
+        "text": "AWS CodeDeploy"
+      },
+      {
+        "id": "C",
+        "text": "AWS Trusted Advisor"
+      },
+      {
+        "id": "D",
+        "text": "AWS IAM"
+      },
+      {
+        "id": "E",
+        "text": "AWS Config"
+      }
+    ],
+    "answer": [
+      "E"
+    ],
+    "explanation": "AWS Config provides a detailed inventory of the AWS resources in an account along with their current configuration, and it continuously records configuration changes over time. The configuration snapshot is a point-in-time capture of all recorded resources and their settings, which is exactly what is required here. CodeDeploy is a deployment service, Trusted Advisor gives cost/performance/security recommendations rather than a configuration inventory, and IAM manages identities and permissions."
+  },
+  {
+    "id": 2,
+    "type": "multiple",
+    "domain": "SDLC Automation",
+    "difficulty": "Professional",
+    "question": "Which of the following deployment types are available in the AWS CodeDeploy service? Choose 2 answers from the options given below.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Blue/green deployment"
+      },
+      {
+        "id": "B",
+        "text": "Immutable deployment"
+      },
+      {
+        "id": "C",
+        "text": "Rolling deployment"
+      },
+      {
+        "id": "D",
+        "text": "In-place deployment"
+      }
+    ],
+    "answer": [
+      "A",
+      "D"
+    ],
+    "explanation": "CodeDeploy supports exactly two deployment types. In-place deployment stops the application on each instance in the deployment group, installs the latest revision, and restarts it — the instances themselves are reused. Blue/green deployment provisions a replacement set of instances, installs the new revision on them, and then reroutes traffic from the original (blue) environment to the replacement (green) environment. Immutable and rolling are Elastic Beanstalk deployment policies, not CodeDeploy deployment types."
+  },
+  {
+    "id": 3,
+    "type": "single",
+    "domain": "SDLC Automation",
+    "difficulty": "Professional",
+    "question": "You work for a very large company that has multiple applications which are very different and built on different programming languages. How can you deploy applications as quickly as possible?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Develop each app in a separate Docker container and deploy using CloudFormation"
+      },
+      {
+        "id": "B",
+        "text": "Develop each app in a separate Docker container and deploy using Elastic Beanstalk"
+      },
+      {
+        "id": "C",
+        "text": "Create a Lambda function deployment package consisting of code and any dependencies"
+      },
+      {
+        "id": "D",
+        "text": "Develop each app in one Docker container and deploy using Elastic Beanstalk"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Docker containers let each application carry its own runtime and dependencies, which solves the \"many different languages\" problem. Elastic Beanstalk has native Docker support and handles capacity provisioning, load balancing, scaling and health monitoring automatically, so it is the fastest route to a running deployment. Packing multiple dissimilar applications into a single container (option D) defeats isolation, CloudFormation alone requires you to author and maintain all the surrounding infrastructure, and Lambda is not a general-purpose fit for arbitrary long-running applications."
+  },
+  {
+    "id": 4,
+    "type": "multiple",
+    "domain": "Configuration Management and Infrastructure as Code",
+    "difficulty": "Professional",
+    "question": "You are the IT administrator for your company. You have the responsibility of creating development environments which would conform to the LAMP development stack. The requirement is that the development team always gets the latest version of the LAMP stack each time a new instance is launched. Which of the following is an efficient and effective way to implement this requirement? Choose 2 answers from the options given below.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an AMI with all the artifacts of the LAMP stack and provide an instance to the development team based on the AMI."
+      },
+      {
+        "id": "B",
+        "text": "Create a CloudFormation template and use the cfn-init / cloud-init directives to download and install the LAMP stack packages."
+      },
+      {
+        "id": "C",
+        "text": "Use the User Data section and use a custom script which will be used to download the necessary LAMP stack packages."
+      },
+      {
+        "id": "D",
+        "text": "Create an EBS volume with the LAMP stack and attach it to an instance whenever it is required."
+      }
+    ],
+    "answer": [
+      "B",
+      "C"
+    ],
+    "explanation": "The key requirement is \"the latest version each time an instance is launched\", so the packages must be pulled at launch time rather than baked in earlier. Both CloudFormation bootstrapping (cloud-init / cfn-init with the AWS::CloudFormation::Init metadata) and an EC2 User Data script fetch and install the current packages during instance boot. A pre-baked AMI (A) and a pre-loaded EBS volume (D) freeze the stack at the version present when the image or volume was created, so they would go stale and require constant re-baking."
+  },
+  {
+    "id": 5,
+    "type": "single",
+    "domain": "SDLC Automation",
+    "difficulty": "Professional",
+    "question": "You need your CI system to build AMIs with code pre-installed on the images on every new code push. You need to do this as cheaply as possible. How do you do this?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Have the CI system launch a new on-demand EC2 instance when new commits come in, perform all instance configuration and setup, then create an AMI based on the on-demand instance."
+      },
+      {
+        "id": "B",
+        "text": "When the CI instance receives commits, attach a new EBS volume to the CI machine. Perform all setup on this EBS volume so you don't need a new EC2 instance to create the AMI."
+      },
+      {
+        "id": "C",
+        "text": "Bid on Spot Instances just above the asking price as soon as new commits come in, perform all instance configuration and setup, then create an AMI based on the Spot Instance."
+      },
+      {
+        "id": "D",
+        "text": "Purchase a Light Utilization Reserved Instance to save money on the continuous integration machine. Use these credits whenever you create AMIs on instances."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "The deciding constraint is cost. AMI baking is a short, interruptible, fault-tolerant batch job — if a Spot Instance is reclaimed the build can simply be retried — which makes it a textbook Spot workload at a substantial discount over On-Demand. On-Demand (A) works but costs the most. Reserved Instances (D) are for steady-state, always-on capacity, so they are a poor match for bursty build work. Building on an attached EBS volume (B) does not produce a proper AMI of a configured, booted instance."
+  },
+  {
+    "id": 6,
+    "type": "multiple",
+    "domain": "SDLC Automation",
+    "difficulty": "Professional",
+    "question": "When creating an Elastic Beanstalk environment using the wizard, what are the 3 configuration options presented to you?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Choosing the type of notification — SNS or SQS"
+      },
+      {
+        "id": "B",
+        "text": "Choosing whether you want a highly available environment or not"
+      },
+      {
+        "id": "C",
+        "text": "Choosing the type of environment — Web Server or Worker environment"
+      },
+      {
+        "id": "D",
+        "text": "Choosing the platform type — Node.js, IIS, etc."
+      }
+    ],
+    "answer": [
+      "A",
+      "C",
+      "D"
+    ],
+    "explanation": "The Beanstalk creation wizard asks you to select the environment tier (web server tier versus worker tier), the platform / runtime for your application (Node.js, .NET on Windows with IIS, Python, Java and so on), and lets you configure notifications so that environment events are published to an SNS topic. High availability is not a discrete wizard question — it is a consequence of choosing a load-balanced, auto-scaling environment type rather than a single-instance environment."
+  },
+  {
+    "id": 7,
+    "type": "single",
+    "domain": "SDLC Automation",
+    "difficulty": "Professional",
+    "question": "Which of the below services can be used to deploy application code content stored in Amazon S3 buckets, GitHub repositories, or Bitbucket repositories?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Route 53"
+      },
+      {
+        "id": "B",
+        "text": "CodeCommit"
+      },
+      {
+        "id": "C",
+        "text": "CodeDeploy"
+      },
+      {
+        "id": "D",
+        "text": "S3 Lifecycles"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "AWS CodeDeploy automates deployments of application revisions to EC2 instances, on-premises servers, Lambda and ECS, and it can source those revisions from Amazon S3, GitHub or Bitbucket. CodeCommit is a source control (Git hosting) service, not a deployment service; Route 53 is DNS; S3 Lifecycle rules govern object transition and expiration."
+  },
+  {
+    "id": 8,
+    "type": "single",
+    "domain": "Monitoring and Logging",
+    "difficulty": "Professional",
+    "question": "Your company has a set of resources hosted in AWS. They want to be notified when the costs of the AWS resources running in the account reach a certain threshold. How can this be accomplished in an ideal way?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a script which monitors all the running resources and calculates the costs accordingly."
+      },
+      {
+        "id": "B",
+        "text": "Download the cost reports and analyze the reports to see if the costs are going beyond the threshold."
+      },
+      {
+        "id": "C",
+        "text": "Create a consolidated billing report and see if the costs are going beyond the threshold."
+      },
+      {
+        "id": "D",
+        "text": "Create a billing alarm which can alert you when the costs are going beyond a certain threshold."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "CloudWatch billing alarms watch the EstimatedCharges metric and publish to an SNS topic when the estimated charges exceed the threshold you set, giving proactive, automated notification with no code to maintain. The other options are all manual, reactive exercises — someone still has to look at a report or maintain a bespoke script — which is precisely what \"notified when costs reach a threshold\" rules out."
+  },
+  {
+    "id": 9,
+    "type": "multiple",
+    "domain": "Resilient Cloud Solutions",
+    "difficulty": "Professional",
+    "question": "You currently have an Auto Scaling group with the following settings: Minimum capacity = 2, Desired capacity = 2, Maximum capacity = 4. The current number of instances running in the Auto Scaling group is 2. You have been notified that for a duration of an hour, you need to ensure that no new instances are launched by the Auto Scaling group. Which of the below 2 actions can be carried out to fulfill this requirement?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Suspend the Launch process of the Auto Scaling group"
+      },
+      {
+        "id": "B",
+        "text": "Change the minimum capacity to 2"
+      },
+      {
+        "id": "C",
+        "text": "Change the desired capacity to 4"
+      },
+      {
+        "id": "D",
+        "text": "Change the maximum capacity to 2"
+      }
+    ],
+    "answer": [
+      "A",
+      "D"
+    ],
+    "explanation": "Suspending the Launch process stops Auto Scaling from adding instances to the group while leaving the existing instances untouched, and it can be resumed after the hour. Setting maximum capacity to 2 caps the group at its current size, so no scale-out can occur regardless of alarms. Minimum capacity is already 2, so option B changes nothing, and raising the desired capacity to 4 would do the opposite of what is needed — it would immediately launch two more instances."
+  },
+  {
+    "id": 10,
+    "type": "multiple",
+    "domain": "SDLC Automation",
+    "difficulty": "Professional",
+    "question": "Which of the following credential types are supported by AWS CodeCommit?",
+    "options": [
+      {
+        "id": "A",
+        "text": "SSH keys"
+      },
+      {
+        "id": "B",
+        "text": "Username/password"
+      },
+      {
+        "id": "C",
+        "text": "Git credentials"
+      },
+      {
+        "id": "D",
+        "text": "AWS access keys"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "explanation": "CodeCommit supports Git credentials (a service-specific username and password generated in IAM, used over HTTPS) and SSH key pairs registered against the IAM user, and it also supports console sign-in with a username and password. Note that the underlying IAM access key and secret key are used by the AWS CLI credential helper rather than being handed directly to Git as a repository credential, which is why the source answer key excludes option D."
+  },
+  {
+    "id": 11,
+    "type": "multiple",
+    "domain": "Resilient Cloud Solutions",
+    "difficulty": "Professional",
+    "question": "Which of the following design strategies are ideal when designing loosely coupled systems? Choose 2 answers from the options given below.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Having the web and worker roles running on the same set of EC2 instances"
+      },
+      {
+        "id": "B",
+        "text": "Using SNS to establish communication between the web and worker roles"
+      },
+      {
+        "id": "C",
+        "text": "Having the web and worker roles running on separate EC2 instances"
+      },
+      {
+        "id": "D",
+        "text": "Using SQS to establish communication between the web and worker roles"
+      }
+    ],
+    "answer": [
+      "C",
+      "D"
+    ],
+    "explanation": "Loose coupling means the tiers can fail, scale and be deployed independently. Running web and worker roles on separate instances lets each tier scale on its own metrics and prevents a failure in one from taking down the other. Placing an SQS queue between them adds a durable buffer so the web tier never blocks on worker availability and messages survive worker failure. SNS is a push/fan-out notification service without durable per-consumer buffering, so it is a weaker fit for the classic web/worker decoupling pattern this question is testing."
+  },
+  {
+    "id": 12,
+    "type": "single",
+    "domain": "Configuration Management and Infrastructure as Code",
+    "difficulty": "Professional",
+    "question": "You are in charge of creating a CloudFormation template that will be used to spin up resources on demand for your DevOps team. The requirement is that this template should be able to spin up resources in different regions. Which of the following aspects of CloudFormation templates can help you design the template to spin up resources based on the region?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use the Metadata section in the CloudFormation template, so that based on the relevant region, the relevant resource can be spun up."
+      },
+      {
+        "id": "B",
+        "text": "Use the Outputs section in the CloudFormation template, so that based on the relevant region, the relevant resource can be spun up."
+      },
+      {
+        "id": "C",
+        "text": "Use the Parameters section in the CloudFormation template, so that based on the relevant region, the relevant resource can be spun up."
+      },
+      {
+        "id": "D",
+        "text": "Use the Mappings section in the CloudFormation template, so that based on the relevant region, the relevant resource can be spun up."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "The Mappings section holds a fixed lookup table of key/value pairs and is the canonical way to make a template region-aware — the classic example maps each region to the correct AMI ID, retrieved with Fn::FindInMap and the AWS::Region pseudo parameter. Parameters take user input at stack creation rather than resolving automatically from the region, Outputs return values after the stack is created, and Metadata carries arbitrary additional information about the template or resources."
+  },
+  {
+    "id": 13,
+    "type": "single",
+    "domain": "Configuration Management and Infrastructure as Code",
+    "difficulty": "Professional",
+    "question": "You have launched a CloudFormation template, but are receiving a failure notification after the template was launched. What is the default behavior of CloudFormation in such a case?",
+    "options": [
+      {
+        "id": "A",
+        "text": "It will continue with the creation of the next resource in the stack"
+      },
+      {
+        "id": "B",
+        "text": "It will keep all the resources that were created up to the failure point"
+      },
+      {
+        "id": "C",
+        "text": "It will prompt the user on whether to keep or terminate the already created resources"
+      },
+      {
+        "id": "D",
+        "text": "It will roll back all the resources that were created up to the failure point"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "CloudFormation treats a stack as an atomic unit. If any resource fails to create, the stack enters ROLLBACK_IN_PROGRESS and every resource provisioned so far is deleted, leaving no partially built stack behind and no orphaned resources being billed. This behavior is controlled by the \"Rollback on failure\" setting (the DisableRollback / OnFailure option), which defaults to rollback but can be turned off explicitly when you need to keep resources for troubleshooting."
+  },
+  {
+    "id": 14,
+    "type": "single",
+    "domain": "Security and Compliance",
+    "difficulty": "Professional",
+    "question": "An enterprise wants to use a third-party SaaS application running on AWS. The SaaS application needs to have access to issue several API commands to discover Amazon EC2 resources running within the enterprise's account. The enterprise has internal security policies that require any outside access to their environment to conform to the principles of least privilege, and there must be controls in place to ensure that the credentials used by the SaaS vendor cannot be used by any other third party. Which of the following would meet all of these conditions?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an IAM role for EC2 instances, assign it a policy that allows only the actions required for the SaaS application to work, and provide the role ARN to the SaaS provider to use when launching their application instances."
+      },
+      {
+        "id": "B",
+        "text": "From the AWS Management Console, navigate to the Security Credentials page and retrieve the access key and secret key for your account."
+      },
+      {
+        "id": "C",
+        "text": "Create an IAM user within the enterprise account, assign a user policy to the IAM user that allows only the actions required by the SaaS application, create a new access and secret key for the user, and provide these credentials to the SaaS provider."
+      },
+      {
+        "id": "D",
+        "text": "Create an IAM role for cross-account access, allow the SaaS provider's account to assume the role, and assign it a policy that allows only the actions required by the SaaS application."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "A cross-account IAM role satisfies both requirements at once. The permissions policy on the role grants only the specific EC2 discovery API actions (least privilege), and the trust policy names the SaaS vendor's AWS account as the only principal permitted to assume it — so even if the role ARN leaked, no other third party could use it. Additionally, an external ID can be added to the trust policy to defend against the confused deputy problem. Long-lived access keys (B and C) are static secrets that can be copied and reused by anyone who obtains them, and root account keys (B) are never appropriate."
+  },
+  {
+    "id": 15,
+    "type": "single",
+    "domain": "Configuration Management and Infrastructure as Code",
+    "difficulty": "Professional",
+    "question": "You are working as an AWS DevOps admin for your company. You are in charge of building the infrastructure for the company's development teams using CloudFormation. The template will include building the VPC and networking components, installing a LAMP stack, and securing the created resources. As per AWS best practices, what is the best way to design this template?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a single CloudFormation template to create all the resources since it would be easier from the maintenance perspective."
+      },
+      {
+        "id": "B",
+        "text": "Create multiple CloudFormation templates based on the number of development groups in the environment."
+      },
+      {
+        "id": "C",
+        "text": "Create multiple CloudFormation templates for each set of logical resources — one for networking, another for LAMP stack creation."
+      },
+      {
+        "id": "D",
+        "text": "Create multiple CloudFormation templates based on the number of VPCs in the environment."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "AWS best practice is to organize stacks by lifecycle and ownership. Long-lived, slow-changing infrastructure such as VPCs and subnets belongs in its own template, while frequently redeployed application resources such as the LAMP stack belong in another, and the two are wired together with nested stacks or cross-stack exports. This keeps the blast radius of a change small, allows reuse of the networking layer across many application stacks, and lets different teams own different templates. One monolithic template becomes brittle and slow to update, and splitting by team or by VPC count leads to duplicated, divergent copies of the same logic."
+  },
+  {
+    "id": 16,
+    "type": "single",
+    "domain": "SDLC Automation",
+    "difficulty": "Professional",
+    "question": "When building a multi-container Docker platform using Elastic Beanstalk, which of the following is required?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Kubernetes to manage the Docker containers"
+      },
+      {
+        "id": "B",
+        "text": "Prebuilt images stored in a public or private online image repository"
+      },
+      {
+        "id": "C",
+        "text": "Red Hat OpenShift to manage the Docker containers"
+      },
+      {
+        "id": "D",
+        "text": "A Dockerfile to create custom images during deployment"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "The multi-container Docker platform on Elastic Beanstalk runs on Amazon ECS, and the Dockerrun.aws.json v2 file that defines the containers references images by name from a registry such as Docker Hub or Amazon ECR. Because the images must already exist when the task definition is registered, they have to be prebuilt and pushed to a repository beforehand — building from a Dockerfile at deployment time is supported only in the single-container platform. Kubernetes and OpenShift are unrelated third-party orchestrators and are not part of the Beanstalk multi-container platform."
+  },
+  {
+    "id": 17,
+    "type": "single",
+    "domain": "Configuration Management and Infrastructure as Code",
+    "difficulty": "Professional",
+    "question": "You currently have EC2 instances hosting an application. These instances are part of an Auto Scaling group. You now want to change the instance type of the EC2 instances. How can you manage the deployment with the least amount of downtime?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use the Rolling Update feature which is available for EC2 instances."
+      },
+      {
+        "id": "B",
+        "text": "Use the AutoScalingRollingUpdate policy on the CloudFormation template Auto Scaling group."
+      },
+      {
+        "id": "C",
+        "text": "Manually terminate the instances, launch new instances with the new instance type, and attach them to the group."
+      },
+      {
+        "id": "D",
+        "text": "Terminate the existing Auto Scaling group. Create a new launch configuration with the new instance type. Attach that to the new Auto Scaling group."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "The AWS::AutoScaling::AutoScalingGroup resource supports an UpdatePolicy with AutoScalingRollingUpdate, which replaces instances in controlled batches. Attributes such as MinInstancesInService, MaxBatchSize and PauseTime let you guarantee that a minimum number of healthy instances keeps serving traffic throughout the replacement, so capacity is never fully lost. Manual termination (C) and tearing down the whole group (D) both create windows with reduced or zero capacity, and there is no standalone \"Rolling Update feature\" for bare EC2 instances outside of Auto Scaling / CloudFormation."
+  },
+  {
+    "id": 18,
+    "type": "single",
+    "domain": "Configuration Management and Infrastructure as Code",
+    "difficulty": "Professional",
+    "question": "When your application is loaded onto an AWS OpsWorks stack, which of the following events is triggered by OpsWorks?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Deploy"
+      },
+      {
+        "id": "B",
+        "text": "Configure"
+      },
+      {
+        "id": "C",
+        "text": "Shutdown"
+      },
+      {
+        "id": "D",
+        "text": "Setup"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "OpsWorks Stacks has five lifecycle events. The Deploy event runs when you deploy an application, and it executes the recipes responsible for placing the application code onto the instances. Setup runs after an instance finishes booting, Configure fires on every instance in the stack whenever instances enter or leave the online state, and Shutdown runs before an instance is stopped. Since the question is specifically about the application being loaded onto the stack, Deploy is the event in play."
+  },
+  {
+    "id": 19,
+    "type": "single",
+    "domain": "SDLC Automation",
+    "difficulty": "Professional",
+    "question": "You have carried out a deployment using Elastic Beanstalk, but the application is unavailable. What could be the reason for this?",
+    "options": [
+      {
+        "id": "A",
+        "text": "The cooldown period is not properly configured for Elastic Beanstalk"
+      },
+      {
+        "id": "B",
+        "text": "You need to configure ELB along with Elastic Beanstalk"
+      },
+      {
+        "id": "C",
+        "text": "There will always be a few seconds of downtime before the application is available"
+      },
+      {
+        "id": "D",
+        "text": "You need to configure Route 53 along with Elastic Beanstalk"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "With the default all-at-once deployment policy, Elastic Beanstalk deploys the new version to all instances simultaneously, so those instances are taken out of service briefly while the new version is installed and the application restarts. A short period of unavailability immediately after deployment is expected behavior, not a misconfiguration. Elastic Beanstalk provisions the load balancer for you in a load-balanced environment, so options B and D are not prerequisites. Note that in practice you would avoid this downtime by choosing a rolling, immutable, or blue/green (swap URL) deployment policy instead of all-at-once."
+  },
+  {
+    "id": 20,
+    "type": "single",
+    "domain": "Security and Compliance",
+    "difficulty": "Professional",
+    "question": "Your company has a set of EC2 resources hosted on AWS. Your new IT procedures state that AWS EC2 instances must be of a particular instance type. Which of the following can be used to get the list of EC2 instances which currently don't match the instance type specified in the new IT procedures?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use VPC Flow Logs to check which EC2 instances don't match the intended instance type."
+      },
+      {
+        "id": "B",
+        "text": "Use Trusted Advisor to check which EC2 instances don't match the intended instance type."
+      },
+      {
+        "id": "C",
+        "text": "Use AWS Config to create a rule to check the EC2 instance type."
+      },
+      {
+        "id": "D",
+        "text": "Use CloudWatch alarms to check which EC2 instances don't match the intended instance type."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "AWS Config rules evaluate recorded resource configurations against a desired state and report each resource as COMPLIANT or NON_COMPLIANT. The managed rule desired-instance-type does exactly this job — you supply the permitted instance types and Config returns the list of instances that violate the policy, with continuous re-evaluation as new instances launch. VPC Flow Logs capture network traffic metadata, CloudWatch alarms watch metrics rather than configuration attributes, and Trusted Advisor offers generic best-practice checks that cannot be parameterized to your specific corporate standard."
+  },
+  {
+    "id": 21,
+    "type": "single",
+    "domain": "SDLC Automation",
+    "difficulty": "Professional",
+    "question": "You are currently using Elastic Beanstalk to host your production environment. You need to roll out updates to your application hosted on this environment. This is a critical application, which is why there is a requirement that the rollback, if required, should be carried out with the least amount of downtime. Which of the following deployment strategies would ideally help achieve this purpose?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a CloudFormation template with the same resources as those in the Elastic Beanstalk environment; if the deployment fails, deploy the CloudFormation template."
+      },
+      {
+        "id": "B",
+        "text": "Create another parallel environment in Elastic Beanstalk. Create a new Route 53 domain name for the new environment and release that to the users."
+      },
+      {
+        "id": "C",
+        "text": "Use rolling updates in Elastic Beanstalk so that if the deployment fails, the rolling updates feature would roll back to the last deployment."
+      },
+      {
+        "id": "D",
+        "text": "Create another parallel environment in Elastic Beanstalk and use the Swap Environment URLs feature."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "The Swap Environment URLs feature is Beanstalk's blue/green mechanism: you deploy the new version to a second, fully warmed environment and then swap the CNAMEs of the two environments. If the new version misbehaves, you simply swap back, and because the old environment is still running and healthy the rollback is near-instantaneous. Issuing a new domain name (B) forces users to change what they connect to and leaves DNS propagation in the critical path, rolling updates (C) replace instances in place so a rollback requires redeploying the old version, and standing up a CloudFormation stack after failure (A) means building infrastructure during an outage."
+  },
+  {
+    "id": 22,
+    "type": "multiple",
+    "domain": "Monitoring and Logging",
+    "difficulty": "Professional",
+    "question": "Your company has a set of resources hosted in AWS. Your IT supervisor is concerned with the costs being incurred by the resources running in AWS and wants to optimize the costs as much as possible. Which of the following ways could help achieve this efficiently? Choose 2 answers from the options given below.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create CloudWatch Logs to monitor underutilized resources and either shut down or terminate resources which are not required."
+      },
+      {
+        "id": "B",
+        "text": "Create CloudWatch alarms to monitor underutilized resources and either shut down or terminate resources which are not required."
+      },
+      {
+        "id": "C",
+        "text": "Use Trusted Advisor to see underutilized resources."
+      },
+      {
+        "id": "D",
+        "text": "Create a script which monitors all the running resources and calculates the costs accordingly, then analyze those resources and see which can be optimized."
+      }
+    ],
+    "answer": [
+      "B",
+      "C"
+    ],
+    "explanation": "Trusted Advisor includes cost optimization checks that identify idle load balancers, underutilized EBS volumes, low-utilization EC2 instances and unassociated Elastic IPs, requiring no engineering effort. CloudWatch alarms watch utilization metrics such as CPUUtilization and can trigger an action — an SNS notification, or an EC2 stop/terminate action — when a resource stays below a threshold. CloudWatch Logs (A) collect log data, which is not the right instrument for utilization thresholds, and a custom script (D) is undifferentiated work that duplicates what Trusted Advisor already provides."
+  },
+  {
+    "id": 23,
+    "type": "single",
+    "domain": "SDLC Automation",
+    "difficulty": "Professional",
+    "question": "You are deciding on a deployment mechanism for your application. Which of the following deployment mechanisms provides the fastest rollback after failure?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Rolling - Immutable"
+      },
+      {
+        "id": "B",
+        "text": "Blue/Green"
+      },
+      {
+        "id": "C",
+        "text": "Rolling - Mutable"
+      },
+      {
+        "id": "D",
+        "text": "Canary"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "In a blue/green deployment the previous environment remains fully provisioned, warmed and healthy while the new environment takes traffic. Rolling back is therefore just a traffic-routing change — swap the DNS CNAME or shift the load balancer target — and takes effect almost immediately with no re-provisioning. Rolling deployments (mutable or immutable) modify or replace instances in batches, so unwinding them requires redeploying the previous version across those batches. Canary releases shift traffic gradually and do roll back reasonably quickly, but the full standby environment of blue/green is what makes it the fastest."
+  },
+  {
+    "id": 24,
+    "type": "single",
+    "domain": "Security and Compliance",
+    "difficulty": "Professional",
+    "question": "An audit is going to be conducted for your company's AWS account. Which of the following steps will ensure that the auditor has the right access to the logs of your AWS account?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Enable CloudWatch Logs. Create a user for the IT auditor and ensure that full control is given to the user for CloudWatch Logs."
+      },
+      {
+        "id": "B",
+        "text": "Ensure that CloudTrail is enabled. Create a role for read-only access to CloudTrail. Create a user for the IT auditor and attach the role to the user."
+      },
+      {
+        "id": "C",
+        "text": "Enable S3 and ELB logs. Send the logs as a zip file to the IT auditor."
+      },
+      {
+        "id": "D",
+        "text": "Ensure that CloudTrail is enabled. Create a user for the IT auditor and ensure that full control is given to the user for CloudTrail."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "CloudTrail records the API activity in the account, which is the audit trail an auditor needs. The auditor should receive read-only access, delivered through an IAM role rather than inline user permissions, so that the grant follows least privilege and can be revoked cleanly. Granting full control (A and D) would let the auditor modify or stop logging, which destroys the integrity of the very evidence being audited. Emailing a zip of logs (C) is manual, incomplete and unverifiable. AWS also provides the managed SecurityAudit and ReadOnlyAccess policies for this purpose."
+  },
+  {
+    "id": 25,
+    "type": "multiple",
+    "domain": "SDLC Automation",
+    "difficulty": "Professional",
+    "question": "Which of the following environment types are available in the Elastic Beanstalk environment? Choose 2 answers from the options given below.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Single instance"
+      },
+      {
+        "id": "B",
+        "text": "Multi-instance"
+      },
+      {
+        "id": "C",
+        "text": "Load balancing, auto scaling"
+      },
+      {
+        "id": "D",
+        "text": "SQS, auto scaling"
+      }
+    ],
+    "answer": [
+      "A",
+      "C"
+    ],
+    "explanation": "When you create a Beanstalk environment you choose between a single-instance environment — one EC2 instance with an Elastic IP and no load balancer, which is cheap and suited to development and test — and a load-balanced, auto-scaling environment, which places a load balancer in front of an Auto Scaling group for production availability and elasticity. \"Multi-instance\" and \"SQS, auto scaling\" are not environment type choices; SQS appears in the worker environment tier as the queue that feeds background jobs, which is a different setting."
+  },
+  {
+    "id": 26,
+    "type": "multiple",
+    "domain": "Resilient Cloud Solutions",
+    "difficulty": "Professional",
+    "question": "Your company is planning to set up a WordPress application. The WordPress application will connect to a MySQL database. Part of the requirement is to ensure that the database environment is fault tolerant and highly available. Which of the following 2 options individually can help fulfill this requirement?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create multiple EC2 instances in the same AZ. Host MySQL and enable replication via scripts between the instances."
+      },
+      {
+        "id": "B",
+        "text": "Create a MySQL RDS environment and create a Read Replica."
+      },
+      {
+        "id": "C",
+        "text": "Create multiple EC2 instances in separate AZs. Host MySQL and enable replication via scripts between the instances."
+      },
+      {
+        "id": "D",
+        "text": "Create a MySQL RDS environment with the Multi-AZ feature enabled."
+      }
+    ],
+    "answer": [
+      "C",
+      "D"
+    ],
+    "explanation": "Fault tolerance requires that the failure of a single Availability Zone not take the database down. RDS Multi-AZ maintains a synchronous standby replica in a second AZ and fails over automatically, and it is the managed answer. Self-managed MySQL replicated across instances in separate AZs achieves the same isolation at the cost of running the replication yourself. Instances confined to one AZ (A) all fail together when that AZ fails. A Read Replica (B) is an asynchronous copy designed to scale read traffic — it is not an automatic failover target and does not by itself deliver high availability."
+  },
+  {
+    "id": 27,
+    "type": "multiple",
+    "domain": "Security and Compliance",
+    "difficulty": "Professional",
+    "question": "You have a code repository that uses Amazon S3 as a data store. During a recent audit of your security controls, some concerns were raised about maintaining the integrity of the data in the Amazon S3 bucket. Another concern was raised around securely deploying code from Amazon S3 to applications running on Amazon EC2 in a virtual private cloud. What are some measures that you can implement to mitigate these concerns? Choose two answers from the options given below.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an IAM role with authorization to access the Amazon S3 bucket, and launch all of your application's Amazon EC2 instances with this role."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS Data Pipeline with multi-factor authentication to securely deploy code from the Amazon S3 bucket to your Amazon EC2 instances."
+      },
+      {
+        "id": "C",
+        "text": "Use a configuration management service to deploy IAM user credentials to the Amazon EC2 instances. Use these credentials to securely access the Amazon S3 bucket when deploying code."
+      },
+      {
+        "id": "D",
+        "text": "Add an Amazon S3 bucket policy with a condition statement that requires multi-factor authentication in order to delete objects, and enable bucket versioning."
+      }
+    ],
+    "answer": [
+      "A",
+      "D"
+    ],
+    "explanation": "The two concerns map to two controls. For integrity, versioning preserves every version of an object so an unwanted overwrite or delete can be undone, and an MFA Delete condition in the bucket policy means an attacker with stolen credentials alone still cannot destroy data. For secure deployment, an instance profile / IAM role delivers temporary, automatically rotated credentials to the EC2 instances, so no long-lived secret ever sits on disk. Option C does the opposite by distributing static IAM user credentials to instances, and AWS Data Pipeline (B) does not support MFA in this way and is not a code deployment mechanism."
+  },
+  {
+    "id": 28,
+    "type": "single",
+    "domain": "Incident and Event Response",
+    "difficulty": "Professional",
+    "question": "You have an application running on Amazon EC2 in an Auto Scaling group. Instances are being bootstrapped dynamically, and the bootstrapping takes over 15 minutes to complete. You find that instances are reported by Auto Scaling as being InService before bootstrapping has completed. You are receiving application alarms related to new instances before they have completed bootstrapping, which is causing confusion. You find the cause: your application monitoring tool is polling the Auto Scaling service API for instances that are InService, and creating alarms for new previously unknown instances. Which of the following will ensure that new instances are not added to your application monitoring tool before bootstrapping is completed?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use the default CloudWatch application metrics to monitor your application's health. Configure an Amazon SNS topic to send these CloudWatch alarms to the correct recipients."
+      },
+      {
+        "id": "B",
+        "text": "Create an Auto Scaling group lifecycle hook to hold the instance in a Pending:Wait state until your bootstrapping is complete. Once bootstrapping is complete, notify Auto Scaling to complete the lifecycle hook and move the instance into a Pending:Proceed state."
+      },
+      {
+        "id": "C",
+        "text": "Increase the desired number of instances in your Auto Scaling group configuration to reduce the time it takes to bootstrap future instances."
+      },
+      {
+        "id": "D",
+        "text": "Tag all instances on launch to identify that they are in a pending state. Change your application monitoring tool to look for this tag before adding new instances, and then use the Amazon EC2 API to set the instance state to pending until bootstrapping is complete."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "An EC2_INSTANCE_LAUNCHING lifecycle hook pauses the instance in Pending:Wait, so Auto Scaling does not report it as InService while your bootstrapping runs. When the bootstrap script finishes it calls CompleteLifecycleAction, the instance moves to Pending:Proceed and then InService, and only at that point does the monitoring tool discover it. The default heartbeat timeout can be extended to cover the 15-minute bootstrap. Adding more instances (C) does nothing to shorten per-instance bootstrap time, and a tagging scheme (D) requires custom logic in the monitoring tool and cannot change an instance's Auto Scaling state."
+  },
+  {
+    "id": 29,
+    "type": "multiple",
+    "domain": "Incident and Event Response",
+    "difficulty": "Professional",
+    "question": "When an Auto Scaling group is running in Amazon EC2, your application rapidly scales up and down in response to load within a 10-minute window; however, after the load peaks, you begin to see problems in your configuration management system where previously terminated Amazon EC2 resources are still showing as active. What would be a reliable and efficient way to handle the cleanup of Amazon EC2 resources within your configuration management system? Choose two answers from the options given below.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Write a script that is run by a daily cron job on an Amazon EC2 instance and that executes API Describe calls of the EC2 Auto Scaling group and removes terminated instances from the configuration management system."
+      },
+      {
+        "id": "B",
+        "text": "Use your existing configuration management system to control the launching and bootstrapping of instances to reduce the number of moving parts in the automation."
+      },
+      {
+        "id": "C",
+        "text": "Write a small script that is run during Amazon EC2 instance shutdown to de-register the resource from the configuration management system."
+      },
+      {
+        "id": "D",
+        "text": "Configure an Amazon SQS queue for Auto Scaling actions that has a script that listens for new messages and removes terminated instances from the configuration management system."
+      }
+    ],
+    "answer": [
+      "A",
+      "C"
+    ],
+    "explanation": "A shutdown-time de-registration script handles the normal case: as each instance terminates it removes its own record from the configuration management system, so the inventory stays accurate in near real time. Because an instance can occasionally die without running its shutdown scripts, a periodic reconciliation job that compares the CMS inventory against the actual Auto Scaling group membership and purges stale entries provides the safety net. Option B addresses launch, not cleanup, and option D describes an approach the exam key rejects — Auto Scaling notifications are published to SNS (and lifecycle hooks), so this is not the clean, reliable mechanism the question is looking for."
+  },
+  {
+    "id": 30,
+    "type": "multiple",
+    "domain": "Configuration Management and Infrastructure as Code",
+    "difficulty": "Professional",
+    "question": "You are a DevOps engineer for a company. You have been requested to create a rolling deployment solution that is cost-effective with minimal downtime. How should you achieve this? Choose two answers from the options below.",
+    "options": [
+      {
+        "id": "A",
+        "text": "After each stack is deployed, tear down the old stack."
+      },
+      {
+        "id": "B",
+        "text": "Re-deploy your application using a CloudFormation template to deploy Elastic Beanstalk."
+      },
+      {
+        "id": "C",
+        "text": "Use the UpdatePolicy attribute to specify how CloudFormation handles updates to the Auto Scaling group resource."
+      },
+      {
+        "id": "D",
+        "text": "Re-deploy with a CloudFormation template, defining update policies on Auto Scaling groups in your CloudFormation template."
+      }
+    ],
+    "answer": [
+      "C",
+      "D"
+    ],
+    "explanation": "Rolling deployments in CloudFormation are driven by the UpdatePolicy attribute on the AWS::AutoScaling::AutoScalingGroup resource. AutoScalingRollingUpdate replaces instances in batches while MinInstancesInService keeps enough healthy capacity serving traffic, which delivers minimal downtime, and because you reuse the existing group rather than standing up a duplicate environment it is also the cost-effective choice. Tearing down and rebuilding entire stacks (A) is the blue/green pattern, which doubles running capacity during the cut-over, and deploying Beanstalk through CloudFormation (B) does not by itself define any rolling behavior."
+  },
+  {
+    "id": 31,
+    "type": "single",
+    "domain": "Configuration Management and Infrastructure as Code",
+    "difficulty": "Professional",
+    "question": "You have a complex system that involves networking, IAM policies, and multiple three-tier applications. You are still receiving requirements for the new system, so you don't yet know how many AWS components will be present in the final design. You want to start using AWS CloudFormation to define these AWS resources so that you can automate and version-control your infrastructure. How would you use AWS CloudFormation to provide agile new environments for your customers in a cost-effective, reliable manner?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create multiple separate templates for each logical part of the system, create nested stacks in AWS CloudFormation, and maintain several templates to version-control."
+      },
+      {
+        "id": "B",
+        "text": "Manually construct the networking layer using Amazon VPC because this does not change often, and then use AWS CloudFormation to define all other ephemeral resources."
+      },
+      {
+        "id": "C",
+        "text": "Manually create one template to encompass all the resources that you need for the system, and only have a single template to version-control."
+      },
+      {
+        "id": "D",
+        "text": "Create multiple separate templates for each logical part of the system, and provide the outputs from one to the next using an Amazon EC2 instance running the SDK for finer granularity of control."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "Nested stacks let you decompose the system into modular templates — networking, IAM, each application tier — that are version-controlled independently and composed by a parent stack using AWS::CloudFormation::Stack. This is the pattern designed for exactly this situation, where the final component count is unknown and templates must evolve: new modules can be added without rewriting a monolith, and common modules are reused across environments. Manual construction (B and C) breaks reproducibility and version control, and passing outputs via a custom EC2/SDK process (D) adds a fragile moving part that nested stacks and cross-stack references already handle natively."
+  },
+  {
+    "id": 32,
+    "type": "single",
+    "domain": "Monitoring and Logging",
+    "difficulty": "Professional",
+    "question": "You have an ELB setup in AWS with EC2 instances running behind it. You have been requested to monitor the incoming connections to the ELB. Which of the below options can suffice this requirement?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a custom metric CloudWatch filter on your load balancer."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS CloudTrail with your load balancer."
+      },
+      {
+        "id": "C",
+        "text": "Enable access logs on the load balancer."
+      },
+      {
+        "id": "D",
+        "text": "Use a CloudWatch Logs agent."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "Monitoring connection volume is a metrics problem, so the answer lies in CloudWatch rather than in trail or log services. CloudTrail records management API calls made against the load balancer, not the data-plane traffic flowing through it, and the CloudWatch Logs agent ships log files from EC2 instances. Note that in practice Elastic Load Balancing already publishes RequestCount and connection metrics to CloudWatch natively, and ELB access logs (option C) do capture per-request detail — so this item's key is debatable; the intended reasoning is that a CloudWatch metric, not a log, is the monitoring instrument for incoming connections."
+  },
+  {
+    "id": 33,
+    "type": "multiple",
+    "domain": "Resilient Cloud Solutions",
+    "difficulty": "Professional",
+    "question": "You are doing a load testing exercise on your application hosted on AWS. While testing your Amazon RDS MySQL DB instance, you notice that when you hit 100% CPU utilization on it, your application becomes non-responsive. Your application is read-heavy. What are methods to scale your data tier to meet the application's needs? Choose three answers from the options given below.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use ElastiCache in front of your Amazon RDS DB to cache common queries."
+      },
+      {
+        "id": "B",
+        "text": "Add Amazon RDS DB read replicas, and have your application direct read queries to them."
+      },
+      {
+        "id": "C",
+        "text": "Use an Amazon SQS queue to throttle data going to the Amazon RDS DB instance."
+      },
+      {
+        "id": "D",
+        "text": "Shard your data set among multiple Amazon RDS DB instances."
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "D"
+    ],
+    "explanation": "For a read-heavy workload saturating the database CPU, all three of these reduce load on the primary. ElastiCache serves repeated queries from memory so they never reach the database at all. Read replicas offload SELECT traffic to additional instances, scaling reads horizontally. Sharding partitions the data set across multiple instances so each handles a fraction of the total. An SQS queue (C) is a write-buffering and decoupling pattern — it can smooth bursty writes but does nothing for read scaling, which is the actual bottleneck described."
+  },
+  {
+    "id": 34,
+    "type": "single",
+    "domain": "SDLC Automation",
+    "difficulty": "Professional",
+    "question": "Your company develops a variety of web applications using many platforms and programming languages with different application dependencies. Each application must be developed and deployed quickly and be highly available to satisfy your business requirements. Which of the following methods should you use to deploy these applications rapidly?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Develop each application's code in DynamoDB, and then use hooks to deploy it to Elastic Beanstalk environments with Auto Scaling and Elastic Load Balancing."
+      },
+      {
+        "id": "B",
+        "text": "Develop the applications in Docker containers, and then deploy them to Elastic Beanstalk environments with Auto Scaling and Elastic Load Balancing."
+      },
+      {
+        "id": "C",
+        "text": "Store each application's code in a Git repository, develop custom package repository managers for each application's dependencies, and deploy to AWS OpsWorks in multiple Availability Zones."
+      },
+      {
+        "id": "D",
+        "text": "Use the AWS CloudFormation Docker import service to build and deploy the applications with high availability in multiple Availability Zones."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Docker containers encapsulate each application's runtime and dependencies, which directly addresses the \"many platforms, different dependencies\" constraint, and Elastic Beanstalk with Auto Scaling and an Elastic Load Balancer supplies the rapid deployment and high availability. DynamoDB is a database and cannot host application code (A), building custom package repository managers per application (C) is exactly the undifferentiated effort containers exist to eliminate, and there is no such thing as a \"CloudFormation Docker import service\" (D)."
+  },
+  {
+    "id": 35,
+    "type": "multiple",
+    "domain": "Resilient Cloud Solutions",
+    "difficulty": "Professional",
+    "question": "You have an application consisting of a stateless web server tier running on Amazon EC2 instances behind a load balancer, and are using Amazon RDS with read replicas. Which of the following methods should you use to implement a self-healing and cost-effective architecture? Choose 2 answers from the options given below.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Set up an Auto Scaling group for the web server tier along with an Auto Scaling policy that uses the Amazon EC2 CPU utilization CloudWatch metric to scale the instances."
+      },
+      {
+        "id": "B",
+        "text": "Set up a third-party monitoring solution on a cluster of Amazon EC2 instances in order to emit custom CloudWatch metrics to trigger the termination of unhealthy Amazon EC2 instances."
+      },
+      {
+        "id": "C",
+        "text": "Use an Amazon RDS Multi-AZ deployment."
+      },
+      {
+        "id": "D",
+        "text": "Set up an Auto Scaling group for the web server tier along with an Auto Scaling policy that uses the Amazon RDS DB CPU utilization CloudWatch metric to scale the instances."
+      }
+    ],
+    "answer": [
+      "A",
+      "C"
+    ],
+    "explanation": "An Auto Scaling group driven by the web tier's own EC2 CPU utilization is self-healing (unhealthy instances are replaced automatically) and cost-effective (capacity tracks demand rather than being provisioned for peak). RDS Multi-AZ provides automatic failover for the database tier without any custom tooling. Scaling the web tier on the database's CPU metric (D) couples the wrong signal to the wrong tier and would scale web capacity for a database problem. Running a third-party monitoring cluster (B) adds an always-on fleet, and therefore cost, to replicate health checking that Auto Scaling and ELB already perform."
+  },
+  {
+    "id": 36,
+    "type": "single",
+    "domain": "SDLC Automation",
+    "difficulty": "Professional",
+    "question": "You are administering a continuous integration application that polls version control for changes and then launches new Amazon EC2 instances for a full suite of build tests. What should you do to ensure the lowest overall cost while being able to run as many tests in parallel as possible?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Perform all tests on the continuous integration system, using AWS OpsWorks for unit, integration and build tests."
+      },
+      {
+        "id": "B",
+        "text": "Perform syntax checking on the continuous integration system before launching a new Amazon EC2 instance for build, unit and integration tests."
+      },
+      {
+        "id": "C",
+        "text": "Perform syntax and build tests on the continuous integration system before launching the new Amazon EC2 instances for unit and integration tests."
+      },
+      {
+        "id": "D",
+        "text": "Perform syntax checking on the continuous integration system before launching a new AWS Data Pipeline for coordinating the output of unit, integration and build tests."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "The cheapest work is the work you never pay to launch an instance for. Running both the syntax checks and the build on the existing CI system means a commit that fails to compile never triggers any EC2 launches at all, and only code that has already built successfully consumes new instances for the parallelizable unit and integration tests. Option B still launches instances to discover build failures. Option A does everything on the CI system, which removes the parallelism the question asks to maximize, and Data Pipeline (D) is a data workflow orchestration service, not a test runner."
+  },
+  {
+    "id": 37,
+    "type": "single",
+    "domain": "SDLC Automation",
+    "difficulty": "Professional",
+    "question": "You have a multi-Docker environment that you want to deploy to AWS. Which of the following configuration files can be used to deploy a set of Docker containers as an Elastic Beanstalk application?",
+    "options": [
+      {
+        "id": "A",
+        "text": ".ebextensions"
+      },
+      {
+        "id": "B",
+        "text": "Dockerrun.aws.json"
+      },
+      {
+        "id": "C",
+        "text": "Dockerrun.json"
+      },
+      {
+        "id": "D",
+        "text": "Dockerfile"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Dockerrun.aws.json is the Elastic Beanstalk-specific descriptor for Docker environments. In the multi-container platform it uses version 2 format and defines the container definitions, images, port mappings and volumes that Beanstalk passes to Amazon ECS as a task definition. A Dockerfile builds a single image and is only used by the single-container platform, .ebextensions is a directory of environment customization configuration files rather than a container descriptor, and there is no \"Dockerrun.json\" in Beanstalk."
+  },
+  {
+    "id": 38,
+    "type": "single",
+    "domain": "Resilient Cloud Solutions",
+    "difficulty": "Professional",
+    "question": "One of the instances in your Auto Scaling group health check returns the status of Impaired to Auto Scaling. What will Auto Scaling do in this case?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Terminate the instance and launch a new instance"
+      },
+      {
+        "id": "B",
+        "text": "Perform a health check until cooldown before declaring that the instance has failed"
+      },
+      {
+        "id": "C",
+        "text": "Send an SNS notification"
+      },
+      {
+        "id": "D",
+        "text": "Wait for the instance to become healthy before sending traffic"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "Auto Scaling marks an instance unhealthy when the EC2 status check reports impaired, and its response is always the same: terminate the unhealthy instance and launch a replacement so the group returns to its desired capacity. This replace-don't-repair behavior is what makes an Auto Scaling group self-healing. Cooldown periods govern the pacing of scaling activities in response to alarms, not health-check evaluation, and while you can configure notifications for scaling events, sending a notification is not the action Auto Scaling takes on an impaired instance."
+  },
+  {
+    "id": 39,
+    "type": "single",
+    "domain": "Monitoring and Logging",
+    "difficulty": "Professional",
+    "question": "You have just recently deployed an application on EC2 instances behind an ELB. After a couple of weeks, customers are complaining about receiving errors from the application. You want to diagnose the errors and are trying to get errors from the ELB access logs, but the ELB access logs are empty. What is the reason for this?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Access logging is an optional feature of Elastic Load Balancing that is disabled by default."
+      },
+      {
+        "id": "B",
+        "text": "ELB access logs are only available for a maximum of one week."
+      },
+      {
+        "id": "C",
+        "text": "You do not have the appropriate permissions to access the logs."
+      },
+      {
+        "id": "D",
+        "text": "You do not have your CloudWatch metrics correctly configured."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "Elastic Load Balancing access logging is opt-in. Until you explicitly enable it on the load balancer and specify a destination S3 bucket with a policy permitting ELB to write to it, no logs are captured at all — which is why the location is empty rather than partially populated. Once enabled, logs are delivered at a 5- or 60-minute interval and are retained in S3 according to your own lifecycle rules, so there is no built-in one-week limit. CloudWatch metric configuration is unrelated to whether access logs exist."
+  },
+  {
+    "id": 40,
+    "type": "single",
+    "domain": "Security and Compliance",
+    "difficulty": "Professional",
+    "question": "You are using a configuration management system to manage your Amazon EC2 instances. On your Amazon EC2 instances, you want to store credentials for connecting to an Amazon RDS DB instance. How should you securely store these credentials?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Store the Amazon RDS DB credentials in Amazon EC2 user data. Import the credentials into the instance on boot."
+      },
+      {
+        "id": "B",
+        "text": "Give the Amazon EC2 instances an IAM role that allows read access to a private Amazon S3 bucket. Store a file with database credentials in the Amazon S3 bucket. Have your configuration management system pull the file from the bucket when it is needed."
+      },
+      {
+        "id": "C",
+        "text": "Assign an IAM role to your Amazon EC2 instance, and use this IAM role to access the Amazon RDS DB from your Amazon EC2 instances."
+      },
+      {
+        "id": "D",
+        "text": "Launch an Amazon EC2 instance and use the configuration management system to bootstrap the instance with the Amazon RDS DB credentials. Create an AMI from this instance."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "An IAM role attached to the instance supplies temporary, automatically rotated credentials through the instance metadata service, so no long-lived database secret is stored anywhere on the instance — with RDS IAM database authentication the instance generates a short-lived auth token instead of holding a password. User data (A) is readable by anyone who can reach the metadata service or describe the instance, and baking credentials into an AMI (D) embeds a static secret in every instance launched from it and makes rotation require a rebuild. Option B is better than A or D but still leaves a persistent credential file to manage and rotate."
+  },
+  {
+    "id": 41,
+    "type": "single",
+    "domain": "Security and Compliance",
+    "difficulty": "Professional",
+    "question": "You have the following application to be set up in AWS: 1) a web tier hosted on EC2 instances, 2) session data to be written to DynamoDB, 3) log files to be written to Microsoft SQL Server. How can you allow an application to write data to a DynamoDB table?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Add an IAM user to a running EC2 instance."
+      },
+      {
+        "id": "B",
+        "text": "Create an IAM role that allows write access to the DynamoDB table."
+      },
+      {
+        "id": "C",
+        "text": "Create an IAM role that allows read access to the DynamoDB table."
+      },
+      {
+        "id": "D",
+        "text": "Add an IAM user that allows write access to the DynamoDB table."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Applications running on EC2 should obtain permissions through an IAM role attached to the instance profile, which delivers temporary rotating credentials with no secrets on the instance. Because the application is writing session data, the role's policy must permit write actions such as dynamodb:PutItem and dynamodb:UpdateItem — read-only permissions (C) would fail. IAM users (A and D) rely on long-lived access keys that must be distributed and rotated manually, and an IAM user cannot simply be \"added to\" an instance."
+  },
+  {
+    "id": 42,
+    "type": "multiple",
+    "domain": "Security and Compliance",
+    "difficulty": "Professional",
+    "question": "Your mobile application includes a photo-sharing service that is expecting tens of thousands of users at launch. You will leverage Amazon S3 for storage of the user images, and you must decide how to authenticate and authorize your users for access to these images. You also need to manage the storage of these images. Which two of the following approaches should you use? Choose two answers from the options below.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Authenticate your users at the application level, and send an SMS token message to the user. Create an Amazon S3 bucket with the same name as the SMS message token, and move the user's objects to that bucket."
+      },
+      {
+        "id": "B",
+        "text": "Use a key-based naming scheme comprised of the user IDs for all user objects in a single Amazon S3 bucket."
+      },
+      {
+        "id": "C",
+        "text": "Authenticate your users at the application level, and use AWS Security Token Service (STS) to grant token-based authorization to S3 objects."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS IAM user accounts as your application-level user database, and offload the burden of authentication from your application code."
+      }
+    ],
+    "answer": [
+      "B",
+      "C"
+    ],
+    "explanation": "A single bucket with keys prefixed by user ID scales to any number of users and avoids the per-account bucket limits and management overhead that a bucket-per-user design would create. For authorization, STS issues short-lived, scoped credentials so each authenticated user can access only the objects under their own prefix, without the application holding permanent keys. Creating a bucket per SMS token (A) is unworkable at scale and ties storage layout to a transient value, and IAM users (D) are meant for AWS principals, not application end users — tens of thousands of them would exceed IAM limits and conflate two identity systems. Note: the source document marks only option B; option C is included here because the question requires two answers and STS is the standard companion control."
+  },
+  {
+    "id": 43,
+    "type": "multiple",
+    "domain": "Resilient Cloud Solutions",
+    "difficulty": "Professional",
+    "question": "You currently have an Auto Scaling group with an Elastic Load Balancer and need to phase out all instances and replace them with a new instance type. What are 2 ways in which this can be achieved?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Attach an additional ELB to your Auto Scaling configuration and phase in newer instances while removing older instances."
+      },
+      {
+        "id": "B",
+        "text": "Use the NewestInstance termination policy to phase out all instances that use the previous configuration."
+      },
+      {
+        "id": "C",
+        "text": "Attach an additional Auto Scaling configuration behind the ELB and phase in newer instances while removing older instances."
+      },
+      {
+        "id": "D",
+        "text": "Use the OldestLaunchConfiguration termination policy to phase out all instances that use the previous configuration."
+      }
+    ],
+    "answer": [
+      "B",
+      "C"
+    ],
+    "explanation": "Running a second Auto Scaling group with a new launch configuration behind the same load balancer lets you grow the new group while shrinking the old one, so capacity is maintained throughout the transition. Adjusting the termination policy makes Auto Scaling choose which instances to remove as it scales in, so scaling activity itself retires the old fleet. Attaching a second ELB (A) does nothing about instance replacement — the load balancer is not what determines instance type. Note: the source document marks NewestInstance, but OldestLaunchConfiguration (option D) is the termination policy AWS documents for exactly this scenario, since it explicitly targets instances running the superseded configuration; treat this item's key with caution."
+  },
+  {
+    "id": 44,
+    "type": "single",
+    "domain": "Resilient Cloud Solutions",
+    "difficulty": "Professional",
+    "question": "You have an Auto Scaling group of instances that processes messages from an Amazon SQS queue. The group scales on the size of the queue. Processing involves calling a third-party web service. The web service is complaining about the number of failed and repeated calls it is receiving from you. You have noticed that when the group scales in, instances are being terminated while they are processing. What cost-effective solution can you use to reduce the number of incomplete process attempts?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Modify the application running on the instances to put itself into an Auto Scaling Standby state while it processes a task, and return itself to InService when the processing is complete."
+      },
+      {
+        "id": "B",
+        "text": "Increase the minimum and maximum size for the Auto Scaling group, and change the scaling policies so they scale less dynamically."
+      },
+      {
+        "id": "C",
+        "text": "Create a new Auto Scaling group with minimum and maximum of 2 and instances running web proxy software. Configure the VPC route table to route HTTP traffic to these web proxies."
+      },
+      {
+        "id": "D",
+        "text": "Modify the application running on the instances to enable termination protection while it processes a task and disable it when the processing is complete."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "An instance in the Standby state remains part of the Auto Scaling group but is excluded from scale-in selection, so a worker can protect itself for the duration of a task and rejoin the pool when finished — no extra infrastructure and no wasted capacity. Termination protection (D) does not prevent Auto Scaling from terminating an instance during scale-in; it only guards against manual API termination, so it does not solve the problem. Over-provisioning and damping the scaling policies (B) wastes money, and a proxy fleet (C) adds always-on cost while doing nothing about instances dying mid-task. In current AWS this scenario is also addressed by instance scale-in protection."
+  },
+  {
+    "id": 45,
+    "type": "single",
+    "domain": "SDLC Automation",
+    "difficulty": "Professional",
+    "question": "You are using Elastic Beanstalk to manage your e-commerce store. The store is based on an open source e-commerce platform and is deployed across multiple instances in an Auto Scaling group. Your development team often creates new extensions for the e-commerce store. These extensions include PHP source code as well as an SQL upgrade script used to make any necessary updates to the database schema. You have noticed that some extension deployments fail due to an error when running the SQL upgrade script. After further investigation, you realize that this is because the SQL script is being executed on all of your Amazon EC2 instances. How would you ensure that the SQL script is only executed once per deployment regardless of how many Amazon EC2 instances are running at the time?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Make use of the Amazon EC2 metadata service to query whether the instance is marked as the leader in the Auto Scaling group. Only execute the script if \"true\" is returned."
+      },
+      {
+        "id": "B",
+        "text": "Use a container command within an Elastic Beanstalk configuration file to execute the script, ensuring that the leader_only flag is set to true."
+      },
+      {
+        "id": "C",
+        "text": "Use a solo command within an Elastic Beanstalk configuration file to execute the script. The Elastic Beanstalk service will ensure that the command is only executed once."
+      },
+      {
+        "id": "D",
+        "text": "Update the Amazon RDS security group to only allow write access from a single instance in the Auto Scaling group; that way, only one instance will successfully execute the script on the database."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "In an .ebextensions configuration file, container_commands run on the instance after the application and web server have been set up but before the application version is deployed, and setting leader_only to true causes the command to execute on only one instance in the environment. This is the mechanism Beanstalk provides specifically for one-time-per-deployment work such as database migrations. There is no leader flag exposed through the EC2 metadata service (A) and no \"solo command\" directive (C). Restricting the security group (D) would leave the other instances failing their script with connection errors rather than skipping it cleanly."
+  }
+]
