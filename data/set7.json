@@ -1,0 +1,1291 @@
+[
+  {
+    "id": 1,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "Your company is migrating infrastructure to AWS. A large number of developers and administrators will need to control this infrastructure using the AWS Management Console. The Identity Management team is objecting to creating an entirely new directory of IAM users for all employees, and the employees are reluctant to commit yet another password to memory. Which of the following will satisfy both these stakeholders?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Users sign in using an OpenID Connect (OIDC) compatible IdP, receive an authentication token, then use that token to log in to the AWS Management Console."
+      },
+      {
+        "id": "B",
+        "text": "Users log in to the AWS Management Console using the AWS Command Line Interface."
+      },
+      {
+        "id": "C",
+        "text": "Users request a SAML assertion from your on-premises SAML 2.0-compliant identity provider (IdP) and use that assertion to obtain federated access to the AWS Management Console via the AWS single sign-on (SSO) endpoint."
+      },
+      {
+        "id": "D",
+        "text": "Users log in directly to the AWS Management Console using the credentials from your on-premises Kerberos compliant Identity provider."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "SAML 2.0 federation lets employees authenticate against the existing corporate identity provider and exchange the resulting assertion for temporary AWS credentials at the SSO endpoint. No IAM user is created for any employee, which satisfies the Identity Management team, and no new password is issued, which satisfies the employees. OIDC federation (A) is intended for web identity and mobile application scenarios rather than console access for a corporate workforce, the CLI (B) is not a console sign-in mechanism, and the AWS Management Console cannot consume Kerberos credentials directly (D)."
+  },
+  {
+    "id": 2,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "You are managing the AWS account of a big organization. The organization has more than 1000+ employees and they want to provide access to the various services to most of the employees. Which of the below-mentioned options is the best possible solution in this case?",
+    "options": [
+      {
+        "id": "A",
+        "text": "The user should create a separate IAM user for each employee and provide access to them as per the policy."
+      },
+      {
+        "id": "B",
+        "text": "The user should create an IAM role and attach STS with the role. The user should attach that role to the EC2 instance and set up AWS authentication on that server."
+      },
+      {
+        "id": "C",
+        "text": "The user should create IAM groups as per the organization's departments and add each user to the group for better access control."
+      },
+      {
+        "id": "D",
+        "text": "Attach an IAM role with the organization's authentication service to authorize each user for various AWS services."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "At this scale the right pattern is to federate with the organization's existing authentication service and map federated identities onto IAM roles, so users are authenticated by the corporate directory and receive temporary credentials for the AWS services they need. Creating a thousand-plus IAM users (A) or grouping them (C) still means managing that many identities and credentials inside AWS, duplicating the corporate directory. Option B describes attaching a role to an EC2 instance, which governs what the instance can do, not how employees are authorized."
+  },
+  {
+    "id": 3,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A company hosts a web application. There is a requirement that users from the internet must be able to access this application, but the application server itself should not be exposed to the internet. Which of the below options can help to fulfill these requirements?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Configure an IPsec VPN connection, and provide the users with the configuration details. Create a public subnet in your VPC, and place your application servers in it."
+      },
+      {
+        "id": "B",
+        "text": "Implement Elastic Load Balancing with an SSL listener that terminates the back-end connection to the application."
+      },
+      {
+        "id": "C",
+        "text": "Implement AWS Direct Connect, and create a private interface to your VPC. Create a public subnet and place your application servers in it."
+      },
+      {
+        "id": "D",
+        "text": "Configure an SSL VPN solution in a public subnet of your VPC, then configure VPN client software on all user computers. Create a private subnet in your VPC and place your application servers in it."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "Placing the application servers in a private subnet means they have no route to or from the internet, satisfying the non-exposure requirement, while an SSL VPN endpoint running in a public subnet gives remote users an authenticated tunnel into the VPC. Options A and C both put the application servers in a public subnet, which is exactly what the requirement forbids, and B terminates SSL at the load balancer but does not by itself describe an architecture that keeps the servers off the internet."
+  },
+  {
+    "id": 4,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A customer is running an application in the US-West region and wants to set up disaster recovery failover to the Singapore region. The customer is interested in achieving a low RPO for an RDS Multi-AZ DB instance. Which approach is best suited to this need?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Copying of RDS incremental snapshots"
+      },
+      {
+        "id": "B",
+        "text": "Asynchronous replication"
+      },
+      {
+        "id": "C",
+        "text": "Synchronous replication"
+      },
+      {
+        "id": "D",
+        "text": "Route 53 health checks"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Cross-region replication for RDS is performed asynchronously via a cross-region read replica, which continuously ships changes and therefore delivers a far lower RPO than periodic snapshot copies. Synchronous replication (C) requires the primary to wait for the remote commit, and across the latency of US-West to Singapore that overhead would be unacceptable — Multi-AZ uses synchronous replication precisely because the standby is close by. Snapshot copying (A) sets the RPO to the snapshot interval, and Route 53 health checks (D) handle traffic redirection, not data recovery."
+  },
+  {
+    "id": 5,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A newspaper organization has a requirement to store around 20TB of data for their readers. This data comprises newspapers in various languages. They want to use a search feature for users to search for articles on the site. Which AWS service can help to fulfill this requirement?",
+    "options": [
+      {
+        "id": "A",
+        "text": "CloudFront"
+      },
+      {
+        "id": "B",
+        "text": "CloudSearch"
+      },
+      {
+        "id": "C",
+        "text": "Multi-AZ RDS"
+      },
+      {
+        "id": "D",
+        "text": "Kinesis"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Amazon CloudSearch is a managed search service that provisions and scales the search infrastructure for you — you create a search domain, upload the documents you want made searchable, and it deploys a tuned index with support for multiple languages, faceting and relevance tuning. CloudFront is a content delivery network, Multi-AZ RDS is a relational database availability configuration rather than a full-text search engine, and Kinesis handles streaming data ingestion."
+  },
+  {
+    "id": 6,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "Due to a lot of your EC2 services going offline at least once a week for no apparent reason, your security officer has told you that you need to tighten up the logging of all events that occur on your AWS account. He wants to be able to access all events that occur on the account across all regions quickly and in the simplest way possible. He also wants to make sure he is the only person that has access to these events in the most secure way possible. Which of the following would be the best solution to assure his requirements are met?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use CloudTrail to log all events to a separate S3 bucket in each region as CloudTrail cannot write to a bucket in a different region. Use MFA and bucket policies on all the different buckets."
+      },
+      {
+        "id": "B",
+        "text": "Use CloudTrail to log all events to an Amazon Glacier Vault. Make sure the vault access policy only grants access to the security officer's IP address."
+      },
+      {
+        "id": "C",
+        "text": "Use CloudTrail to send all API calls to CloudWatch and send an email to the security officer every time an API call is made. Make sure the emails are encrypted."
+      },
+      {
+        "id": "D",
+        "text": "Use CloudTrail to log all events to one S3 bucket. Make this S3 bucket only accessible by your security officer with a bucket policy that restricts access to his user only and also add MFA to the policy for a further level of security."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "Two requirements drive the answer: all regions in one place for simple access, and access restricted to a single person. A CloudTrail trail can be applied to all regions and deliver every region's events into a single S3 bucket, so the officer has one location to query. A bucket policy naming only his IAM principal, combined with an MFA condition, enforces the exclusive and secure access. Option A is based on the false premise that CloudTrail cannot write cross-region, and it fragments the logs. Glacier (B) is archival and slow to retrieve, and per-API-call emails (C) would be unusable at volume."
+  },
+  {
+    "id": 7,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "Someone on your team configured a Virtual Private Cloud with two public subnets in two separate AZs and two private subnets in two separate AZs. Each public subnet AZ has a matching private subnet AZ. The VPC and its subnets are properly configured. You also notice that there are multiple webserver instances in the private subnet, and you've been charged with setting up a public-facing Elastic Load Balancer which will accept requests from clients and distribute those requests to the webserver instances. How can you set this up without making any significant architectural changes?",
+    "options": [
+      {
+        "id": "A",
+        "text": "You can't. Webserver instances must be in public subnets in order for this to work."
+      },
+      {
+        "id": "B",
+        "text": "Put the webserver instances in the public subnets and then configure the ELB with those subnets."
+      },
+      {
+        "id": "C",
+        "text": "Select both of the public subnets when configuring the ELB."
+      },
+      {
+        "id": "D",
+        "text": "Select both of the private subnets which contain the webserver instances when configuring the ELB."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "An internet-facing load balancer needs its nodes placed in public subnets so they can be reached from the internet, but the targets it registers can sit in private subnets in the same Availability Zones. You associate the two public subnets with the ELB and leave the instances where they are — no architectural change required. You must also ensure the load balancer's security group has the listener ports open and the instances' security groups permit traffic from the load balancer on both the listener and health check ports."
+  },
+  {
+    "id": 8,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "An AWS customer is deploying a web application that is composed of a front end running on Amazon EC2 and confidential data that is stored on Amazon S3. The customer's security policy requires that all access operations to this sensitive data must be authenticated and authorized by a centralized access management system that is operated by a separate security team. In addition, the web application team that owns and administers the EC2 web front-end instances is prohibited from having any ability to access the data that circumvents this centralized access management system. Which of the following configurations will support these requirements?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Configure the web application to authenticate end users against the centralized access management system. Have the web application provision trusted users STS tokens entitling the download of approved data directly from Amazon S3."
+      },
+      {
+        "id": "B",
+        "text": "Encrypt the data on Amazon S3 using a CloudHSM that is operated by the separate security team. Configure the web application to integrate with the CloudHSM for decrypting approved data access operations for trusted end users."
+      },
+      {
+        "id": "C",
+        "text": "Configure the web application to authenticate end users against the centralized access management system using SAML. Have the end users authenticate to IAM using their SAML token and download the approved data directly from Amazon S3."
+      },
+      {
+        "id": "D",
+        "text": "Have the separate security team create an IAM Role that is entitled to access the data on Amazon S3. Have the web application team provision their instances with this Role while denying their IAM users access to the data on Amazon S3."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "Every access is authenticated by the centralized system, which then issues a scoped, short-lived STS token permitting only the approved objects — so authorization always flows through the central authority and the tokens carry no standing privilege. Option D fails the second requirement outright: an instance role attached to servers the web application team administers gives that team an inherent path to the data, since anyone with instance access can retrieve the role's credentials. Option B addresses encryption but not per-request authorization, and option C bypasses the centralized system by having end users authenticate directly to IAM."
+  },
+  {
+    "id": 9,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "An online gaming server in which you have recently increased its IOPS performance by creating a RAID 0 configuration has now started to have bottleneck problems due to your instance bandwidth. Which of the following would be the best solution for this to increase throughput?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Move all your EC2 instances to the same availability zone."
+      },
+      {
+        "id": "B",
+        "text": "Use instance store backed instances and stripe the attached ephemeral storage devices and use DRBD Asynchronous Replication."
+      },
+      {
+        "id": "C",
+        "text": "Use Single Root I/O Virtualization (SR-IOV) on all the instances."
+      },
+      {
+        "id": "D",
+        "text": "Use a RAID 1 configuration instead of RAID 0."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "The bottleneck described is instance network bandwidth, not disk. SR-IOV — enhanced networking — gives the instance direct access to the network interface hardware, delivering higher packets-per-second throughput, lower CPU utilization and lower, more consistent latency than the standard virtualized path. Co-locating instances in one AZ (A) reduces latency but does not raise per-instance bandwidth, RAID 1 (D) mirrors for redundancy and actually reduces write throughput versus RAID 0, and option B changes the storage layer, which is not where the constraint lies."
+  },
+  {
+    "id": 10,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A company has an application that is hosted on an EC2 instance. The code is written in .NET and connects to a MySQL RDS database. If you're executing .NET code against AWS on an EC2 instance that is assigned an IAM role, which of the following is a true statement?",
+    "options": [
+      {
+        "id": "A",
+        "text": "None of these"
+      },
+      {
+        "id": "B",
+        "text": "The code will assume the same permissions as the EC2 role"
+      },
+      {
+        "id": "C",
+        "text": "The code must have AWS access keys in order to execute"
+      },
+      {
+        "id": "D",
+        "text": "Only .NET code can assume IAM roles"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "When an IAM role is attached to an instance through an instance profile, the AWS SDKs — including the .NET SDK — automatically retrieve temporary credentials for that role from the instance metadata service and refresh them before expiry. Code running on the instance therefore inherits exactly the permissions granted by the role's policy, with no access keys embedded anywhere (C). Roles are language-agnostic, so option D is false. Note that the explanation printed in the source document for this item is unrelated boilerplate about ELB role creation steps."
+  },
+  {
+    "id": 11,
+    "type": "multiple",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "You tried to integrate 2 systems (front end and back end) with an HTTP interface into one large system. These subsystems don't store any state inside. All state is stored in a DynamoDB table. You have launched each of the subsystems with separate AMIs. After testing, these servers stopped running and are issuing malformed requests that do not meet the HTTP specifications of the client. Your developers fix the issue and deploy the fix to the subsystems as soon as possible without service disruption. What are the 3 most effective options from the below to deploy these fixes?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use Amazon CloudFront to access the front end server with origin fetch."
+      },
+      {
+        "id": "B",
+        "text": "Use Elastic Load Balancing in front of the back-end system and Auto Scaling to keep the specified number of instances."
+      },
+      {
+        "id": "C",
+        "text": "Use Elastic Load Balancing in front of the front-end system and Auto Scaling to keep the specified number of instances."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS OpsWorks auto healing for both the front end and back end instance pair."
+      },
+      {
+        "id": "E",
+        "text": "Use VPC."
+      },
+      {
+        "id": "F",
+        "text": "Use Amazon SQS between the front end and back end subsystems."
+      }
+    ],
+    "answer": [
+      "B",
+      "C",
+      "D"
+    ],
+    "explanation": "Because the subsystems are stateless, instances can be replaced freely. Putting each tier behind an Elastic Load Balancer with an Auto Scaling group lets you detach or place instances in standby, patch them, and return them to service while the remaining instances keep serving — a rolling update with no disruption, applied to both the front end and the back end. OpsWorks auto healing complements this by detecting failed instances and bringing replacements back up with the fixed configuration deployed. CloudFront (A) caches content but does not deploy fixes, VPC (E) is a networking construct, and an SQS queue (F) would be an architectural redesign rather than a deployment mechanism."
+  },
+  {
+    "id": 12,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "You are maintaining an application that is spread across multiple web servers and has incoming traffic balanced by ELB. The application allows users to upload pictures. Currently, each web server stores the image and a background task synchronizes the data between servers. However, the synchronization task can no longer keep up with the number of images uploaded. What change could you make so that all web servers have a place to store and read images at the same time?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Store the images on Amazon EBS"
+      },
+      {
+        "id": "B",
+        "text": "Store the images in Amazon S3"
+      },
+      {
+        "id": "C",
+        "text": "Store the images on the ELB"
+      },
+      {
+        "id": "D",
+        "text": "Store the images on Amazon CloudFront"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "S3 is shared, durable object storage that every web server can write to and read from concurrently, which eliminates the synchronization job entirely and removes the scaling ceiling it created. It is also cost-effective and highly available, and it decouples image storage from the lifecycle of any individual instance. An EBS volume (A) attaches to a single instance and cannot serve as shared storage in this design, the ELB (C) is not a storage service at all, and CloudFront (D) is a cache in front of an origin, not the origin itself."
+  },
+  {
+    "id": 13,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "As a solutions architect professional, you have been requested to launch 20 large EC2 instances which will all be used to process huge amounts of data. There is also a requirement that these instances will need to transfer data back and forth between each other. Which of the following would be the most efficient setup to achieve this?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Ensure all instances are placed in the same Availability Zone."
+      },
+      {
+        "id": "B",
+        "text": "Use the largest EC2 instances currently available on AWS and make sure they are spread across multiple availability zones."
+      },
+      {
+        "id": "C",
+        "text": "Use Placement Groups and ensure all instances are launched at the same time."
+      },
+      {
+        "id": "D",
+        "text": "Ensure all the instances are placed in the same region."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "A cluster placement group packs instances close together on the same high-bisection-bandwidth network segment, delivering the low-latency, high-throughput node-to-node communication that tightly coupled HPC-style workloads require. Launching all the instances in a single request is the recommended practice, since it lets EC2 satisfy the whole group at once and avoids insufficient-capacity errors when adding to the group later. Merely sharing an Availability Zone (A) or a region (D) provides no such placement guarantee, and spreading across AZs (B) increases inter-node latency, which is the opposite of what this workload needs."
+  },
+  {
+    "id": 14,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "A company has placed a set of on-premises resources with an AWS Direct Connect provider. After establishing connections to a local AWS region in the US, the company needs to establish a low latency dedicated connection to an S3 public endpoint over the Direct Connect dedicated low latency connection. What steps need to be taken to accomplish configuring a direct connection to a public S3 endpoint?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Add a BGP route as part of the on-premises router; this will route S3 related traffic to the public S3 endpoint to a dedicated AWS region."
+      },
+      {
+        "id": "B",
+        "text": "Configure a public virtual interface to connect to a public S3 endpoint resource."
+      },
+      {
+        "id": "C",
+        "text": "Establish a VPN connection from the VPC to the public S3 endpoint."
+      },
+      {
+        "id": "D",
+        "text": "Configure a private virtual interface to connect to the public S3 endpoint via the Direct Connect connection."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Direct Connect virtual interfaces come in two relevant flavours: a private VIF connects to resources inside a VPC using private IP addresses, and a public VIF connects to AWS public endpoints such as S3. Because S3 is reached over a public endpoint, a public virtual interface is required. Multiple virtual interfaces can share a single Direct Connect connection, and each needs a VLAN ID, interface IP address, ASN and BGP key. A private VIF (D) cannot reach the public endpoint, and a VPN over the internet (C) defeats the purpose of the dedicated connection."
+  },
+  {
+    "id": 15,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "You have been asked to manage your AWS infrastructure in a manner similar to the way you might manage application code. You want to be able to deploy exact copies of different versions of your infrastructure, stage changes into different environments, revert back to previous versions, and identify what versions are running at any particular time (development, test, QA, production). Which approach addresses this requirement?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use cost allocation reports and AWS OpsWorks to deploy and manage your infrastructure."
+      },
+      {
+        "id": "B",
+        "text": "Use AWS CloudWatch metrics and alerts along with resource tagging to deploy and manage your infrastructure."
+      },
+      {
+        "id": "C",
+        "text": "Use AWS CloudFormation and a version control system like Git to deploy and manage your infrastructure."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Elastic Beanstalk and a version control system like Git to deploy and manage your infrastructure."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "CloudFormation templates declare the resources, dependencies and runtime parameters of an environment as text, so committing them to Git gives infrastructure the same properties as application code: exact reproducibility across environments, diffable change history, tagged releases, and rollback by redeploying an earlier revision. CloudFormation also resolves provisioning order for you and can update stacks in a controlled, predictable way. Cost allocation reports (A) and CloudWatch metrics with tagging (B) are observability and accounting tools, not provisioning mechanisms, and Beanstalk (D) versions application deployments rather than the full infrastructure definition."
+  },
+  {
+    "id": 16,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "While hosting a static website with Amazon S3, your static JavaScript code attempts to include resources from another S3 bucket but permission is denied. How might you solve the problem?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Disable Public Object Permissions"
+      },
+      {
+        "id": "B",
+        "text": "Move the object to the main bucket"
+      },
+      {
+        "id": "C",
+        "text": "None of these"
+      },
+      {
+        "id": "D",
+        "text": "Enable CORS Configuration"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "Browsers enforce the same-origin policy, so JavaScript served from one bucket's website endpoint is blocked from reading resources hosted on a different bucket unless that second bucket explicitly permits it. Adding a CORS configuration to the bucket holding the resources — specifying the allowed origins, methods and headers — makes S3 return the Access-Control-Allow-Origin headers the browser requires, and the requests succeed. Note that the explanation printed in the source document for this item was copied in error from the AMI question that follows it and does not describe CORS."
+  },
+  {
+    "id": 17,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A user has launched an EC2 instance store-backed instance in the us-east-1a zone. The user created AMI #1 and copied it to the eu-west-1 region. After that, the user made a few updates to the application running in the us-east-1a zone. The user makes an AMI #2 after the changes. If the user launches a new instance in Europe from the AMI #1 copy, which of the below-mentioned statements is true?",
+    "options": [
+      {
+        "id": "A",
+        "text": "The new instance will have the changes made after the AMI copy since AWS keeps updating the AMI."
+      },
+      {
+        "id": "B",
+        "text": "The new instance in the eu-west-1 region will not have the changes made after the AMI copy."
+      },
+      {
+        "id": "C",
+        "text": "The new instance will have the changes made after the AMI copy as AWS just copies the reference of the original AMI during the copying. Thus, the copied AMI will have all the updated data."
+      },
+      {
+        "id": "D",
+        "text": "It is not possible to copy the instance store backed AMI from one region to another."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "An AMI copy is a point-in-time, independent duplicate of the source image, not a live reference to it. Any application changes made after the copy exist only in AMI #2 in us-east-1, so an instance launched in eu-west-1 from the AMI #1 copy reflects the state at the time of copying. To pick up the changes you must copy AMI #2 to eu-west-1 and launch from that. AMIs are region-scoped and are never auto-updated (A and C), and instance store-backed AMIs can indeed be copied between regions (D)."
+  },
+  {
+    "id": 18,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "You've been tasked with moving an e-commerce web application from a customer's data center into a VPC. The application must be fault tolerant as well as highly scalable. Moreover, the customer is adamant that service interruptions must not affect the user experience. As you near launch, you discover that the application currently uses multicast to share session state between web servers. In order to handle session state within the VPC, you choose which of the following options?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a mesh VPN between instances and allow multicast on it."
+      },
+      {
+        "id": "B",
+        "text": "Store session state in Amazon ElastiCache for Redis."
+      },
+      {
+        "id": "C",
+        "text": "Store session state in Amazon Relational Database Service."
+      },
+      {
+        "id": "D",
+        "text": "Enable session stickiness via Elastic Load Balancing."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "VPCs do not support multicast, so the session-sharing mechanism must be redesigned. Externalizing session state to ElastiCache for Redis gives an in-memory store with sub-millisecond reads that every web server can share, which keeps the tier stateless and therefore freely scalable and fault tolerant. A mesh VPN (A) reintroduces a supernode registration point that becomes a single point of failure and does not register cleanly across AZs. RDS (C) adds relational overhead for what is a simple key-value access pattern, and session stickiness (D) pins users to individual servers, so losing a server loses their session."
+  },
+  {
+    "id": 19,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "You've created a temporary application that accepts image uploads, stores them in S3, and records information about the image in RDS. After building this architecture and accepting images for the duration required, it's time to delete the CloudFormation template. However, your manager has informed you that for archival reasons the RDS data needs to be stored and the S3 bucket with the images needs to remain. Your manager has also instructed you to ensure that the application can be restored by a CloudFormation template and run next year during the same period. Knowing that when a CloudFormation template is deleted it will remove the resources it created, what is the best method for achieving the desired goals?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Set the DeletionPolicy on the S3 resource to snapshot and the DeletionPolicy on the RDS resource to snapshot."
+      },
+      {
+        "id": "B",
+        "text": "For both the RDS and S3 resource types on the CloudFormation template, set the DeletionPolicy to retain."
+      },
+      {
+        "id": "C",
+        "text": "Enable S3 bucket replication on the source bucket to a destination bucket to maintain a copy of all the S3 objects, set the deletion policy for the RDS instance to snapshot."
+      },
+      {
+        "id": "D",
+        "text": "Set the DeletionPolicy on the S3 resource declaration in the CloudFormation template to retain, set the RDS resource declaration DeletionPolicy to snapshot."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "The two requirements differ, so the two policies differ. The bucket and its images must survive intact, which is what Retain does — CloudFormation leaves the resource and its contents in place when the stack is deleted. The RDS data only needs to be restorable later, which Snapshot achieves by capturing the database before deleting the instance, avoiding a year of instance charges. Option A is invalid because S3 buckets are not among the resource types that support Snapshot (that list covers EC2 volumes, ElastiCache clusters and replication groups, RDS instances and clusters, and Redshift clusters). Option B would leave the RDS instance running and billing all year, and option C adds needless replication cost."
+  },
+  {
+    "id": 20,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "Which of the following cache options is normally preferred when building gaming applications?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Primary Cache"
+      },
+      {
+        "id": "B",
+        "text": "None of these"
+      },
+      {
+        "id": "C",
+        "text": "Memcached"
+      },
+      {
+        "id": "D",
+        "text": "Redis"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "ElastiCache for Redis suits gaming workloads because the dominant features — leaderboards, session stores and player profiles — map directly onto Redis data structures. Sorted sets in particular make ranking by score a native operation rather than something the application must compute, and Redis also supports persistence, replication and pub/sub for pushing real-time updates. Memcached (C) is a simpler multi-threaded key-value cache with no sorted sets, no persistence and no replication, so it cannot support leaderboards natively."
+  },
+  {
+    "id": 21,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "One of your requirements is to set up an S3 bucket to store your files like documents and images. However, those objects should not be directly accessible via the S3 URL, they should only be accessible from pages on your website so that only your paying customers can see them. How could you implement this?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use HTTPS endpoints to encrypt your data."
+      },
+      {
+        "id": "B",
+        "text": "You can use server-side and client-side encryption, where only your application can decrypt the objects."
+      },
+      {
+        "id": "C",
+        "text": "You can use a bucket policy and check for the aws:Referer key in a condition, where that key matches your domain."
+      },
+      {
+        "id": "D",
+        "text": "You can't. The S3 URL must be public in order to use it on your website."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "A bucket policy granting s3:GetObject with a condition on the aws:Referer key restricts successful requests to those originating from the specified web pages, so a customer following a link from your site is served the object while someone pasting the raw S3 URL into a browser is denied. By default all S3 resources are private, and this policy opens them only for the referring domain. Encryption (A and B) protects data confidentiality but does not control who may retrieve the object. Note that the Referer header can be spoofed, so for genuinely paid content CloudFront signed URLs or signed cookies are the stronger modern control."
+  },
+  {
+    "id": 22,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "An Enterprise customer is starting their migration to the cloud. Their main reason for migrating is agility, and they want to make their internal Microsoft Active Directory available to any applications running on AWS; this is so internal users only have to remember one set of credentials and as a central point of user control for leavers and joiners. How could they make their Active Directory secure, and highly available, with minimal on-premises infrastructure changes, in the most cost and time-efficient way?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Using VPC, they could create an extension to their data center and make use of resilient hardware IPSec tunnels; they could then have two domain controller instances that are joined to their existing domain and reside within different subnets, in different Availability Zones."
+      },
+      {
+        "id": "B",
+        "text": "The customer could create a stand-alone VPC with its own Active Directory Domain Controllers; two domain controller instances could be configured, one in each Availability Zone; new applications would authenticate with those domain controllers."
+      },
+      {
+        "id": "C",
+        "text": "Using Amazon EC2, they could create a DMZ using a security group; within the security group they could provision two smaller Amazon EC2 instances that are running Openswan for resilient IPSec tunnels, and two larger instances that are domain controllers; they would use multiple Availability Zones."
+      },
+      {
+        "id": "D",
+        "text": "Within the customer's existing infrastructure, they could provision new hardware to run Active Directory Federation Services; this would present Active Directory as a SAML2 endpoint on the internet; any new application on AWS could be written to authenticate using SAML2."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "Extending the existing domain into the VPC over redundant hardware IPSec tunnels keeps a single directory and therefore a single set of credentials and one place to handle joiners and leavers, which is the stated goal. Placing two domain controllers in different subnets in different Availability Zones provides the high availability, and the tunnels secure all traffic between on-premises and AWS. A stand-alone directory (B) creates a second identity store and defeats the central-control requirement, the Openswan design (C) substitutes self-managed software VPN instances for resilient hardware tunnels and adds operational burden, and option D requires new on-premises hardware, conflicting with \"minimal on-premises infrastructure changes\"."
+  },
+  {
+    "id": 23,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "Currently, a company uses Redshift to store its analyzed data. They have started with the base configuration. What would they get when they initially start using Redshift?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Two nodes with 320GB each"
+      },
+      {
+        "id": "B",
+        "text": "One node of 160GB"
+      },
+      {
+        "id": "C",
+        "text": "Two nodes with 160GB each"
+      },
+      {
+        "id": "D",
+        "text": "One node of 320GB"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "The smallest Redshift configuration is a single-node cluster, and the entry-level dense compute node type historically provided 160GB of SSD storage per node. A single-node cluster acts as both leader and compute node, and you scale from there by adding compute nodes, which promotes the cluster to a multi-node configuration with a dedicated leader node. Note that the source document supplies no explanation for this item, and node types and capacities have changed considerably since it was written — current Redshift offers RA3 managed storage and Redshift Serverless, so treat this as a legacy fact rather than current guidance."
+  },
+  {
+    "id": 24,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "What can be done if a company wants to establish a low latency dedicated connection to an S3 public endpoint over Direct Connect?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Configure a private virtual interface to connect to the public S3 endpoint via the Direct Connect connection."
+      },
+      {
+        "id": "B",
+        "text": "Establish a VPN connection from the VPC to the public S3 endpoint."
+      },
+      {
+        "id": "C",
+        "text": "Configure a public virtual interface to connect to a public S3 endpoint resource."
+      },
+      {
+        "id": "D",
+        "text": "Add a BGP route as part of the on-premises router; this will route S3 related traffic to the public S3 endpoint to a dedicated AWS region."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Public virtual interfaces are what Direct Connect provides for reaching AWS public endpoints such as Amazon S3, whereas private virtual interfaces terminate inside a VPC and address resources by private IP. A single Direct Connect connection can carry multiple virtual interfaces, each configured with a VLAN ID, interface IP address, ASN and BGP key. A VPN over the internet (B) would not deliver the dedicated low-latency path being asked for. This item duplicates Question 14 in the source document."
+  },
+  {
+    "id": 25,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "Which of the following are some of the best examples where Amazon Kinesis can be used?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Real-time data analytics"
+      },
+      {
+        "id": "B",
+        "text": "Accelerated log and data feed intake"
+      },
+      {
+        "id": "C",
+        "text": "All of these"
+      },
+      {
+        "id": "D",
+        "text": "Real-time metrics and reporting"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "All three listed scenarios are canonical Kinesis Data Streams use cases. Accelerated log and data feed intake lets producers push records straight into a stream so they are available within seconds and are not lost if an application server fails. Real-time metrics and reporting lets consumers work on data as it streams in rather than waiting for batches. Real-time data analytics combines parallel processing with live data, for example analyzing clickstreams as they arrive. Kinesis also supports complex stream processing, where applications and streams are chained into directed acyclic graphs."
+  },
+  {
+    "id": 26,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "An organization is planning to use AWS for their production rollout. The organization wants to implement automation for deployment such that it will automatically create a LAMP stack, download the latest PHP installable from S3, and set up the ELB. Which of the below-mentioned AWS services meets the requirement for making an orderly deployment of the software?",
+    "options": [
+      {
+        "id": "A",
+        "text": "AWS CloudFront"
+      },
+      {
+        "id": "B",
+        "text": "AWS CloudFormation"
+      },
+      {
+        "id": "C",
+        "text": "AWS DevOps"
+      },
+      {
+        "id": "D",
+        "text": "AWS Elastic Beanstalk"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "Elastic Beanstalk takes uploaded application code and handles the deployment end to end — capacity provisioning, load balancing, auto scaling and health monitoring — while still leaving the underlying AWS resources accessible and under your control. CloudFront (A) is a CDN and \"AWS DevOps\" (C) is not a service. Note that CloudFormation (B) is a defensible answer for orchestrating an orderly, dependency-aware provisioning of a LAMP stack and ELB, and other versions of this question key it that way; the source document keys Elastic Beanstalk on the grounds that it automates the application deployment itself rather than just the infrastructure template."
+  },
+  {
+    "id": 27,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "An organization has created one IAM user and applied the below-mentioned policy to the user. What entitlements do the IAM users avail with this policy? { \"Version\": \"2012-10-17\", \"Statement\": [ { \"Effect\": \"Allow\", \"Action\": \"ec2:Describe*\", \"Resource\": \"*\" }, { \"Effect\": \"Allow\", \"Action\": [ \"cloudwatch:ListMetrics\", \"cloudwatch:GetMetricStatistics\", \"cloudwatch:Describe*\" ], \"Resource\": \"*\" }, { \"Effect\": \"Allow\", \"Action\": \"autoscaling:Describe*\", \"Resource\": \"*\" } ] }",
+    "options": [
+      {
+        "id": "A",
+        "text": "The policy will allow the user to perform all read-only activities on the EC2 services."
+      },
+      {
+        "id": "B",
+        "text": "The policy will allow the user to perform all read and write activities on the EC2 services."
+      },
+      {
+        "id": "C",
+        "text": "The policy will allow the user to perform all read-only activities on the EC2 services except load balancing."
+      },
+      {
+        "id": "D",
+        "text": "The policy will allow the user to list all the EC2 resources except EBS."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "The three statements grant EC2 Describe actions, a set of CloudWatch read actions, and Auto Scaling Describe actions — so the user can view instances, metrics and scaling groups, but every action is read-only, ruling out option B. Elastic Load Balancing lives under its own service prefix, elasticloadbalancing, which appears nowhere in the policy, so load balancer information is not visible. Adding an allow for \"elasticloadbalancing:Describe*\" would complete the read-only picture. EBS volumes are described through ec2:Describe* and so are visible, which makes option D incorrect."
+  },
+  {
+    "id": 28,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "You have an EBS root device on /dev/sda1 on one of your EC2 instances. You are having trouble with this particular instance and you want to either stop/start, reboot or terminate the instance but you do not want to lose any data that you have stored on /dev/sda1. Which of the below statements best describes the effect each change of instance state would have on the data you have stored on /dev/sda1?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Whether you stop/start, reboot or terminate the instance it does not matter because data on an EBS volume is not ephemeral and the data will not be lost regardless of what method is used."
+      },
+      {
+        "id": "B",
+        "text": "Whether you stop/start, reboot or terminate the instance it does not matter because data on an EBS volume is ephemeral and it will be lost no matter what method is used."
+      },
+      {
+        "id": "C",
+        "text": "If you stop/start the instance the data will not be lost. However, if you either terminate or reboot the instance the data will be lost."
+      },
+      {
+        "id": "D",
+        "text": "The data in an instance store is not permanent — it persists only during the lifetime of the instance. The data will be lost if you terminate the instance. However, the data will remain on /dev/sda1 if you reboot or stop/start the instance because data on an EBS volume is not ephemeral."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "EBS volumes persist independently of the instance lifecycle, so an EBS-backed instance can be rebooted or stopped and started later with the root volume's contents intact. Termination is the exception: the root device volume's DeleteOnTermination attribute defaults to true, so unless you have changed it the root volume is deleted with the instance and the data is lost. Option A ignores that default, option B confuses EBS with instance store, and option C wrongly claims a reboot destroys data."
+  },
+  {
+    "id": 29,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "Your company hosts an on-premises legacy engineering application with 900GB of data shared via a central file server. The engineering data consists of thousands of individual files ranging in size from megabytes to multiple gigabytes. Engineers typically modify 5-10 percent of the files a day. Your CTO would like to migrate this application to AWS, but only if the application can be migrated over the weekend to minimize user downtime. You calculate that it will take a minimum of 48 hours to transfer 900GB of data using your company's existing 45-Mbps internet connection. After replicating the application's environment in AWS, which option will allow you to move the application's data to AWS without losing any data and within the given timeframe?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Copy the data to Amazon S3 using multiple threads and multi-part upload for large files over the weekend, and work in parallel with your developers to reconfigure the replicated application environment to leverage Amazon S3 to serve the engineering files."
+      },
+      {
+        "id": "B",
+        "text": "Leverage the AWS Storage Gateway to create a Gateway-Stored volume. On Friday copy the application data to the Storage Gateway volume. After the data has been copied, perform a snapshot of the volume and restore the volume as an EBS volume to be attached to your AWS file server on Sunday."
+      },
+      {
+        "id": "C",
+        "text": "Sync the application data to Amazon S3 starting a week before the migration, on Friday morning perform a final sync, and copy the entire data set to your AWS file server after the sync completes."
+      },
+      {
+        "id": "D",
+        "text": "Copy the application data to a 1-TB USB drive on Friday and immediately send overnight, with Saturday delivery, the USB drive to AWS Import/Export to be imported as an EBS volume, mount the resulting EBS volume to your AWS file server on Sunday."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Four constraints govern this: only 5-10% of files change daily, the window is a weekend, downtime must be minimized, and no data may be lost. Seeding the bulk of the 900GB to S3 over the preceding week spreads the transfer across available bandwidth, so the final Friday sync only has to move the recent deltas and completes comfortably inside the window — with time in hand if problems arise. Options A and B both attempt to move the full 900GB during the weekend against a transfer that takes at least 48 hours, leaving no margin, and option D depends on a physical shipment arriving and being imported on a fixed schedule with no room for delay."
+  },
+  {
+    "id": 30,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "An application is deployed in multiple Availability Zones in a single region. In the event of failure, the RTO must be less than 3 hours and the RPO is 15 minutes. Which DR strategy can be used to achieve this RTO and RPO in the event of this kind of failure?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use synchronous database master-slave replication between two Availability Zones."
+      },
+      {
+        "id": "B",
+        "text": "Take hourly DB backups to Amazon S3, with transaction logs stored in S3 every 5 minutes."
+      },
+      {
+        "id": "C",
+        "text": "Take hourly DB backups to an Amazon EC2 instance store volume, with transaction logs stored in Amazon S3 every 5 minutes."
+      },
+      {
+        "id": "D",
+        "text": "Take 15-minute DB backups stored in Amazon Glacier, with transaction logs stored in Amazon S3 every 5 minutes."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Restoring an hourly full backup from S3 and then replaying transaction logs written every five minutes recovers the database to within five minutes of the failure, comfortably inside the 15-minute RPO, and an S3 restore is fast enough to meet a three-hour RTO. Option C stores the backups on instance store, which is ephemeral — the backups vanish with the instance, so they cannot be relied on for recovery. Option D uses Glacier, whose retrieval times can run to hours and jeopardize the RTO. Option A protects against an AZ failure but is described without any backup or point-in-time recovery capability."
+  },
+  {
+    "id": 31,
+    "type": "multiple",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "There is a requirement to move a legacy app to AWS. This legacy app still requires accessing some of the services on the on-premises architecture. Which of the 2 below options will help to fulfill this requirement?",
+    "options": [
+      {
+        "id": "A",
+        "text": "An AWS Direct Connect link between the VPC and the network housing the internal services."
+      },
+      {
+        "id": "B",
+        "text": "An Internet Gateway to allow a VPN connection."
+      },
+      {
+        "id": "C",
+        "text": "An Elastic IP address on the VPC instance."
+      },
+      {
+        "id": "D",
+        "text": "An IP address space that does not conflict with the one on-premises."
+      }
+    ],
+    "answer": [
+      "A",
+      "D"
+    ],
+    "explanation": "Hybrid connectivity needs two things. First a path: Direct Connect establishes a dedicated private link between the on-premises data center and the VPC, letting the migrated application reach the internal services it still depends on (a Site-to-Site VPN would serve the same purpose over the internet). Second, non-overlapping addressing: if the VPC CIDR overlaps the on-premises ranges, routing between the two becomes ambiguous and the environments cannot communicate. An Internet Gateway (B) and an Elastic IP (C) provide public internet reachability, which is not what private access to internal services requires."
+  },
+  {
+    "id": 32,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "Your customer is implementing a video-on-demand streaming platform on AWS. The requirement is to be able to support multiple devices such as iOS, Android and Windows as client devices, using a standard client player, using streaming technology and a scalable architecture with cost-effectiveness. Which architecture meets the requirements?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Launch a streaming server on Amazon EC2 (for example, Adobe Media Server), and store the video contents as an origin server. Configure the Amazon CloudFront distribution with a download option to stream the video contents."
+      },
+      {
+        "id": "B",
+        "text": "Launch a streaming server on Amazon EC2 (for example, Adobe Media Server), and store the video contents as an origin server. Launch and configure the required amount of streaming servers on Amazon EC2 as an edge server to stream the video contents."
+      },
+      {
+        "id": "C",
+        "text": "Store the video contents in Amazon S3 as an origin server. Configure the Amazon CloudFront distribution with a streaming option to stream the video contents."
+      },
+      {
+        "id": "D",
+        "text": "Store the video contents in Amazon S3 as an origin server. Configure the Amazon CloudFront distribution with a download option to stream the video contents."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "A CloudFront download distribution over HTTP serves HLS and similar adaptive bitrate formats, which every modern iOS, Android and Windows player supports natively — no proprietary client is required. Using S3 as the origin removes the cost and operational burden of running media servers and scales without capacity planning, making this both the most compatible and the most cost-effective option. The streaming distribution type in option C used RTMP, which is not supported by iOS and has since been discontinued by AWS. Options A and B run EC2-based media servers, adding licensing and management cost, and B additionally reinvents edge distribution that CloudFront already provides."
+  },
+  {
+    "id": 33,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "Company B has created an e-commerce site using DynamoDB and is designing a table named Products that includes items purchased and the users who purchased them. When creating a primary key on this table which of the following would be the best attribute?",
+    "options": [
+      {
+        "id": "A",
+        "text": "product_id where there are few products to many users"
+      },
+      {
+        "id": "B",
+        "text": "user_id where there are many users to few products"
+      },
+      {
+        "id": "C",
+        "text": "category_id where there are few categories to many products"
+      },
+      {
+        "id": "D",
+        "text": "None of these"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "A DynamoDB partition key should have high cardinality and an even access distribution so that reads and writes spread across partitions rather than concentrating on a few hot keys. Choosing user_id, where there are many distinct users, gives exactly that — the \"many to few\" principle the source cites. Keying on product_id or category_id, where a small number of values each attract a large share of traffic, produces hot partitions and throttling as popular products or categories dominate."
+  },
+  {
+    "id": 34,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "You have multiple instances behind private and public subnets. None of the instances have an EIP assigned to them. How can you securely connect them to the internet just to be able to download system updates?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Connect to a VPN"
+      },
+      {
+        "id": "B",
+        "text": "Assign EIP to each instance"
+      },
+      {
+        "id": "C",
+        "text": "Create a NAT instance"
+      },
+      {
+        "id": "D",
+        "text": "Use both a NAT instance and a VPN"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "A NAT instance placed in a public subnet lets instances in private subnets initiate outbound IPv4 traffic to the internet — enough to reach package repositories — while blocking any connection initiated from the internet toward those instances. This gives the update path without exposing the instances. Assigning Elastic IPs (B) would make every instance directly reachable from the internet, which is the opposite of secure here. A VPN (A) connects networks to each other rather than providing general internet egress. Note that AWS now recommends the managed NAT Gateway over a self-managed NAT instance for this pattern."
+  },
+  {
+    "id": 35,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A user is using CloudFormation to launch an EC2 instance and then configure an application after the instance is launched. The user wants the stack creation of ELB and Auto Scaling to wait until the EC2 instance is launched and configured properly. How can the user configure this?",
+    "options": [
+      {
+        "id": "A",
+        "text": "The user can use the DependentCondition resource to hold the creation of the other dependent resources."
+      },
+      {
+        "id": "B",
+        "text": "The user can use the HoldCondition resource to wait for the creation of the other dependent resources."
+      },
+      {
+        "id": "C",
+        "text": "The user can use the WaitCondition resource to hold the creation of the other dependent resources."
+      },
+      {
+        "id": "D",
+        "text": "It is not possible that the stack creation will wait until one service is created and launched."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "AWS::CloudFormation::WaitCondition pauses stack creation until it receives the expected success signals or its timeout expires, which is precisely how you coordinate resource creation with configuration work that happens outside CloudFormation's own view — such as an application install running on the instance. The instance signals completion via cfn-signal, and only then do the dependent ELB and Auto Scaling resources proceed. DependentCondition and HoldCondition are not CloudFormation resource types."
+  },
+  {
+    "id": 36,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "A user has configured an SSL listener at ELB as well as on the back-end instances. Which of the below-mentioned statements helps the user understand ELB traffic handling with respect to the SSL listener?",
+    "options": [
+      {
+        "id": "A",
+        "text": "ELB will intercept the request to add the cookie details if sticky session is enabled."
+      },
+      {
+        "id": "B",
+        "text": "It is not possible to have the SSL listener both at ELB and back-end instances."
+      },
+      {
+        "id": "C",
+        "text": "ELB will not modify the headers."
+      },
+      {
+        "id": "D",
+        "text": "ELB will modify headers to add requestor details."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "When the load balancer is configured for end-to-end SSL — an SSL listener at the ELB and SSL on the back-end instances — the traffic remains encrypted through the load balancer, so the ELB cannot inspect or alter the HTTP headers. That is why X-Forwarded-For and similar headers are added only when the listener terminates TLS at the load balancer (HTTP/HTTPS listeners), and why sticky sessions cannot be handled by the load balancer inserting a cookie in this configuration. Note that the source document's explanation for this item is truncated and cites no actual excerpt."
+  },
+  {
+    "id": 37,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "An Amazon Redshift cluster with four nodes is running 24/7/365 and expects potentially to add one on-demand node for one to two days once during the year. Which architecture would have the lowest possible cost for the cluster requirement?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Purchase 5 reserved nodes to cover all possible usage during the year."
+      },
+      {
+        "id": "B",
+        "text": "Purchase 2 reserved nodes and utilize 3 on-demand nodes only for peak usage times."
+      },
+      {
+        "id": "C",
+        "text": "Purchase 4 reserved nodes and rely on on-demand instances for the fifth node, if required."
+      },
+      {
+        "id": "D",
+        "text": "Purchase 4 reserved nodes and bid on spot instances for the extra node if required."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Match the pricing model to the usage pattern. Four nodes run continuously, so reserved node pricing gives the deepest discount on that steady-state baseline. The fifth node is needed at most one to two days a year and may not be needed at all, so paying a reservation for it (A) wastes most of the commitment. Under-reserving at two nodes (B) means paying on-demand rates for two nodes all year, which is more expensive. Redshift does not offer spot pricing for cluster nodes, so option D is not available."
+  },
+  {
+    "id": 38,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "You decide to create a bucket on AWS S3 called 'mybucket' and then perform the following actions in the order that they are listed here: you upload a file to the bucket called 'file1'; you upload a file called 'file2'; you upload a file called 'file3'; you upload another file called 'file2'. Which of the following is true for 'mybucket'?",
+    "options": [
+      {
+        "id": "A",
+        "text": "There will be 1 version ID for file1, there will be 2 version IDs for file2 and 1 version ID for file3."
+      },
+      {
+        "id": "B",
+        "text": "There will be 1 version ID for file1, the version ID for file2 will be null and there will be 1 version ID for file3."
+      },
+      {
+        "id": "C",
+        "text": "All file version IDs will be null because versioning must be enabled before uploading objects to 'mybucket'."
+      },
+      {
+        "id": "D",
+        "text": "The version ID for file1 will be null, there will be 2 version IDs for file2 and 1 version ID for file3."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "Objects that were already in the bucket before versioning was turned on keep a version ID of null — enabling versioning does not retroactively change existing objects, it only changes how S3 handles requests from that point on. So file1, uploaded before versioning was enabled, has a null version ID, while file3 gets one version ID and file2, uploaded twice afterwards, accumulates two. Note that the question as printed in the source omits the step where versioning is enabled after the first upload, which the answer key assumes; without that step every object would simply be unversioned."
+  },
+  {
+    "id": 39,
+    "type": "multiple",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "A corporate web application is deployed within an Amazon VPC and is connected to the corporate data center via IPSec VPN. The application must authenticate against the on-premises LDAP server. Once authenticated, logged-in users can only access an S3 keyspace specific to the user. Choose 2 options from the below.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Develop an identity broker that authenticates against LDAP and then calls IAM Security Token Service (STS) to get IAM federated user credentials. The application calls the identity broker to get IAM federated user credentials with access to the appropriate S3 bucket."
+      },
+      {
+        "id": "B",
+        "text": "The application authenticates against LDAP; the application then calls the AWS Identity and Access Management (IAM) Security service to log in to IAM using the LDAP credentials; the application can use the IAM temporary credentials to access the appropriate S3 bucket."
+      },
+      {
+        "id": "C",
+        "text": "Develop an identity broker that authenticates against IAM Security Token Service (STS) to assume an IAM role in order to get temporary AWS security credentials. The application calls the identity broker to get AWS temporary security credentials with access to the appropriate S3 bucket."
+      },
+      {
+        "id": "D",
+        "text": "The application authenticates against LDAP and retrieves the name of an IAM role associated with the user. The application then calls the IAM Security Token Service (STS) to assume that IAM role. The application can use the temporary credentials to access the appropriate S3 bucket."
+      }
+    ],
+    "answer": [
+      "A",
+      "D"
+    ],
+    "explanation": "The correct sequence is always: authenticate against LDAP first, then determine the IAM role, then obtain temporary credentials from STS, then access S3 with them. Both A and D follow that order — one via a dedicated identity broker service, the other with the application performing the broker function itself — and both scope the resulting credentials to the user's own keyspace. Option B is wrong because IAM cannot accept LDAP credentials as a login, and option C inverts the sequence by authenticating against STS rather than against the corporate directory, so the on-premises LDAP server never validates the user."
+  },
+  {
+    "id": 40,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A company has hired you to assist with the migration of an interactive website that allows registered users to rate local restaurants. Updates to the ratings are displayed on the home page and ratings are updated in real time. Although the website is not very popular today, the company anticipates that it will grow over the next few weeks. They also want to ensure that the website remains highly available. The current architecture consists of a single Windows Server 2008 R2 web server and a MySQL database on Linux, both residing on an on-premises hypervisor. What would be the most efficient way to transfer the application to AWS, ensuring high performance and availability?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use AWS VM Import/Export to create an Amazon EC2 AMI of the web server. Configure auto scaling to launch two web servers in us-west-1a and two in us-west-1b. Launch a Multi-AZ MySQL Amazon RDS instance in us-west-1b. Import the data into Amazon RDS from the latest MySQL backup. Use Amazon Route 53 to create a hosted zone and point an A record to the elastic load balancer."
+      },
+      {
+        "id": "B",
+        "text": "Export web files to an Amazon S3 bucket in us-west-1. Run the website directly out of Amazon S3. Launch a Multi-AZ MySQL Amazon RDS instance in us-west-1a. Import the data into Amazon RDS from the latest MySQL backup. Use Route 53 and create an alias record pointing to the elastic load balancer."
+      },
+      {
+        "id": "C",
+        "text": "Launch two Windows Server 2008 R2 instances in us-west-1b and two in us-west-1a and configure auto scaling. Copy the web files from the on-premises web server to each Amazon EC2 web server, using Amazon S3 as the repository. Launch a Multi-AZ MySQL Amazon RDS instance in us-west-1a. Import the data into Amazon RDS from the latest MySQL backup. Create an elastic load balancer (ELB) to front your web servers. Use Route 53 and create an alias record pointing to the ELB."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS VM Import/Export to create an Amazon EC2 AMI of the web server. Configure auto scaling to launch two web servers in us-west-1a and two in us-west-1b. Launch a Multi-AZ MySQL Amazon RDS instance in us-west-1a. Import the data into Amazon RDS from the latest MySQL backup. Create an elastic load balancer (ELB) in front of your web servers. Use Amazon Route 53 and create an A record pointing to the ELB."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "This option is complete and internally consistent: web servers spread across two Availability Zones with auto scaling, web content sourced from S3 as the repository, a Multi-AZ RDS instance for database availability, an ELB fronting the fleet, and a Route 53 alias record pointing at that ELB. Options A and B point DNS at a load balancer that the described architecture never creates, and B additionally proposes serving an interactive, real-time ratings site as a static S3 website, which cannot execute the application logic. Option D is close but uses a plain A record rather than an alias record for the ELB, which is not the recommended way to route to an ELB whose addresses change."
+  },
+  {
+    "id": 41,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A user has launched a large EBS-backed EC2 instance in the US-East-1a region. The user wants to achieve disaster recovery for that instance by creating another small instance in Europe. How can the user achieve DR?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use the \"Launch more like this\" option to copy the instance from one region to another."
+      },
+      {
+        "id": "B",
+        "text": "Create an AMI of the instance and copy the AMI to the EU region. Then launch the instance from the EU AMI."
+      },
+      {
+        "id": "C",
+        "text": "Copy the running instance using the \"Instance Copy\" command to the EU region."
+      },
+      {
+        "id": "D",
+        "text": "Copy the instance from the US East region to the EU region."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "AMIs are region-scoped, so an image created in us-east-1 is not visible in eu-west-1 by default. The supported path is to create an AMI from the instance and then use CopyImage to replicate it into the target region, after which an instance of any size can be launched from the copy. \"Launch more like this\" (A) only clones launch parameters within the same region, and there is no \"Instance Copy\" command or direct instance copy operation across regions (C and D)."
+  },
+  {
+    "id": 42,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "You are designing a multi-region architecture and you want to send users to a geographic location based on latency-based routing, which seems simple enough; however, you also want to use weighted-based routing among resources within that region. Which of the below setups would best accomplish this?",
+    "options": [
+      {
+        "id": "A",
+        "text": "You will need to use AAAA - IPv6 addresses when you define your weighted based record sets."
+      },
+      {
+        "id": "B",
+        "text": "You will need to use complex routing (nested record sets) and ensure that you define the latency based records first."
+      },
+      {
+        "id": "C",
+        "text": "You will need to use complex routing (nested record sets) and ensure that you define the weighted resource record sets first."
+      },
+      {
+        "id": "D",
+        "text": "This cannot be done. You can't use different routing records together."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Route 53 supports combining routing policies by nesting record sets, where a top-level record refers to a set of child records via alias records. When building such a configuration you create the records from the bottom up: the weighted records within each region are defined first, and the latency records that reference them are created afterwards, since a parent alias must point at records that already exist. Record type (A) is irrelevant to policy nesting, and combining policies is explicitly supported, so option D is wrong."
+  },
+  {
+    "id": 43,
+    "type": "multiple",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "You are designing security inside your VPC. You are considering the options for establishing separate security zones, and enforcing network traffic rules across the different zones to limit which instances can communicate. How would you accomplish these requirements? Choose 2 options from the below.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Configure a security group for every zone. Configure a default allow all rule. Configure explicit deny rules for the zones that shouldn't be able to communicate with one another."
+      },
+      {
+        "id": "B",
+        "text": "Use NACLs to explicitly allow or deny communication between the different IP address ranges, as required for inter-zone communication."
+      },
+      {
+        "id": "C",
+        "text": "Configure multiple subnets in your VPC, one for each zone. Configure routing within your VPC in such a way that each subnet only has routes to other subnets with which it needs to communicate, and doesn't have routes to subnets with which it shouldn't be able to communicate."
+      },
+      {
+        "id": "D",
+        "text": "Configure a security group for every zone. Configure allow rules only between zones that need to be able to communicate with one another. Use the implicit deny all rule to block any other traffic."
+      }
+    ],
+    "answer": [
+      "B",
+      "D"
+    ],
+    "explanation": "The two enforcement points in a VPC are network ACLs at the subnet boundary and security groups at the instance boundary. NACLs are stateless and do support explicit deny, so they can allow or block traffic between the CIDR ranges assigned to each zone. Security groups are stateful, act as an instance-level firewall at the port and protocol level, and support allow rules only — everything not explicitly allowed is denied by the implicit deny, which is exactly the model option D describes. Option A is impossible because security groups have no deny rules. Option C fails because all subnets in a VPC have an implicit local route to each other that cannot be removed."
+  },
+  {
+    "id": 44,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "An auditor needs read-only access to all AWS resources and logs of all the events that have occurred on AWS. What is the best way for creating this sort of access?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an SNS notification that sends the CloudTrail log files to the auditor's email when CloudTrail delivers the logs to S3, but do not allow the auditor access to the AWS environment."
+      },
+      {
+        "id": "B",
+        "text": "The company should contact AWS as part of the shared responsibility model, and AWS will grant required access to the third-party auditor."
+      },
+      {
+        "id": "C",
+        "text": "Create a role that has the required permissions for the auditor."
+      },
+      {
+        "id": "D",
+        "text": "Enable CloudTrail logging and create an IAM user who has read-only permissions to the required AWS resources, including the bucket containing the CloudTrail logs."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "The auditor needs two things: visibility of the resources, and the event history. CloudTrail supplies the event history, and a principal with read-only permissions on both the resources and the S3 bucket holding the trail satisfies the requirement while granting nothing that could alter the environment or the evidence. Emailing log files (A) is not a workable architecture at any volume and provides no resource visibility. AWS does not provision customer account access on request (B). Option C is incomplete — it never enables CloudTrail, so there are no event logs to read; in practice a role assumed by the auditor is preferable to a long-lived IAM user, and the managed SecurityAudit and ReadOnlyAccess policies exist for this purpose."
+  }
+]
