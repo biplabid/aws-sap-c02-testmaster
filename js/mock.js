@@ -15,6 +15,7 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
       durationSeconds: DURATION_SECONDS,
       currentIndex: 0,
       questions: [],
+      preparedQuestions: null,
       answers: {},
       marked: {},
       timer: null,
@@ -27,16 +28,8 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
       return;
     }
 
-    viewHelpers.populateSetSelector(elements.setSelector);
-
     elements.start.addEventListener("click", () => {
-      startMockExam(appState, elements);
-    });
-
-    window.addEventListener("testmaster:view-change", (event) => {
-      if (event.detail.view === "mock" && !appState.mockExam.started && !appState.mockExam.completed) {
-        viewHelpers.populateSetSelector(elements.setSelector);
-      }
+      handleStartClick(appState, elements);
     });
 
     elements.form.addEventListener("change", () => {
@@ -61,6 +54,10 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
       openReviewScreen(appState, elements);
     });
 
+    elements.endTest.addEventListener("click", () => {
+      openSubmitConfirmation(appState, elements);
+    });
+
     elements.returnExam.addEventListener("click", () => {
       returnToExam(appState, elements);
     });
@@ -78,7 +75,7 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
     });
 
     elements.restart.addEventListener("click", () => {
-      startMockExam(appState, elements, true);
+      returnToIntroForNewAttempt(appState, elements);
     });
 
     if (elements.correctTile) {
@@ -115,7 +112,10 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
   function getMockElements() {
     return {
       intro: document.querySelector("#mockIntro"),
-      setSelector: document.querySelector("#mockSetSelector"),
+      prepareNote: document.querySelector("#mockPrepareNote"),
+      prepareTrack: document.querySelector("#mockPrepareTrack"),
+      prepareFill: document.querySelector("#mockPrepareFill"),
+      prepareStatus: document.querySelector("#mockPrepareStatus"),
       start: document.querySelector("#mockStart"),
       workspace: document.querySelector("#mockWorkspace"),
       reviewScreen: document.querySelector("#mockReviewScreen"),
@@ -123,6 +123,8 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
       timer: document.querySelector("#mockTimer"),
       progress: document.querySelector("#mockProgressText"),
       markedText: document.querySelector("#mockMarkedText"),
+      reviewButton: document.querySelector("#mockReviewButton"),
+      endTest: document.querySelector("#mockEndTest"),
       palette: document.querySelector("#mockPalette"),
       meta: document.querySelector("#mockQuestionMeta"),
       type: document.querySelector("#mockQuestionType"),
@@ -131,7 +133,6 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
       previous: document.querySelector("#mockPrevious"),
       next: document.querySelector("#mockNext"),
       markReview: document.querySelector("#mockMarkReview"),
-      reviewButton: document.querySelector("#mockReviewButton"),
       reviewAnswered: document.querySelector("#mockReviewAnswered"),
       reviewUnanswered: document.querySelector("#mockReviewUnanswered"),
       reviewMarked: document.querySelector("#mockReviewMarked"),
@@ -156,11 +157,119 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
     };
   }
 
-  async function startMockExam(appState, elements, forceNew) {
+  async function handleStartClick(appState, elements) {
     const session = storage.loadExamSession(SESSION_ID);
-    const shouldRestore = session && !forceNew;
 
-    if (appState.mockExam.started && !shouldRestore && !forceNew) {
+    if (session) {
+      startMockExam(appState, elements);
+      return;
+    }
+
+    if (appState.mockExam.phase === "preparing") {
+      return;
+    }
+
+    if (appState.mockExam.phase === "ready" && appState.mockExam.preparedQuestions) {
+      startMockExam(appState, elements);
+      return;
+    }
+
+    await prepareQuestionSet(appState, elements);
+  }
+
+  /**
+   * Combines every bundled/uploaded question bank into one pool and draws a
+   * fresh, randomized 75-question set from it, reporting progress as each
+   * bank is fetched.
+   */
+  async function prepareQuestionSet(appState, elements) {
+    appState.mockExam.phase = "preparing";
+    appState.mockExam.preparedQuestions = null;
+
+    elements.start.disabled = true;
+    elements.start.textContent = "Preparing Question Paper...";
+    if (elements.prepareNote) elements.prepareNote.classList.add("hidden");
+    setPrepareProgress(elements, 0, "Discovering question banks...");
+
+    const sets = await viewHelpers.getAvailableQuestionSets();
+    const combined = [];
+
+    for (let index = 0; index < sets.length; index += 1) {
+      const set = sets[index];
+      const source = viewHelpers.resolveQuestionSetSource(set.key);
+
+      await questionEngine.loadQuestions(source);
+      questionEngine.getQuestions().forEach((question) => {
+        combined.push({ ...question, id: `${set.key}:${question.id}` });
+      });
+
+      const percent = Math.round(((index + 1) / sets.length) * 100);
+      setPrepareProgress(elements, percent, `Combining ${set.name} (${index + 1} of ${sets.length})...`);
+    }
+
+    let pool = questionEngine.shuffle(combined);
+    while (pool.length < QUESTION_COUNT && combined.length > 0) {
+      pool = pool.concat(questionEngine.shuffle(combined));
+    }
+
+    appState.mockExam.preparedQuestions = pool.slice(0, QUESTION_COUNT).map((question, index) => ({
+      ...question,
+      examId: `${question.id}-mock-${index + 1}`,
+      examNumber: index + 1
+    }));
+
+    appState.mockExam.phase = "ready";
+    elements.prepareTrack.classList.add("hidden");
+    elements.prepareStatus.textContent = `Ready! ${QUESTION_COUNT} questions randomly selected from ${combined.length} across ${sets.length} question bank${sets.length === 1 ? "" : "s"}. Click "Start Test" to begin.`;
+
+    elements.start.disabled = false;
+    elements.start.textContent = "Start Test";
+  }
+
+  function setPrepareProgress(elements, percent, statusText) {
+    if (elements.prepareTrack) {
+      elements.prepareTrack.classList.remove("hidden");
+      elements.prepareTrack.setAttribute("aria-valuenow", String(percent));
+    }
+    if (elements.prepareFill) {
+      elements.prepareFill.style.width = `${percent}%`;
+    }
+    if (elements.prepareStatus) {
+      elements.prepareStatus.classList.remove("hidden");
+      elements.prepareStatus.textContent = statusText;
+    }
+  }
+
+  function returnToIntroForNewAttempt(appState, elements) {
+    storage.clearExamSession(SESSION_ID);
+
+    appState.mockExam.started = false;
+    appState.mockExam.completed = false;
+    appState.mockExam.phase = "intro";
+    appState.mockExam.preparedQuestions = null;
+
+    elements.result.classList.add("hidden");
+    elements.workspace.classList.add("hidden");
+    elements.reviewScreen.classList.add("hidden");
+    elements.intro.classList.remove("hidden");
+
+    if (elements.prepareNote) elements.prepareNote.classList.remove("hidden");
+    if (elements.prepareTrack) elements.prepareTrack.classList.add("hidden");
+    if (elements.prepareStatus) {
+      elements.prepareStatus.classList.add("hidden");
+      elements.prepareStatus.textContent = "";
+    }
+
+    elements.start.classList.remove("hidden");
+    elements.start.disabled = false;
+    elements.start.textContent = "Begin Mock Exam";
+  }
+
+  async function startMockExam(appState, elements) {
+    const session = storage.loadExamSession(SESSION_ID);
+    const shouldRestore = Boolean(session);
+
+    if (appState.mockExam.started && !shouldRestore) {
       return;
     }
 
@@ -174,9 +283,8 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
       appState.mockExam.marked = storage.loadReviewFlags(SESSION_ID);
       appState.mockExam.currentIndex = session.currentIndex;
     } else {
-      const setKey = elements.setSelector ? elements.setSelector.value : "set1";
-      const source = viewHelpers.resolveQuestionSetSource(setKey);
-      appState.mockExam.questions = await buildQuestionSet(appState, QUESTION_COUNT, source);
+      appState.mockExam.questions = appState.mockExam.preparedQuestions;
+      appState.mockExam.preparedQuestions = null;
       appState.mockExam.answers = {};
       appState.mockExam.marked = {};
       appState.mockExam.currentIndex = 0;
@@ -237,29 +345,6 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
     elements.next.disabled = appState.mockExam.currentIndex === appState.mockExam.questions.length - 1;
     elements.markReview.classList.toggle("marked", isCurrentMarked(appState));
     elements.markReview.textContent = isCurrentMarked(appState) ? "Unmark Review" : "Mark for Review";
-  }
-
-  async function buildQuestionSet(appState, count, source = "data/set1.json") {
-    const engine = appState.questionEngine;
-    await questionEngine.loadQuestions(source);
-
-    const availableQuestions = engine.getQuestions();
-    const selectedQuestions = engine.randomSelection(count);
-
-    while (selectedQuestions.length < count && availableQuestions.length > 0) {
-      const nextBatch = engine.shuffle(availableQuestions);
-      nextBatch.forEach((question) => {
-        if (selectedQuestions.length < count) {
-          selectedQuestions.push(question);
-        }
-      });
-    }
-
-    return selectedQuestions.slice(0, count).map((question, index) => ({
-      ...question,
-      examId: `${question.id}-mock-${index + 1}`,
-      examNumber: index + 1
-    }));
   }
 
   function renderPalette(appState, elements) {

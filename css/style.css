@@ -279,7 +279,7 @@ input {
 
 .view {
   display: none;
-  animation: viewIn 180ms ease both;
+  animation: viewIn 180ms ease;
 }
 
 .view.active {
@@ -1158,6 +1158,35 @@ input:disabled {
   gap: 12px;
 }
 
+.mock-prepare {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 10px;
+}
+
+.mock-prepare-note,
+.mock-prepare-status {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.progress-track {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--aws-blue);
+  border-radius: inherit;
+  transition: width 0.2s ease;
+}
+
 .done-status-row span {
   color: var(--text-muted);
   font-size: 0.85rem;
@@ -1193,6 +1222,13 @@ input:disabled {
   background: var(--surface-raised);
   border: 1px solid var(--border);
   border-radius: 6px;
+}
+
+.mock-status-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
 }
 
 .mock-layout {

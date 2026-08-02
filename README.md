@@ -12,9 +12,9 @@ The platform is organized into several practice modes, each tailored for a diffe
 
 -   **Random Test**: Answer randomly selected questions one at a time with immediate feedback. Any question can be flagged **Mark as Done**, which permanently excludes it from future Random Test sessions for that question set (the flag persists across reloads). Progress can be reset per set from the intro screen.
 -   **Timed Quiz**: A 20-question, 40-minute quiz that mimics a subsection of the exam, with a persistent countdown timer. Answers are saved as you progress, and the results screen lets you filter to just your Correct or Incorrect answers, revealing your selected answer, the correct answer, and the explanation for each question.
--   **Mock Exam**: A full 75-question, 3-hour simulation of the SAP-C02 exam, with a question palette for navigation, the ability to mark questions for review, a pre-submission review screen, and a results summary showing your score and a per-question correct/wrong/unanswered/marked breakdown. As in Timed Quiz, the Correct/Incorrect tiles filter the results and reveal each question's selected answer, correct answer, and explanation.
+-   **Mock Exam**: A full 75-question, 3-hour simulation of the SAP-C02 exam, with a question palette for navigation, the ability to mark questions for review, a pre-submission review screen, and a results summary showing your score and a per-question correct/wrong/unanswered/marked breakdown. As in Timed Quiz, the Correct/Incorrect tiles filter the results and reveal each question's selected answer, correct answer, and explanation. Unlike Random Test and Timed Quiz, there's no set selector: each attempt combines every question bank in `data/` on the fly (with a progress bar while it fetches them) and draws a fresh, randomized 75-question paper from the combined pool, then asks you to confirm before starting.
 -   **Statistics**: A dashboard with a radar chart of your score by domain, a bar chart of your most recent attempts, summary cards (attempts, average score, best score, study time), and a full attempt history table.
--   **Upload**: Import a custom question bank from a formatted `.docx` file. The file is parsed in the browser and written directly into the project's `data/` folder as a new `setN.json` file, which then appears as a selectable question set in every practice mode.
+-   **Upload**: Import a custom question bank from a formatted `.docx` file. The file is parsed in the browser and written directly into the project's `data/` folder as a new `setN.json` file, which then appears as a selectable question set in Random Test and Timed Quiz, and is automatically folded into Mock Exam's combined pool.
 
 ### AI Study Coach
 
@@ -39,7 +39,7 @@ The platform is organized into several practice modes, each tailored for a diffe
 ### Core Functionality
 
 -   **Responsive Design**: Fully responsive UI that adapts to desktop, tablet, and mobile devices, including an off-canvas navigation menu on smaller screens.
--   **Multiple Question Sets**: The built-in set plus any sets imported via Upload are all selectable from a dropdown in Random Test, Timed Quiz, and Mock Exam.
+-   **Multiple Question Sets**: The built-in set plus any sets imported via Upload are all selectable from a dropdown in Random Test and Timed Quiz. Mock Exam instead combines all of them automatically into one pool for each attempt.
 -   **State Persistence**: Exam/quiz progress, attempt history, statistics, theme preference, and per-question "done" flags are all saved to `LocalStorage` (namespaced per signed-in user, where applicable), so nothing is lost on refresh.
 -   **Login-Gated Access**: The entire app is hidden behind an animated welcome screen until you sign in with Google — see [Google Sign-In (Required)](#google-sign-in-required) above.
 -   **Dynamic Timers**: Each timed mode features a persistent countdown timer with visual cues for low-time warnings.

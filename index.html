@@ -371,16 +371,22 @@
               <span>3 hour timer</span>
               <span>Review before submit</span>
             </div>
-            <div class="session-config">
-              <label for="mockSetSelector">Question Set:</label>
-              <select id="mockSetSelector"></select>
+            <div class="mock-prepare" id="mockPrepare">
+              <p class="mock-prepare-note" id="mockPrepareNote">Each attempt combines every question bank in <code>data/</code> and draws a fresh, randomized set of 75 questions on the fly.</p>
+              <div class="progress-track hidden" id="mockPrepareTrack" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <div class="progress-fill" id="mockPrepareFill"></div>
+              </div>
+              <p class="mock-prepare-status hidden" id="mockPrepareStatus" aria-live="polite"></p>
             </div>
           </div>
           <div class="mock-workspace hidden" id="mockWorkspace">
             <div class="mock-status-bar">
               <span id="mockProgressText" aria-live="polite">0 / 75 answered</span>
               <span id="mockMarkedText" aria-live="polite">0 marked for review</span>
-              <button class="secondary-action" type="button" id="mockReviewButton">Review All</button>
+              <div class="mock-status-actions">
+                <button class="secondary-action" type="button" id="mockReviewButton">Review All</button>
+                <button class="finish-button" type="button" id="mockEndTest">End Test</button>
+              </div>
             </div>
             <div class="mock-layout">
               <div class="question-card mock-card">
@@ -472,7 +478,7 @@
               <h2 id="mockConfirmTitle">Submit exam?</h2>
               <p id="mockConfirmText">You are about to submit your mock exam. You cannot change answers after submission.</p>
               <div class="dialog-actions">
-                <button class="secondary-action" type="button" id="mockCancelSubmit">Return to Review</button>
+                <button class="secondary-action" type="button" id="mockCancelSubmit">Cancel</button>
                 <button class="finish-button" type="button" id="mockConfirmSubmit">Submit Exam</button>
               </div>
             </div>
@@ -898,7 +904,7 @@ Explanation: [Detailed explanation text...]
                 <div class="doc-card-grid">
                   <div class="doc-card"><h4><code>random.js</code></h4><p>Random Test: untimed, one question at a time, immediate feedback, and per-question "Mark as Done" tracking keyed by question set.</p></div>
                   <div class="doc-card"><h4><code>quiz.js</code></h4><p>Timed Quiz: 20 questions, 40-minute timer, question palette, filterable Correct/Incorrect results with per-question answer reveal.</p></div>
-                  <div class="doc-card"><h4><code>mock.js</code></h4><p>Mock Exam: 75 questions, 3-hour timer, mark-for-review, a pre-submission review screen, and the same filterable results view as Timed Quiz.</p></div>
+                  <div class="doc-card"><h4><code>mock.js</code></h4><p>Mock Exam: 75 questions randomly drawn from every bundled question bank combined, 3-hour timer, mark-for-review, a pre-submission review screen, and the same filterable results view as Timed Quiz. The combined pool is rebuilt on the fly (with a progress bar) each time a new attempt starts.</p></div>
                   <div class="doc-card"><h4><code>analytics.js</code></h4><p>Statistics dashboard: renders summary cards and two Chart.js visualizations (domain radar, recent-attempts bar) from attempt history.</p></div>
                   <div class="doc-card"><h4><code>upload.js</code></h4><p>Parses a <code>.docx</code> file (via Mammoth.js) into the canonical question shape and hands it to <code>file-sets.js</code> to persist.</p></div>
                   <div class="doc-card"><h4><code>ai-coach.js</code></h4><p>Backs every "Ask AI Coach" button &mdash; live in <code>random.js</code>, and only in <code>quiz.js</code>/<code>mock.js</code>'s post-submission result rows. Opens a right-side panel, submits the question to Groq's OpenAI-compatible chat completions API (open-weight <code>llama-3.3-70b-versatile</code>) with a system prompt recreating the shared Gem's persona, and renders the Markdown answer in-app. Manages the user-supplied API key in <code>LocalStorage</code>.</p></div>
@@ -939,14 +945,14 @@ Explanation: [Detailed explanation text...]
                   </table>
                 </div>
                 <p>Any raw question missing a prompt, options, or a correct answer is dropped during normalization. If an entire set normalizes to zero valid questions (or fails to fetch), <code>question-engine.js</code> silently falls back to two generic built-in questions so the UI never renders a blank state &mdash; see <a href="#arch-limitations">Known Limitations</a> for why this matters.</p>
-                <p>Set selection flows through <code>view-helpers.js</code>: <code>getAvailableQuestionSets()</code> returns the bundled sets plus any uploaded sets from <code>file-sets.js</code>, <code>populateSetSelector()</code> fills each mode's <code>&lt;select&gt;</code>, and <code>resolveQuestionSetSource()</code> turns the chosen key into a <code>data/&lt;key&gt;.json</code> path for <code>question-engine.js</code> to fetch.</p>
+                <p>Set selection flows through <code>view-helpers.js</code>: <code>getAvailableQuestionSets()</code> returns the bundled sets (discovered on the fly by probing <code>data/set1.json</code>, <code>data/set2.json</code>, ... until one 404s) plus any uploaded sets from <code>file-sets.js</code>, <code>populateSetSelector()</code> fills Random Test's and Timed Quiz's <code>&lt;select&gt;</code>, and <code>resolveQuestionSetSource()</code> turns a chosen key into a <code>data/&lt;key&gt;.json</code> path for <code>question-engine.js</code> to fetch. Mock Exam doesn't use a selector at all &mdash; it calls <code>getAvailableQuestionSets()</code> to fetch and combine <em>every</em> bank into one pool before each attempt (see below).</p>
               </section>
 
               <section class="doc-section" id="arch-modes">
                 <h2>Practice Mode State</h2>
                 <p>Timed Quiz and Mock Exam share the same lifecycle shape, each owning its own slice of <code>appState</code> (<code>appState.quiz</code> / <code>appState.mockExam</code>):</p>
                 <ol>
-                  <li><strong>Start</strong> &mdash; build a question set (bundled questions shuffled and sliced to the mode's count), or restore an in-progress session from <code>storage.loadExamSession()</code> if one exists.</li>
+                  <li><strong>Start</strong> &mdash; Timed Quiz shuffles and slices the selected bank to 20 questions immediately. Mock Exam instead fetches and combines <em>every</em> bundled bank on the fly, showing a progress bar as each one loads, then waits for the user to confirm "Start Test" once the combined 75-question set is ready. Either mode restores an in-progress session from <code>storage.loadExamSession()</code> instead, if one exists.</li>
                   <li><strong>In progress</strong> &mdash; every answer change and navigation saves the current answers and session pointer to <code>LocalStorage</code> immediately, and a persisted <code>timer.js</code> instance keeps counting down based on elapsed wall-clock time.</li>
                   <li><strong>Finish</strong> &mdash; triggered manually or by timer expiry; computes the score, records the attempt via <code>storage.recordAttempt()</code>, clears the session, and renders the filterable results view.</li>
                 </ol>
