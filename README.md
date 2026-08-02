@@ -99,7 +99,7 @@ aws-sap-c02-testmaster/
 │   └── question-loader.js     # Legacy single-set loader, not currently used
 ├── data/
 │   ├── set1.json              # Bundled official question bank
-│   ├── set2.json, set3.json, set4.json, set5.json  # Additional bundled sets, selectable in every mode
+│   ├── set2.json ... set11.json  # Additional bundled sets, selectable in every mode
 │   └── questions.sample.json  # Minimal sample set
 ├── assets/
 │   ├── icon.ico                # Windows app/installer icon

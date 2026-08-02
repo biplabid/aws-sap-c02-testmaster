@@ -112,7 +112,13 @@ window.TestMaster.viewHelpers = (function createViewHelpersModule() {
     { key: "set2", name: "Practice Set 2" },
     { key: "set3", name: "Practice Set 3" },
     { key: "set4", name: "Practice Set 4" },
-    { key: "set5", name: "Practice Set 5" }
+    { key: "set5", name: "Practice Set 5" },
+    { key: "set6", name: "Practice Set 6" },
+    { key: "set7", name: "Practice Set 7" },
+    { key: "set8", name: "Practice Set 8" },
+    { key: "set9", name: "Practice Set 9" },
+    { key: "set10", name: "Practice Set 10" },
+    { key: "set11", name: "Practice Set 11" }
   ];
 
   /**
