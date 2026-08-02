@@ -1,0 +1,1749 @@
+[
+  {
+    "id": 1,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "You are launching your first ElastiCache cache cluster, and start using Memcached. Which of the following is NOT a key feature of Memcached?",
+    "options": [
+      {
+        "id": "A",
+        "text": "You use more advanced data types, such as lists, hashes, and sets."
+      },
+      {
+        "id": "B",
+        "text": "You need as simple a caching model as possible."
+      },
+      {
+        "id": "C",
+        "text": "Object caching is your primary goal to offload your database."
+      },
+      {
+        "id": "D",
+        "text": "You need the ability to scale your cache horizontally as you grow."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "Advanced data structures — strings, hashes, lists, sets, sorted sets and bitmaps — are a Redis capability, not a Memcached one. Memcached is chosen when you want the simplest possible caching model, straightforward object caching to offload a database, and the ability to scale out horizontally by adding nodes."
+  },
+  {
+    "id": 2,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "You're consulting for a company that is migrating its legacy application to the AWS cloud. In order to apply high availability, you've decided to implement Elastic Load Balancer and Auto Scaling services to serve traffic to this legacy application. The legacy application is not a standard HTTP web application but is a custom application with custom codes that is run internally for the employees of the company. The ports required to be open are port 80 and port 8080. Which listener configuration would you create?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Configure the load balancer with the following ports: TCP:80 and TCP:8080 and the instance protocol to TCP:80 and TCP:8080."
+      },
+      {
+        "id": "B",
+        "text": "Configure the load balancer with the following ports: HTTP:80 and HTTP:8080 and the instance protocol to HTTP:80 and HTTP:8080."
+      },
+      {
+        "id": "C",
+        "text": "Configure the load balancer with the following ports: HTTP:80 and HTTP:8080 and the instance protocol to HTTPS:80 and HTTPS:8080."
+      },
+      {
+        "id": "D",
+        "text": "Configure the load balancer with the following ports: HTTP:80 and HTTP:8080 and the instance protocol to TCP:80 and TCP:8080."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "The application is not a standard HTTP application, so the load balancer cannot parse or route on HTTP semantics. Both the listener and the back-end instance protocol must be TCP on ports 80 and 8080 so the traffic is passed through at layer 4 untouched."
+  },
+  {
+    "id": 3,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "The Dynamic Host Configuration Protocol (DHCP) provides a standard for passing configuration information to hosts on a TCP/IP network. You can have multiple sets of DHCP options, but you can associate only one set of DHCP options with a VPC at a time. You have just created your first set of DHCP options, associated it with your VPC, but now realize that you have made an error in setting them up and you need to change the options. Which of the following options do you need to take to achieve this?",
+    "options": [
+      {
+        "id": "A",
+        "text": "You need to stop all the instances in the VPC. You can then change the options, and they will take effect when you start the instances."
+      },
+      {
+        "id": "B",
+        "text": "You can modify the options from the CLI only, not from the console."
+      },
+      {
+        "id": "C",
+        "text": "You can modify the options from the console or the CLI."
+      },
+      {
+        "id": "D",
+        "text": "You must create a new set of DHCP options and associate them with your VPC."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "A DHCP options set is immutable once created. To change any value you create a new options set with the corrected values and associate it with the VPC; the old set can then be deleted. Instances pick up the new settings as their DHCP leases renew, without needing to be stopped."
+  },
+  {
+    "id": 4,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "Your application is having very high traffic, so you have enabled Auto Scaling in multiple Availability Zones to suffice the needs of your application, but you observe that one of the Availability Zones is not receiving any traffic. What can be wrong here?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Auto Scaling can be enabled for multi-AZ only in the North Virginia region."
+      },
+      {
+        "id": "B",
+        "text": "The Availability Zone is not added to the Elastic Load Balancer."
+      },
+      {
+        "id": "C",
+        "text": "Instances need to be manually added to the Availability Zone."
+      },
+      {
+        "id": "D",
+        "text": "Auto Scaling only works for a single Availability Zone."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Elastic Load Balancing creates a load balancer node only in the Availability Zones that have been enabled on the load balancer, and only forwards requests to healthy registered instances in those zones. If an AZ has not been added to the ELB, its instances never receive traffic. Auto Scaling works across multiple AZs in any region, and instances do not need to be added to an AZ manually."
+  },
+  {
+    "id": 5,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "Which of the below-mentioned options is the best for on-premise users to manage AWS resources from the AWS console, if you want to re-use the existing on-premise credentials?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use your on-premises SAML 2.0-compliant identity provider (IdP) to retrieve temporary security credentials to enable members to sign in to the AWS Management Console."
+      },
+      {
+        "id": "B",
+        "text": "Use Web Identity Federation to retrieve AWS temporary security credentials to enable your members to sign in to the AWS Management Console."
+      },
+      {
+        "id": "C",
+        "text": "Use your on-premises SAML 2.0-compliant identity provider (IdP) to grant the members federated access to the AWS Management Console via the AWS single sign-on (SSO) endpoint."
+      },
+      {
+        "id": "D",
+        "text": "Use OAuth 2.0 to retrieve temporary AWS security credentials to enable your members to sign in to the AWS Management Console."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "The requirements are temporary access to AWS resources and no new IAM users, which is federated access. A SAML 2.0 IdP authenticates users against the existing on-premise directory and the AWS SSO endpoint issues the console sign-in, so users never present AWS security credentials. Web Identity Federation and OAuth 2.0 (B, D) are for public identity providers such as Facebook and Google, and option A still has members signing in with retrieved credentials rather than through the SSO endpoint."
+  },
+  {
+    "id": 6,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A company needs to configure a NAT instance for its internal AWS applications to be able to download patches and package software. Currently, they are running a NAT instance that is using floating IP scripting configuration to create fault tolerance for the NAT. The NAT instance needs to be built with fault tolerance in mind. What is the best way to configure the NAT instance with fault tolerance?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create one NAT instance in a public subnet; create a route from the private subnet to the NAT instance."
+      },
+      {
+        "id": "B",
+        "text": "Create two NAT instances in a public subnet; create a route from the private subnet to each NAT instance for fault tolerance."
+      },
+      {
+        "id": "C",
+        "text": "Create two NAT instances in two separate private subnets."
+      },
+      {
+        "id": "D",
+        "text": "Create two NAT instances in two separate public subnets; create a route from the private subnet to each NAT instance for fault tolerance."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "True fault tolerance requires the NAT instances to be in separate Availability Zones, which means separate public subnets, with routes from the private subnets pointing at each. Two NAT instances in one subnet (B) share a single AZ failure domain, one instance (A) is a single point of failure, and a NAT instance placed in a private subnet (C) has no path to the Internet Gateway."
+  },
+  {
+    "id": 7,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "What could be the possible cause of an HTTP status code 502 error when using CloudFront?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Could not connect to the origin server."
+      },
+      {
+        "id": "B",
+        "text": "None of these."
+      },
+      {
+        "id": "C",
+        "text": "CloudFront service is down."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "A 502 Bad Gateway from CloudFront means the distribution could not successfully connect to or get a valid response from the origin — typically an origin that is unreachable, an SSL/TLS negotiation failure, or a cipher or certificate mismatch between CloudFront and the origin."
+  },
+  {
+    "id": 8,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "You're migrating an existing application to the AWS cloud. The application will be primarily using EC2 instances. This application needs to be built with the highest availability architecture available. The application currently relies on hardcoded hostnames for intercommunication between the three tiers. You've migrated the application and configured the multi-tiers using the internal Elastic Load Balancer for serving the traffic. The load balancer hostname is demo-app.us-east-1.elb.amazonaws.com. The current hard-coded hostname in your application used to communicate between your multi-tier application is demolayer.example.com. What is the best method for architecting this setup to have as much high availability as possible?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an environment variable passed to the EC2 instances using user-data with the ELB hostname, demo-app.us-east-1.elb.amazonaws.com."
+      },
+      {
+        "id": "B",
+        "text": "Create a private resource record set using Route 53 with a hostname of demolayer.example.com and an alias record to demo-app.us-east-1.elb.amazonaws.com."
+      },
+      {
+        "id": "C",
+        "text": "Create a public resource record set using Route 53 with a hostname of demolayer.example.com and an alias record to demo-app.us-east-1.elb.amazonaws.com."
+      },
+      {
+        "id": "D",
+        "text": "Add a CNAME record to the existing on-premise DNS server with a value of demo-app.us-east-1.elb.amazonaws.com. Create a public resource record set using Route 53 with a hostname of applayer.example.com and an alias record to demo-app.us-east-1.elb.amazonaws.com."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "A private hosted zone alias record maps the hard-coded internal hostname to the internal ELB, so no application change is required and resolution stays inside the VPC. An alias record also tracks the ELB's changing IP addresses automatically. A public record set (C) would expose an internal endpoint, and depending on the on-premise DNS server (D) or user-data variables (A) adds fragility rather than availability."
+  },
+  {
+    "id": 9,
+    "type": "multiple",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "A company is building an AWS Cloud environment for a financial regulatory firm. Part of the requirements is being able to monitor all changes in an environment and all traffic sent to and from the environment. What suggestions would you make to ensure all the requirements for monitoring the financial architecture are satisfied? (Choose 2)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Configure an IPS/IDS system, such as Palo Alto Networks, using promiscuous mode that monitors, filters, and alerts of all potential hazard traffic leaving the VPC."
+      },
+      {
+        "id": "B",
+        "text": "Configure an IPS/IDS in promiscuous mode, which will listen to all packet traffic and API changes."
+      },
+      {
+        "id": "C",
+        "text": "Configure an IPS/IDS system, such as Palo Alto Networks, that monitors, filters, and alerts of all potential hazard traffic leaving the VPC."
+      },
+      {
+        "id": "D",
+        "text": "Configure an IPS/IDS to listen and block all suspected bad traffic coming into and out of the VPC. Configure CloudTrail with CloudWatch Logs to monitor all changes within an environment."
+      }
+    ],
+    "answer": [
+      "C",
+      "D"
+    ],
+    "explanation": "The traffic requirement is met by a host- or appliance-based IPS/IDS that inspects and filters traffic entering and leaving the VPC, and the change-monitoring requirement is met by CloudTrail delivering API activity to CloudWatch Logs. The options that rely on promiscuous mode (A, B) are invalid because AWS does not support promiscuous mode on EC2 network interfaces."
+  },
+  {
+    "id": 10,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "An application has multiple components. The single application and all the components are hosted on a single EC2 instance (without an ELB) in a VPC. You have been told that this needs to be set up with two separate SSL certificates for each component. Which of the following would best achieve the setting up of the two separate SSLs while still using only one EC2 instance?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an EC2 instance which has multiple subnets attached to it and each will have a separate IP address."
+      },
+      {
+        "id": "B",
+        "text": "Create an EC2 instance which has both an ACL and the security group attached to it and have separate rules for each IP address."
+      },
+      {
+        "id": "C",
+        "text": "Create an EC2 instance with a NAT address."
+      },
+      {
+        "id": "D",
+        "text": "Create an EC2 instance which has multiple network interfaces with multiple elastic IP addresses."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "Multiple IP addresses on one instance — achieved with multiple ENIs, each carrying its own Elastic IP — allow multiple SSL certificates to be hosted on a single server, with each certificate bound to a specific IP address. An instance cannot attach multiple subnets (A), and neither security group and NACL rules (B) nor a NAT address (C) relate to SSL certificate binding."
+  },
+  {
+    "id": 11,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "A third party auditor is being brought in to review security processes and configurations for all of a company's AWS accounts. Currently, the company does not use any on-premise identity provider. Instead, they rely on IAM accounts in each of their AWS accounts. The auditor needs read-only access to all AWS resources for each AWS account. Given the requirements, what is the best security method for architecting access for the security auditor?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a custom identity broker application that allows the auditor to use existing Amazon credentials to log into the AWS environments."
+      },
+      {
+        "id": "B",
+        "text": "Create an IAM user for each AWS account with read-only permission policies for the auditor, and disable each account when the audit is complete."
+      },
+      {
+        "id": "C",
+        "text": "Configure an on-premise AD server and enable SAML and identity federation for single sign-on to each AWS account."
+      },
+      {
+        "id": "D",
+        "text": "Create an IAM role with read-only permissions to all AWS services in each AWS account. Create one auditor IAM account and add a permissions policy that allows the auditor to assume the ARN role for each AWS account that has an assigned role."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "Cross-account role assumption is the standard pattern for third-party auditor access: one identity, a read-only role in every account, and no long-lived credentials replicated per account. Creating an IAM user in each account (B) multiplies credentials to manage and revoke, a custom broker (A) adds unnecessary complexity, and there is no on-premise directory to federate with (C)."
+  },
+  {
+    "id": 12,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "There are currently multiple applications hosted in a VPC. During monitoring it has been noticed that multiple port scans are coming in from a specific IP address block. The internal security team has requested that all offending IP addresses be denied for the next 24 hours. Which of the following is the best method to quickly and temporarily deny access from the specified IP addresses?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Modify the Windows Firewall settings on all AMIs that your organization uses in that VPC to deny access from the IP address block."
+      },
+      {
+        "id": "B",
+        "text": "Add a rule to all of the VPC security groups to deny access from the IP address block."
+      },
+      {
+        "id": "C",
+        "text": "Modify the Network ACLs associated with all public subnets in the VPC to deny access from the IP address block."
+      },
+      {
+        "id": "D",
+        "text": "Create an AD policy to modify the Windows Firewall settings on all hosts in the VPC to deny access from the IP address block."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Network ACLs are the optional subnet-level firewall for a VPC and are the only VPC control that supports explicit deny rules by source IP. They apply immediately across every instance in the subnet and can be reverted just as quickly after 24 hours. Security groups (B) do not support deny rules, and host firewall approaches (A, D) only work for Windows instances and act too late in the path."
+  },
+  {
+    "id": 13,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "There is a requirement to migrate 50 TB of data to AWS. There is a restriction on the time to migrate the data and there is a limitation of only a 100 Mbit line to the AWS Cloud. What is the best solution to use to migrate the data to the cloud?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Amazon S3"
+      },
+      {
+        "id": "B",
+        "text": "AWS Snowball"
+      },
+      {
+        "id": "C",
+        "text": "Amazon Storage Gateway"
+      },
+      {
+        "id": "D",
+        "text": "Amazon Direct Connect"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "At 100 Mbit, 50 TB would take months over the wire. AWS Snowball moves large data sets into and out of AWS using physical storage appliances shipped by a regional carrier, bypassing the internet entirely and completing the transfer far faster than the constrained link allows. Direct Connect would require provisioning lead time and ongoing cost, and Storage Gateway still depends on the same limited bandwidth."
+  },
+  {
+    "id": 14,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A legacy application is being migrated to AWS. It works on the TCP protocol. There is a requirement to ensure scalability of the application and also ensure that records of the client IP using the application are recorded. Which of the below-mentioned steps would you implement to fulfill the above requirement?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use an ELB with a TCP listener and Cross-Zone Load Balancing enabled, two application servers in different AZs."
+      },
+      {
+        "id": "B",
+        "text": "Use Route 53 with Latency Based Routing enabled to distribute load on two or more application servers in different AZs."
+      },
+      {
+        "id": "C",
+        "text": "Use Route 53 Alias Resource Record to distribute load on two application servers in different AZs."
+      },
+      {
+        "id": "D",
+        "text": "Use an ELB with a TCP listener and Proxy Protocol enabled to distribute load on two or more application servers in different AZs."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "With a TCP listener the load balancer terminates the connection, so instance access logs record the load balancer's IP rather than the client's. Proxy Protocol prepends a human-readable header carrying the originating client's connection information, letting the application parse the real client IP and port. Cross-zone load balancing (A) distributes load but does not preserve client IP, and Route 53 options do not provide load balancing with connection-level information."
+  },
+  {
+    "id": 15,
+    "type": "multiple",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "There is a requirement for an application hosted on a VPC to access an on-premise LDAP server. The VPC and the on-premise location are connected via an IPSec VPN. Which of the below are the right options for the application to authenticate each user? (Choose 2)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Develop an identity broker that authenticates against LDAP and then calls IAM Security Token Service to get IAM federated user credentials. The application calls the identity broker to get IAM federated user credentials with access to the appropriate AWS service."
+      },
+      {
+        "id": "B",
+        "text": "Develop an identity broker that authenticates against IAM Security Token Service to assume an IAM role in order to get temporary AWS security credentials. The application calls the identity broker to get AWS temporary security credentials."
+      },
+      {
+        "id": "C",
+        "text": "The application authenticates against LDAP and retrieves the name of an IAM role associated with the user. The application then calls the IAM Security Token Service to assume that IAM role. The application can use the temporary credentials to access any AWS resources."
+      },
+      {
+        "id": "D",
+        "text": "The application authenticates against IAM using the LDAP credentials. The application then calls the IAM Security Token Service to get IAM federated user credentials."
+      }
+    ],
+    "answer": [
+      "A",
+      "C"
+    ],
+    "explanation": "The correct sequence is always authenticate first against LDAP, then obtain temporary credentials from STS, then access the AWS resource. Both a broker-mediated flow and a direct flow where the application looks up the user's role and calls AssumeRole satisfy that ordering. Option B inverts the sequence by authenticating against STS, and option D is invalid because LDAP credentials cannot be used to sign in to IAM."
+  },
+  {
+    "id": 16,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "There is a requirement to carry out the backup of an Oracle RAC cluster which is currently hosted on the AWS public cloud. How can this be achieved?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Enable automated backups on the RDS RAC cluster; enable auto snapshot copy to a backup region to reduce RPO and RTO."
+      },
+      {
+        "id": "B",
+        "text": "Enable Multi-AZ failover on the RDS RAC cluster to reduce the RPO and RTO in the event of disaster or failure."
+      },
+      {
+        "id": "C",
+        "text": "Create a script that runs snapshots against the EBS volumes to create backups and durability."
+      },
+      {
+        "id": "D",
+        "text": "Create manual snapshots of the RDS backup and write a script that runs the manual snapshot."
+      },
+      {
+        "id": "E",
+        "text": "Migrate the cluster to Amazon Aurora and rely on automated backups."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Amazon RDS does not support Oracle Real Application Clusters, so any RAC deployment on AWS is self-managed on EC2. Backups must therefore be taken at the infrastructure level, by scripting EBS volume snapshots of the instances running the cluster. Every option that assumes an RDS RAC cluster is invalid on its face."
+  },
+  {
+    "id": 17,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "Your company has a lot of GPU-intensive workloads. Also, these workloads are part of a process in which some steps need manual intervention. Which of the below options works out for the above-mentioned requirement?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use AWS Data Pipeline to manage the workflow. Use an auto-scaling group of C3 instances with SR-IOV (Single Root I/O Virtualization)."
+      },
+      {
+        "id": "B",
+        "text": "Use Amazon Simple Workflow (SWF) to manage the workflow. Use an auto-scaling group of C3 instances with SR-IOV (Single Root I/O Virtualization)."
+      },
+      {
+        "id": "C",
+        "text": "Use Amazon Simple Workflow (SWF) to manage the workflow. Use an auto-scaling group of G2 instances in a placement group."
+      },
+      {
+        "id": "D",
+        "text": "Use AWS Data Pipeline to manage the workflow. Use an auto-scaling group of G2 instances in a placement group."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Two signals drive this answer. Tasks requiring human intervention within a workflow point to Amazon SWF, which explicitly supports activity tasks completed by people. High graphical processing with low-latency networking points to GPU instances (the G family) in a placement group. C3 instances are compute-optimised without GPUs, and Data Pipeline orchestrates data movement rather than human-in-the-loop workflows."
+  },
+  {
+    "id": 18,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A company has the requirement to analyze the clickstreams from a web application. Which of the below options will fulfill this requirement?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Publish web clicks by session to an Amazon SQS queue and periodically drain these events to Amazon RDS. Then analyze with SQL."
+      },
+      {
+        "id": "B",
+        "text": "Write click events directly to Amazon Redshift and then analyze with SQL."
+      },
+      {
+        "id": "C",
+        "text": "Push web clicks by session to Amazon Kinesis and analyze behavior using Kinesis workers."
+      },
+      {
+        "id": "D",
+        "text": "Log clicks in weblogs by URL and store it in Amazon S3, and then analyze with Elastic MapReduce."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Massive real-time data analysis such as clickstream processing is the canonical Kinesis use case. Kinesis collects and processes large streams of records in real time; Kinesis Streams applications using the Kinesis Client Library run on EC2 and feed dashboards, alerts, dynamic pricing or downstream AWS services. The other options all introduce batch latency or use a store not designed for streaming ingest."
+  },
+  {
+    "id": 19,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "A company currently has an on-premise location connecting to a VPC. The company wants to have a dedicated network connection from the on-premise location to the VPC. Choose the correct answer from the below options which would help to fulfill the above requirement.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use a hardware VPN to connect both locations."
+      },
+      {
+        "id": "B",
+        "text": "Suggest provisioning a Direct Connect connection between the on-premise data center and the AWS region."
+      },
+      {
+        "id": "C",
+        "text": "Provision a VPN connection between the on-premise data center and the AWS region using the VPN section of a VPC."
+      },
+      {
+        "id": "D",
+        "text": "Use a software VPN to connect both locations."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "AWS Direct Connect establishes a dedicated, private network connection between the customer premises and AWS, typically reducing network costs, increasing bandwidth throughput and providing a more consistent network experience than internet-based links. All the VPN options run over the public internet and are therefore not dedicated connections."
+  },
+  {
+    "id": 20,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A custom script needs to be passed to new Amazon Linux instances created in your Auto Scaling group. Which feature allows you to accomplish this?",
+    "options": [
+      {
+        "id": "A",
+        "text": "EC2Config service"
+      },
+      {
+        "id": "B",
+        "text": "User data"
+      },
+      {
+        "id": "C",
+        "text": "IAM roles"
+      },
+      {
+        "id": "D",
+        "text": "AWS Config"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "User data lets you supply a script that runs during instance launch, configured in the Advanced Details section of the launch configuration or launch template. IAM roles grant permissions rather than run code, AWS Config records resource configuration history, and EC2Config is a Windows agent."
+  },
+  {
+    "id": 21,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "What would happen to an RDS (Relational Database Service) Multi-Availability Zone deployment if the primary DB instance fails?",
+    "options": [
+      {
+        "id": "A",
+        "text": "A new DB instance is created in the standby Availability Zone."
+      },
+      {
+        "id": "B",
+        "text": "The primary RDS DB instance reboots and remains as primary."
+      },
+      {
+        "id": "C",
+        "text": "The IP address of the primary DB instance is switched to the standby DB instance."
+      },
+      {
+        "id": "D",
+        "text": "The canonical name record (CNAME) is changed from primary to standby."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "In a Multi-AZ deployment RDS maintains a synchronously replicated standby in another Availability Zone. On failure it performs an automatic failover by repointing the DB instance's DNS CNAME at the standby, which is then promoted to primary. Applications reconnect using the same endpoint name."
+  },
+  {
+    "id": 22,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "An organization is planning to use AWS for their production rollout. The organization wants to implement automation for deployment such that it will automatically create a LAMP stack, download the latest PHP installable from S3 and set up the ELB. Which of the below-mentioned AWS services meets the requirement for making an orderly deployment of the software?",
+    "options": [
+      {
+        "id": "A",
+        "text": "AWS CloudFront"
+      },
+      {
+        "id": "B",
+        "text": "AWS Elastic Beanstalk"
+      },
+      {
+        "id": "C",
+        "text": "AWS CloudFormation"
+      },
+      {
+        "id": "D",
+        "text": "AWS DevOps"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Elastic Beanstalk is the service for deploying and scaling web applications: you upload code and it handles capacity provisioning, load balancing, auto-scaling and application health monitoring, while you retain full control of the underlying AWS resources. That matches an orderly LAMP-stack application deployment with an ELB."
+  },
+  {
+    "id": 23,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "Which section in your CloudFormation template would you modify to fire up different instance sizes based on environment type (Dev/Staging/Production)?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Outputs"
+      },
+      {
+        "id": "B",
+        "text": "Resources"
+      },
+      {
+        "id": "C",
+        "text": "Mappings"
+      },
+      {
+        "id": "D",
+        "text": "Conditions"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "The optional Conditions section contains statements that define when a resource is created or when a property value is applied, based on comparisons such as an environment-type parameter. Those conditions are then referenced from resources and properties to vary instance sizes per environment."
+  },
+  {
+    "id": 24,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "You have an application running on an EC2 instance which allows users to download files from a private S3 bucket using a pre-signed URL. Before generating the URL, the application should verify the existence of the file in S3. How should the application use AWS credentials to access the S3 bucket securely?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an IAM user for the application with permissions that allow list access to the S3 bucket. The application retrieves the IAM user credentials from a temporary directory with permissions that allow read access only to the application user."
+      },
+      {
+        "id": "B",
+        "text": "Create an IAM role for EC2 that allows list access to objects in the S3 bucket. Launch the instance with the role, and retrieve the role's credentials from the EC2 instance metadata."
+      },
+      {
+        "id": "C",
+        "text": "Use the AWS account access keys. The application retrieves the credentials from the source code of the application."
+      },
+      {
+        "id": "D",
+        "text": "Create an IAM user for the application with permissions that allow list access to the S3 bucket, launch the instance as the IAM user and retrieve the IAM user's credentials from the EC2 instance user data."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "An IAM role attached to the instance provides the list permission needed to verify the object exists, with credentials delivered dynamically through the instance metadata service and rotated automatically. No access key or secret key is stored on disk, in code, or in user data, which is what makes it the preferred approach over the alternatives."
+  },
+  {
+    "id": 25,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "Your company's on-premises content management system has an Application Tier hosted on IIS, a database tier running MySQL that is regularly backed up to Amazon S3 using a custom backup utility, and static content stored on a 512 GB gateway-stored Storage Gateway volume attached to the application server via the iSCSI interface. Which AWS-based disaster recovery strategy will give you the best RTO?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Deploy the MySQL database and the IIS app server on EC2. Restore the backups from Amazon S3. Restore the static content from an AWS Storage Gateway-VTL running on Amazon EC2."
+      },
+      {
+        "id": "B",
+        "text": "Deploy the MySQL database and the IIS app server on EC2. Restore the MySQL backups from Amazon S3. Restore the static content by attaching an AWS Storage Gateway running on Amazon EC2 as an iSCSI volume to the IIS EC2 server."
+      },
+      {
+        "id": "C",
+        "text": "Deploy the MySQL database and the IIS app server on EC2. Restore the backups from Amazon S3. Generate an EBS volume of static content from the Storage Gateway and attach it to the IIS EC2 server."
+      },
+      {
+        "id": "D",
+        "text": "Deploy the MySQL database on RDS. Deploy the IIS app server on EC2. Restore the backups from Amazon Glacier. Generate an EBS volume of static content from the Storage Gateway and attach it to the IIS EC2 server."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "With gateway-stored volumes, the snapshot in S3 can be used to create an EBS volume directly, making the static content available to the recovery instance almost immediately — the fastest RTO of the options. A VTL (A) is a tape-based archive requiring a lengthy restore, running a gateway on EC2 and re-attaching over iSCSI (B) adds indirection, and Glacier retrieval (D) introduces hours of delay."
+  },
+  {
+    "id": 26,
+    "type": "multiple",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "You currently have developers who have access to your production AWS account. There is a concern raised that the developers could potentially delete the production-based EC2 resources. Which of the below options could help alleviate this concern? (Choose 2)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Modify the IAM policy on the developers to require MFA before deleting EC2 instances and disable MFA access to the employee."
+      },
+      {
+        "id": "B",
+        "text": "Tag the instance with a production-identifying tag and modify the employees group to allow only start, stop, and reboot API calls and not the terminate instance call."
+      },
+      {
+        "id": "C",
+        "text": "Tag the production instances with a production-identifying tag and add resource-level permissions to the developers with an explicit deny on the terminate API call to instances with the production tag."
+      },
+      {
+        "id": "D",
+        "text": "Modify the IAM policy on the developers to require MFA before deleting EC2 instances."
+      }
+    ],
+    "answer": [
+      "B",
+      "C"
+    ],
+    "explanation": "Preventing an action requires resource-level permissions or an explicit deny, applied to resources identified by a production tag. Both correct options do exactly that — one via a group policy that permits only start, stop and reboot, the other via an explicit deny on TerminateInstances for tagged resources. MFA (A, D) is an authentication control; it strengthens sign-in but does nothing to stop an authenticated user from performing a permitted action."
+  },
+  {
+    "id": 27,
+    "type": "multiple",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "You are designing an intrusion detection and prevention (IDS/IPS) solution for a customer's web application in a single VPC. You are considering the options for implementing IDS/IPS protection for traffic coming from the Internet. Which of the following options would you consider? (Choose 2)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Implement IDS/IPS agents on each instance running in the VPC."
+      },
+      {
+        "id": "B",
+        "text": "Configure an instance in each subnet to switch its network interface card to promiscuous mode and analyze network traffic."
+      },
+      {
+        "id": "C",
+        "text": "Implement a reverse proxy layer in front of web servers and configure IDS/IPS agents on each reverse proxy server."
+      },
+      {
+        "id": "D",
+        "text": "Implement Elastic Load Balancing with SSL listeners in front of the web applications."
+      }
+    ],
+    "answer": [
+      "A",
+      "C"
+    ],
+    "explanation": "In a VPC, IDS/IPS is implemented either as agents installed on the instances themselves or on a proxy/NAT layer through which all traffic flows — or by peering with a dedicated security VPC. Promiscuous mode (B) is not supported by AWS, and an ELB with SSL listeners (D) terminates encryption but has no intrusion detection or prevention capability."
+  },
+  {
+    "id": 28,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "There is a requirement to split a subnet (CIDR block 10.0.0.0/24) into two subnets, each supporting 128 IP addresses. Can this be done and if so, how will the allocation of IP addresses be configured?",
+    "options": [
+      {
+        "id": "A",
+        "text": "This is not possible."
+      },
+      {
+        "id": "B",
+        "text": "One subnet will use CIDR block 10.0.0.0/25 (for addresses 10.0.0.0 – 10.0.0.127) and the other will use CIDR block 10.0.1.0/25 (for addresses 10.0.1.0 – 10.0.1.127)."
+      },
+      {
+        "id": "C",
+        "text": "One subnet will use CIDR block 10.0.0.0/127 (for addresses 10.0.0.0 – 10.0.0.127) and the other will use CIDR block 10.0.0.128/255 (for addresses 10.0.0.128 – 10.0.0.255)."
+      },
+      {
+        "id": "D",
+        "text": "One subnet will use CIDR block 10.0.0.0/25 (for addresses 10.0.0.0 – 10.0.0.127) and the other will use CIDR block 10.0.0.128/25 (for addresses 10.0.0.128 – 10.0.0.255)."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "Splitting a /24 in half yields two /25 blocks of 128 addresses each: 10.0.0.0/25 covering .0 to .127 and 10.0.0.128/25 covering .128 to .255. Option B moves outside the original block into 10.0.1.0, and option C uses prefix lengths that are not valid for IPv4 subnetting."
+  },
+  {
+    "id": 29,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "An application has been set up with Auto Scaling and EC2 instances in multiple AZs. When you look at the load balancer logs you notice that EC2 instances in one of the AZs are not receiving requests. What can be wrong here?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Instances need to be manually added to the Availability Zone."
+      },
+      {
+        "id": "B",
+        "text": "Auto Scaling can be enabled for multi-AZ only in the North Virginia region."
+      },
+      {
+        "id": "C",
+        "text": "Auto Scaling only works for a single Availability Zone."
+      },
+      {
+        "id": "D",
+        "text": "The Availability Zone is not added to the Elastic Load Balancer."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "Elastic Load Balancing places a load balancer node only in the Availability Zones enabled on the load balancer, and forwards requests only to healthy registered instances in those zones. The most likely cause is that the affected AZ was never added to the ELB. Auto Scaling works with multiple AZs in every region, and instances do not need manual addition to an AZ."
+  },
+  {
+    "id": 30,
+    "type": "multiple",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "Your company is getting ready to do a major public announcement of a social media site on AWS. The website is running on EC2 instances deployed across multiple Availability Zones with a Multi-AZ RDS MySQL Extra Large DB instance. The site performs a high number of small reads and writes per second and relies on an eventual consistency model. After comprehensive tests, you discover that there is read contention on RDS MySQL. Which are the best approaches to meet these requirements? (Choose 2)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Add an RDS MySQL read replica in each Availability Zone."
+      },
+      {
+        "id": "B",
+        "text": "Increase the RDS MySQL instance size and implement provisioned IOPS."
+      },
+      {
+        "id": "C",
+        "text": "Implement sharding to distribute load to multiple RDS MySQL instances."
+      },
+      {
+        "id": "D",
+        "text": "Deploy ElastiCache in-memory cache running in each Availability Zone."
+      }
+    ],
+    "answer": [
+      "A",
+      "D"
+    ],
+    "explanation": "The bottleneck is read contention, so look for caching or read scaling. Read replicas scale reads out beyond the capacity of a single DB instance, and ElastiCache serves hot data from memory, removing load from the database entirely. Sharding (C) improves write distribution, which is not the problem, and scaling the instance up (B) buys headroom only up to a fixed limit and is not a durable answer to read growth."
+  },
+  {
+    "id": 31,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "You have a periodic image analysis application that gets some files. The input stream analyzes them and for each file it writes some data to an output stream to a number of files. The number of files in input per day is high and concentrated in a few hours of the day. Currently, you have a server on EC2 with a large EBS volume that hosts the input data and the results, and it takes almost 20 hours per day to complete the process. What services could be used to reduce the elaboration time and improve the availability of the solution?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use S3 to store I/O files, then use SQS to distribute elaboration commands to a group of hosts working in parallel. Then use Auto Scaling to dynamically size the group of hosts depending on the length of the SQS queue."
+      },
+      {
+        "id": "B",
+        "text": "Use EBS with Provisioned IOPS (PIOPS) to store I/O files. Use SQS to distribute elaboration commands to a group of hosts working in parallel. Use Auto Scaling to dynamically size the group of hosts depending on the length of the SQS queue."
+      },
+      {
+        "id": "C",
+        "text": "Use EBS with Provisioned IOPS (PIOPS) to store I/O files. Use SNS to distribute elaboration commands to a group of hosts working in parallel and Auto Scaling to dynamically size the group of hosts depending on the number of SNS notifications."
+      },
+      {
+        "id": "D",
+        "text": "Use S3 to store I/O files, SNS to distribute elaboration commands to a group of hosts working in parallel, and Auto Scaling to dynamically size the group of hosts depending on the number of SNS notifications."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "Two choices decide this question. Storage must be shared across many parallel workers, and a single EBS volume cannot be attached to multiple instances — S3 also provides the higher availability required. For work distribution, SQS holds tasks durably until a worker takes them and its queue depth is a natural Auto Scaling metric; SNS is a push notification service that does not retain work items."
+  },
+  {
+    "id": 32,
+    "type": "multiple",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "You are given a task of moving a legacy application from a virtual machine running inside your datacenter to an Amazon VPC. Unfortunately, this app requires access to a number of on-premise services and no one who configured the app still works for your company. Even worse, there's no documentation for it. What will allow the application running inside the VPC to reach back and access its internal dependencies without being reconfigured? (Choose 3)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Entries in Amazon Route 53 that allow the instance to resolve its dependencies' IP addresses."
+      },
+      {
+        "id": "B",
+        "text": "An AWS Direct Connect link between the VPC and the network housing the internal services."
+      },
+      {
+        "id": "C",
+        "text": "An IP address space that does not conflict with the one on-premises."
+      },
+      {
+        "id": "D",
+        "text": "A VM Import of the current virtual machine."
+      }
+    ],
+    "answer": [
+      "B",
+      "C",
+      "D"
+    ],
+    "explanation": "Because the application cannot be reconfigured, it must be lifted as-is and must find its dependencies at exactly the addresses it already uses. VM Import brings the virtual machine into EC2 unchanged, Direct Connect provides connectivity back to the internal network, and a non-overlapping IP address space is what makes routing between the VPC and on-premise possible at all. Route 53 (A) does not resolve on-premise dependencies for an app using hard-coded addresses."
+  },
+  {
+    "id": 33,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "An administrator has granted temporary credentials from STS to a set of users. It is later realized that these credentials should not have been given. Can these credentials be revoked?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Correct — the sessions can be revoked."
+      },
+      {
+        "id": "B",
+        "text": "Incorrect — they cannot be revoked."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "Active role sessions can be invalidated by attaching an inline policy to the role that denies all actions for sessions issued before a given time (AWSRevokeOlderSessions), which the console exposes as \"Revoke sessions\". This immediately cuts off the outstanding temporary credentials without waiting for them to expire."
+  },
+  {
+    "id": 34,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "Your company's on-premises content management system has an Application Tier of Java code on a JBoss application server, a Database Tier with an Oracle database regularly backed up to Amazon S3 using the Oracle RMAN backup utility, and static content stored on a 512 GB gateway-stored Storage Gateway volume attached to the application server via the iSCSI interface. Which AWS-based disaster recovery strategy will give you the best RTO?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Deploy the Oracle database and the JBoss app server on EC2. Restore the RMAN Oracle backups from Amazon S3. Restore the static content from an AWS Storage Gateway-VTL running on Amazon EC2."
+      },
+      {
+        "id": "B",
+        "text": "Deploy the Oracle database and the JBoss app server on EC2. Restore the RMAN Oracle backups from Amazon S3. Restore the static content by attaching an AWS Storage Gateway running on Amazon EC2 as an iSCSI volume to the JBoss EC2 server."
+      },
+      {
+        "id": "C",
+        "text": "Deploy the Oracle database on RDS. Deploy the JBoss app server on EC2. Restore the RMAN Oracle backups from Amazon Glacier. Generate an EBS volume of static content from the Storage Gateway and attach it to the JBoss EC2 server."
+      },
+      {
+        "id": "D",
+        "text": "Deploy the Oracle database and the JBoss app server on EC2. Restore the RMAN Oracle backups from Amazon S3. Generate an EBS volume of static content from the Storage Gateway and attach it to the JBoss EC2 server."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "Gateway-stored volume snapshots live in S3 and can be turned directly into an EBS volume, making the static content usable immediately — the shortest recovery time. Restoring from a VTL (A) is a tape restore, re-attaching a gateway over iSCSI (B) is slower and more complex, and Glacier retrieval plus an RMAN restore into RDS (C) adds hours and a migration step."
+  },
+  {
+    "id": 35,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "An application stores a set of files in a single Amazon S3 bucket. Users will upload files from their mobile device directly to Amazon S3 and will be able to view and download their uploaded files directly from Amazon S3. You want to configure security to handle potentially millions of users in the most secure manner possible. What should your server-side application do when a new user registers on the mobile application?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create an IAM user. Assign appropriate permissions to the IAM user, generate an access key and secret key for the IAM user, store them in the mobile app and use these credentials to access Amazon S3."
+      },
+      {
+        "id": "B",
+        "text": "Record the user's information in Amazon DynamoDB. When the user uses their mobile app, create temporary credentials using AWS Security Token Service with appropriate permissions, store these credentials in the mobile app's memory and use them to access Amazon S3. Generate new credentials the next time the user runs the mobile app."
+      },
+      {
+        "id": "C",
+        "text": "Record the user's information in Amazon RDS and create a role in IAM with appropriate permissions. When the user uses their mobile app, create temporary credentials using the AWS Security Token Service 'AssumeRole' function, store these credentials in the mobile app's memory and use them to access Amazon S3. Generate new credentials the next time the user runs the mobile app."
+      },
+      {
+        "id": "D",
+        "text": "Create a set of long-term credentials using AWS Security Token Service with appropriate permissions. Store these credentials in the mobile app and use them to access Amazon S3."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "At mobile scale, the pattern is an IAM role plus AssumeRole-issued temporary credentials held only in the app's memory and refreshed each session. Option C is the only choice that both creates the IAM role with the right permissions and uses AssumeRole to mint short-lived credentials. Option B omits the role creation step, and options A and D distribute long-lived credentials inside the application, which should never be done."
+  },
+  {
+    "id": 36,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "You currently have a placement group of instances. When you try to add new instances to the group, you receive a 'capacity error'. Which of the following actions will most likely fix this problem?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Request a capacity increase from AWS as you are initially limited to 10 instances per placement group."
+      },
+      {
+        "id": "B",
+        "text": "Stop and restart the instances in the placement group and then try the launch again."
+      },
+      {
+        "id": "C",
+        "text": "Make a new placement group and launch the new instances in the new group. Make sure the placement groups are in the same subnet."
+      },
+      {
+        "id": "D",
+        "text": "Make sure all the instances are the same size and then try the launch again."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "A cluster placement group needs contiguous capacity on the same underlying hardware, and that capacity may not be available for additional instances after the group has been running. Stopping and starting all the instances in the group lets AWS relocate them together onto hardware with room for the full set, after which the launch succeeds."
+  },
+  {
+    "id": 37,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "If you want to deliver private content to users from an S3 bucket, which of the below options is the most feasible to fulfill this requirement?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use SQS to deliver content from the S3 bucket."
+      },
+      {
+        "id": "B",
+        "text": "Use EC2 to deliver content from the S3 bucket."
+      },
+      {
+        "id": "C",
+        "text": "Use a pre-signed URL."
+      },
+      {
+        "id": "D",
+        "text": "None of these."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "A pre-signed URL grants time-limited access to a specific private object without making it public or requiring the recipient to have AWS credentials. The URL carries a signature and an expiry, after which it stops working. SQS and EC2 are not content delivery mechanisms for S3 objects."
+  },
+  {
+    "id": 38,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "Explain what the following resource in a CloudFormation template does: SNSTopic : { \"Type\" : \"AWS::SNS::Topic\", \"Properties\" : { \"Subscription\" : [{ \"Protocol\" : \"sqs\", \"Endpoint\" : { \"Fn::GetAtt\" : [ \"SQSQueue\", \"Arn\" ] } }] } }",
+    "options": [
+      {
+        "id": "A",
+        "text": "Creates an SNS topic and adds a subscription ARN endpoint for the SQS resource created under the logical name SQSQueue."
+      },
+      {
+        "id": "B",
+        "text": "Creates an SNS topic and then invokes the call to create an SQS queue with a logical resource name of SQSQueue."
+      },
+      {
+        "id": "C",
+        "text": "Creates an SNS topic and adds a subscription ARN endpoint for the SQS resource named Arn."
+      },
+      {
+        "id": "D",
+        "text": "Creates an SNS topic which allows SQS subscription endpoints to be added as a parameter on the template."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "The resource declares an SNS topic with one subscription whose protocol is sqs. Fn::GetAtt retrieves the Arn attribute of the resource whose logical name is SQSQueue and uses it as the subscription endpoint. It does not create the queue — that resource must be declared elsewhere in the template — and \"Arn\" is an attribute name, not a queue name."
+  },
+  {
+    "id": 39,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "An ERP application is deployed in multiple Availability Zones in a single region. In the event of failure, the RTO must be less than 3 hours and the RPO is 15 minutes. The customer realizes that data corruption occurred roughly 1.5 hours ago. Which DR strategy can be used to achieve this RTO and RPO in the event of this kind of failure?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Take hourly DB backups to an Amazon EC2 instance store volume, with transaction logs stored in Amazon S3 every 5 minutes."
+      },
+      {
+        "id": "B",
+        "text": "Take hourly DB backups to Amazon S3, with transaction logs stored in S3 every 5 minutes."
+      },
+      {
+        "id": "C",
+        "text": "Use synchronous database master-slave replication between two Availability Zones."
+      },
+      {
+        "id": "D",
+        "text": "Take 15-minute DB backups stored in Amazon Glacier, with transaction logs stored in Amazon S3 every 5 minutes."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Recovering from data corruption requires point-in-time restore: take the last good hourly backup and replay transaction logs up to just before the corruption, which meets a 15-minute RPO and restores well inside 3 hours. Synchronous replication (C) faithfully replicates the corruption to the standby, instance store volumes (A) are ephemeral and lost on stop, and Glacier retrieval (D) jeopardises the 3-hour RTO."
+  },
+  {
+    "id": 40,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "A user is trying to save some cost on AWS services. Which of the below-mentioned options will NOT help him to save cost?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Delete the AWS ELB after all the instances behind it are terminated."
+      },
+      {
+        "id": "B",
+        "text": "Release the Elastic IP if not required once the instance is terminated."
+      },
+      {
+        "id": "C",
+        "text": "Delete the Auto Scaling launch configuration after the instances are terminated."
+      },
+      {
+        "id": "D",
+        "text": "Delete the unutilized EBS volumes once the instance is terminated."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "A launch configuration is only metadata describing how to launch instances — it is free, so deleting it saves nothing. The other three all remove billed resources: a running load balancer, an unassociated Elastic IP, and unattached EBS volumes all continue to accrue charges until removed."
+  },
+  {
+    "id": 41,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "You are designing network connectivity for your fat client application. The application is designed for business travelers who must be able to connect to it from their hotel rooms, cafes, public Wi-Fi hotspots, and elsewhere on the Internet. However, you do not want to publish the application on the Internet. Which network design meets the above requirements while minimizing deployment and operational costs?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Configure an SSL VPN solution in a public subnet of your VPC, then install and configure SSL VPN client software on all user computers. Create a private subnet in your VPC and place your application servers in it."
+      },
+      {
+        "id": "B",
+        "text": "Configure an IPsec VPN connection, and provide the users with the configuration details. Create a public subnet in your VPC, and place your application servers in it."
+      },
+      {
+        "id": "C",
+        "text": "Implement AWS Direct Connect, and create a private interface to your VPC. Create a public subnet and place your application servers in it."
+      },
+      {
+        "id": "D",
+        "text": "Implement Elastic Load Balancing with an SSL listener that terminates the back-end connection to the application."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "An SSL VPN endpoint in a public subnet, with clients installed on traveller laptops, allows connection from any internet location while the application servers stay in a private subnet and are never published to the internet. IPsec VPN (B) is often blocked on hotel and café networks and places servers in a public subnet, Direct Connect (C) is a fixed-site dedicated link unsuited to mobile users, and an internet-facing ELB (D) publishes the application."
+  },
+  {
+    "id": 42,
+    "type": "multiple",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "When you create an encrypted EBS volume and attach it to a supported instance type, which of the following data types are encrypted? (Choose 3)",
+    "options": [
+      {
+        "id": "A",
+        "text": "All snapshots created from the volume"
+      },
+      {
+        "id": "B",
+        "text": "All data copied from the EBS volume to S3"
+      },
+      {
+        "id": "C",
+        "text": "All data moving between the volume and the instance"
+      },
+      {
+        "id": "D",
+        "text": "Data at rest inside the volume"
+      }
+    ],
+    "answer": [
+      "A",
+      "C",
+      "D"
+    ],
+    "explanation": "EBS encryption covers data at rest in the volume, data in transit between the volume and the instance, all snapshots created from the volume, and all volumes created from those snapshots. It does not extend to data your application copies out of the volume into another service such as S3 — that data is only encrypted if you encrypt it there."
+  },
+  {
+    "id": 43,
+    "type": "multiple",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "You have two EC2 instances inside a VPC in the same Availability Zone but in different subnets. One instance is running a database and the other instance an application that will interface with the database. You want to confirm that they can talk to each other for your application to work properly. Which two things do we need to confirm in the VPC settings so that these EC2 instances can communicate inside the VPC? (Choose 2)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Security groups are set to allow the application host to talk to the database on the right port/protocol."
+      },
+      {
+        "id": "B",
+        "text": "That the default route is set to a NAT instance or Internet Gateway (IGW) for them to communicate."
+      },
+      {
+        "id": "C",
+        "text": "Both instances are the same instance class and using the same key-pair."
+      },
+      {
+        "id": "D",
+        "text": "A network ACL that allows communication between the two subnets."
+      }
+    ],
+    "answer": [
+      "A",
+      "D"
+    ],
+    "explanation": "Instance-to-instance traffic is governed by two layers: security groups at the instance level, which must permit the application host to reach the database on the correct port and protocol, and network ACLs at the subnet level, which must allow traffic between the two subnets in both directions. NAT and Internet Gateways (B) are for internet-bound traffic, and instance class and key-pair (C) are irrelevant to connectivity."
+  },
+  {
+    "id": 44,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A company has a requirement to host an application behind an AWS ELB. The application will be supporting multiple device platforms. Each device platform will need separate SSL certificates assigned to it. Which of the below options is the best setup in AWS to fulfill the above requirement?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Set up a hybrid architecture to handle multiple SSL certificates by using separate EC2 instance groups running web applications for different platform types running in a VPC."
+      },
+      {
+        "id": "B",
+        "text": "Set up one ELB for all device platforms to distribute load among multiple instances under it. Each EC2 instance will have different SSL certificates assigned to it."
+      },
+      {
+        "id": "C",
+        "text": "You manage the encryption keys and Amazon S3 manages the encryption, as it writes to disk, and decryption, when you access your objects."
+      },
+      {
+        "id": "D",
+        "text": "Create multiple ELBs for each type of certificate for each device platform."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "Creating a separate load balancer per platform type makes the traffic split by platform natural and lets each ELB own its own SSL termination logic and certificate. Trying to serve all platforms behind a single ELB (B) makes platform-based distribution unworkable, a hybrid EC2-group architecture (A) is not cost effective, and option C describes S3 encryption and is unrelated to the question."
+  },
+  {
+    "id": 45,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "Server-side encryption is about data encryption at rest — that is, Amazon S3 encrypts your data at the object level as it writes it to disk in its data centers and decrypts it for you when you go to access it. There are a few different options depending on how you choose to manage the encryption keys. One of the options is called 'Server-Side Encryption with Amazon S3-Managed Keys (SSE-S3)'. Which of the following best describes how this encryption method works?",
+    "options": [
+      {
+        "id": "A",
+        "text": "You manage the encryption keys and Amazon S3 manages the encryption, as it writes to disk, and decryption, when you access your objects."
+      },
+      {
+        "id": "B",
+        "text": "A randomly generated data encryption key is returned from Amazon S3, which is used by the client to encrypt the object data."
+      },
+      {
+        "id": "C",
+        "text": "Each object is encrypted with a unique key employing strong encryption. As an additional safeguard, it encrypts the key itself with a master key that it regularly rotates."
+      },
+      {
+        "id": "D",
+        "text": "There are separate permissions for the use of an envelope key (that is, a key that protects your data's encryption key) that provides added protection against unauthorized access of your objects in S3 and also provides you with an audit trail of when your key was used and by whom."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "With SSE-S3, Amazon S3 encrypts each object with a unique data key using AES-256, and then encrypts that data key with a regularly rotated master key that AWS manages entirely. Customer-managed keys (A) describe SSE-C, client-side encryption with a returned data key (B) is a different model, and separate envelope-key permissions with an audit trail (D) describes SSE-KMS."
+  },
+  {
+    "id": 46,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "The Marketing Director in your company asked you to create a mobile app that lets users post sightings of good deeds known as random acts of kindness in 80-character summaries. You decided to write the application in JavaScript so that it would run on the broadest range of phones, browsers, and tablets. Your application should provide access to Amazon DynamoDB to store the good deed summaries. Initial testing of a prototype shows that there aren't large spikes in usage. Which option provides the most cost-effective and scalable architecture for this application?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Register the JavaScript application with a Web Identity Provider like Amazon, Google, or Facebook, create an IAM role for that provider, and set up permissions for the IAM role to allow DynamoDB puts. You serve your mobile application out of Apache EC2 instances that are load-balanced and auto-scaled. Your EC2 instances are configured with an IAM role that allows DynamoDB puts. Your server updates DynamoDB."
+      },
+      {
+        "id": "B",
+        "text": "Provide the JavaScript client with temporary credentials from the Security Token Service using a Token Vending Machine (TVM) to provide signed credentials mapped to an IAM user allowing DynamoDB puts. You serve your mobile application out of Apache EC2 instances that are load-balanced and auto-scaled. Your EC2 instances are configured with an IAM role that allows DynamoDB puts. Your server updates DynamoDB."
+      },
+      {
+        "id": "C",
+        "text": "Register the application with a Web Identity Provider like Amazon, Google, or Facebook, create an IAM role for that provider, and set up permissions for the IAM role to allow S3 gets and DynamoDB puts. You serve your mobile application out of an S3 bucket enabled as a web site. Your client updates DynamoDB."
+      },
+      {
+        "id": "D",
+        "text": "Provide the JavaScript client with temporary credentials from the Security Token Service using a Token Vending Machine (TVM) on an EC2 instance to provide signed credentials mapped to an IAM user allowing DynamoDB puts and S3 gets. You serve your mobile application out of an S3 bucket enabled as a web site. Your client updates DynamoDB."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Web identity federation removes the need to run any authentication infrastructure, and hosting the JavaScript application from an S3 static website is both cheaper and more scalable than a load-balanced, auto-scaled fleet of EC2 web servers. A Token Vending Machine on EC2 (B, D) is a single point of failure and a potential bottleneck, and option A pays for an EC2 fleet it does not need."
+  },
+  {
+    "id": 47,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "You currently have an EC2 instance with EBS volumes that store a lot of files. It takes a long time for an application to process the files. Which of the following options can be used to ensure the right storage option is used and to also ensure high availability of the application?",
+    "options": [
+      {
+        "id": "A",
+        "text": "EBS with Provisioned IOPS (PIOPS) to store I/O files, SNS to distribute elaboration commands to a group of hosts working in parallel, and Auto Scaling to dynamically size the group of hosts depending on the number of SNS notifications."
+      },
+      {
+        "id": "B",
+        "text": "S3 to store I/O files, SNS to distribute elaboration commands to a group of hosts working in parallel, and Auto Scaling to dynamically size the group of hosts depending on the number of SNS notifications."
+      },
+      {
+        "id": "C",
+        "text": "EBS with Provisioned IOPS (PIOPS) to store I/O files, SQS to distribute elaboration commands to a group of hosts working in parallel, and Auto Scaling to dynamically size the group of hosts depending on the length of the SQS queue."
+      },
+      {
+        "id": "D",
+        "text": "S3 to store I/O files, SQS to distribute elaboration commands to a group of hosts working in parallel, and Auto Scaling to dynamically size the group of hosts depending on the length of the SQS queue."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "A single EBS volume cannot be shared across the many parallel workers needed to cut the processing time, and S3 additionally provides the high availability required. SQS durably holds the work items until a worker picks them up and its queue depth is the natural Auto Scaling signal, whereas SNS pushes notifications without retaining tasks."
+  },
+  {
+    "id": 48,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "An auditor has been called upon to carry out an audit of the configuration of your AWS accounts. The auditor has specified that they just want read-only access to the AWS resources on all accounts. Which of the below options would help the auditor get the required access?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a custom identity broker application that allows the auditor to use existing Amazon credentials to log into the AWS environments."
+      },
+      {
+        "id": "B",
+        "text": "Configure an on-premise AD server and enable SAML and identity federation for single sign-on to each AWS account."
+      },
+      {
+        "id": "C",
+        "text": "Create an IAM role with read-only permissions to all AWS services in each AWS account. Create one auditor IAM account and add a permissions policy that allows the auditor to assume the ARN role for each AWS account that has an assigned role."
+      },
+      {
+        "id": "D",
+        "text": "Create an IAM user for each AWS account with read-only permission policies for the auditor, and disable each account when the audit is complete."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "A read-only role in each account, assumable from a single auditor identity, gives exactly the access required with one credential to issue and one to revoke when the engagement ends. Per-account IAM users (D) multiply credentials and offboarding risk, and building a custom broker (A) or standing up an AD server and SAML federation (B) is disproportionate effort for a single read-only auditor."
+  },
+  {
+    "id": 49,
+    "type": "multiple",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "Which of the following are the recommendations from AWS when migrating a legacy application which is hosted on a virtual machine in an on-premise location? (Choose 2)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use entries in Amazon Route 53 that allow the instance to resolve its dependencies' IP addresses on the on-premise location."
+      },
+      {
+        "id": "B",
+        "text": "Use an Elastic IP address on the VPC instance."
+      },
+      {
+        "id": "C",
+        "text": "Use a NAT instance to route traffic from the instance in the VPC."
+      },
+      {
+        "id": "D",
+        "text": "Use the VM Import facility provided by AWS."
+      }
+    ],
+    "answer": [
+      "B",
+      "D"
+    ],
+    "explanation": "VM Import/Export brings the existing virtual machine image into EC2 as a ready-to-use instance, preserving the configuration nobody in the company still understands, and an Elastic IP gives that instance a stable, persistent address. Route 53 entries (A) do not help an application that resolves dependencies by hard-coded address, and a NAT instance (C) addresses outbound internet access rather than migration."
+  },
+  {
+    "id": 50,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "A company currently has an on-premise location connecting to a VPC. The company wants to have a dedicated network connection from the on-premise location to the VPC. Choose the correct answer from the below options which would help to fulfill the above requirement.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use a hardware VPN to connect both locations."
+      },
+      {
+        "id": "B",
+        "text": "Suggest provisioning a Direct Connect connection between the on-premise data center and the AWS region."
+      },
+      {
+        "id": "C",
+        "text": "Provision a VPN connection between the on-premise data center and the AWS region using the VPN section of a VPC."
+      },
+      {
+        "id": "D",
+        "text": "Use a software VPN to connect both locations."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Only AWS Direct Connect provides a dedicated private network connection between the customer premises and AWS. It typically reduces network costs, increases bandwidth throughput and delivers a more consistent network experience than internet-based connections. Every VPN option, hardware or software, traverses the public internet and is therefore not dedicated."
+  },
+  {
+    "id": 51,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "Jack's start-up sells a personalized gadget that needs an average of 3–4 days to produce, and he wants to implement an order fulfilment process with some orders taking up to 6 months. He expects 10 orders per day on his first day, 1,000 orders per day after 6 months, and 10,000 orders after 12 months. Orders coming in are checked for consistency, then dispatched to the manufacturing plant for production, quality control, packaging, shipment and payment processing. Employees may force the process to repeat a step if the product does not meet quality standards at any stage. Order status is notified via email to customers, as are critical issues such as payment failure. Jack's architecture includes AWS Elastic Beanstalk for his website with an RDS MySQL instance for customer data and orders. While making sure that the emails are delivered reliably, how can he implement the order fulfilment process?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Use an SQS queue to manage all process tasks. Use an Auto Scaling group of EC2 instances that poll the tasks and execute them. Use SES to send emails to customers."
+      },
+      {
+        "id": "B",
+        "text": "Use SWF with an Auto Scaling group of activity workers and a decider instance in another Auto Scaling group with min/max=1. Use SES to send emails to customers."
+      },
+      {
+        "id": "C",
+        "text": "Use SWF with an Auto Scaling group of activity workers and a decider instance in another Auto Scaling group with min/max=1. Use the decider instance to send emails to customers."
+      },
+      {
+        "id": "D",
+        "text": "Add a business process management application to your Elastic Beanstalk app servers and re-use the RDS database for tracking order status. Use one of the Elastic Beanstalk instances to send emails to customers."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "The process is long-running (up to 6 months), has ordered steps, and can loop back to repeat a step on quality failure — that is a workflow, and Amazon SWF is built for exactly this, including human-performed activity tasks. The decider runs as a single instance to maintain workflow state, while activity workers scale with volume. Email delivery must be reliable and decoupled, so SES handles it rather than the decider, whose job is orchestration only. A plain SQS queue (A) cannot express step ordering or repetition, and a self-managed BPM application (D) reintroduces the operational burden SWF removes."
+  },
+  {
+    "id": 52,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "Several FTP servers are currently run by a web design company that their 250 customers use to upload and download large graphic files. To make it more scalable they wish to move this system to AWS, but at the same time they wish to maintain customer privacy and keep costs to a minimum. What AWS architecture would you recommend?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Create a single S3 bucket with Requester Pays turned on and ask their customers to use an S3 client instead of an FTP client. Create a bucket for each customer with a bucket policy that permits access only to that one customer."
+      },
+      {
+        "id": "B",
+        "text": "Create an auto-scaling group of FTP servers with a scaling policy to automatically scale in when minimum network traffic on the auto-scaling group is below a given threshold. Load a central list of FTP users from S3 as part of the user data startup script on each instance."
+      },
+      {
+        "id": "C",
+        "text": "Create a single S3 bucket with Reduced Redundancy Storage turned on and ask their customers to use an S3 client instead of an FTP client. Create a bucket for each customer with a bucket policy that permits access only to that one customer."
+      },
+      {
+        "id": "D",
+        "text": "Ask their customers to use an S3 client instead of an FTP client. Create a single S3 bucket, create an IAM user for each customer, and put the IAM users in a group that has an IAM policy that permits access to sub-directories within the bucket via use of the 'username' policy variable."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "A single bucket with one shared group policy using the ${aws:username} policy variable scopes every customer to their own prefix automatically, so privacy is enforced without writing 250 separate bucket policies or hitting per-account bucket limits. Keeping the FTP fleet (B) retains the servers, cost and scaling problem being solved. Requester Pays (A) shifts cost to customers rather than minimising it, and Reduced Redundancy (C) trades durability for a marginal saving on customer data."
+  },
+  {
+    "id": 53,
+    "type": "single",
+    "domain": "Design Solutions for Organizational Complexity",
+    "difficulty": "Professional",
+    "question": "Select the security aspects in AWS which are the customer's responsibility. 1) Security Group and ACL (Access Control List) settings. 2) Encryption of EBS (Elastic Block Storage) volumes. 3) Patch management on the EC2 instance's operating system. 4) Life-cycle management of IAM credentials. 5) Controlling physical access to compute resources.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Only 1, 2, 3, and 4"
+      },
+      {
+        "id": "B",
+        "text": "Only 2, 4 and 5"
+      },
+      {
+        "id": "C",
+        "text": "Only 3, and 5"
+      },
+      {
+        "id": "D",
+        "text": "Only 1, 3, 4 and 5"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "Under the shared responsibility model, the customer is responsible for security in the cloud: configuring security groups and network ACLs, encrypting EBS volumes, patching the guest operating system, and managing the lifecycle of IAM credentials. Physical access to the data centres and compute hardware (item 5) is AWS's responsibility for security of the cloud, which is why it is excluded."
+  },
+  {
+    "id": 54,
+    "type": "single",
+    "domain": "Accelerate Workload Migration and Modernization",
+    "difficulty": "Professional",
+    "question": "A large amount of aerial image data is uploaded to S3 by Allen's firm. In the past, in his on-premises environment, he used a dedicated group of servers to batch process this data and used RabbitMQ, an open source messaging system, to get job information to the servers. Once processed, the data would go to tape and be shipped offsite. His manager told him to stay with the current design, and leverage AWS archival storage and messaging services to minimize cost. Select the correct option for the above.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Set up auto-scaled workers triggered by queue depth that use Spot instances to process messages in SQS. Once data is processed, change the storage class of the S3 objects to Glacier."
+      },
+      {
+        "id": "B",
+        "text": "Set up auto-scaled workers triggered by queue depth that use Spot instances to process messages in SQS. Once data is processed, change the storage class of the S3 objects to Reduced Redundancy Storage."
+      },
+      {
+        "id": "C",
+        "text": "Use SQS for passing job messages, and use CloudWatch alarms to terminate EC2 worker instances when they become idle. Once data is processed, change the storage class of the S3 objects to Reduced Redundancy Storage."
+      },
+      {
+        "id": "D",
+        "text": "Use SNS to pass job messages, and use CloudWatch alarms to terminate Spot worker instances when they become idle. Once data is processed, change the storage class of the S3 object to Glacier."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "The source answer key marks the SNS-plus-Glacier option as correct, on the reasoning that Glacier is the correct archival tier replacing the offsite tape process, and that Spot workers terminated by CloudWatch alarms minimise compute cost. Note for review: SQS is the direct AWS analogue of RabbitMQ for durable job queuing, and option A (SQS with queue-depth-triggered Spot workers plus Glacier) is the architecturally stronger answer. Verify this item against current AWS guidance before relying on it."
+  },
+  {
+    "id": 55,
+    "type": "single",
+    "domain": "Continuous Improvement for Existing Solutions",
+    "difficulty": "Professional",
+    "question": "Joy is an IT architect in a company that operates a mobile sleep tracking application. When activated at night, the mobile app sends collected data points of 1 kilobyte every 5 minutes to his backend. The backend takes care of authenticating the user and writing the data points into an Amazon DynamoDB table. Every morning, Joy scans the table on a per-user basis to aggregate and extract last night's data, and stores the results in Amazon S3. The availability of new data is notified to the users via Amazon SNS mobile push notifications, which is parsed and visualized by the mobile app. He has around 100k users currently who are mostly based out of North America. He has been tasked to optimize the architecture of the backend system to lower costs. Select the recommended option of the following. 1) Have the mobile app access Amazon DynamoDB directly instead of JSON files stored on Amazon S3. 2) Write data directly into an Amazon Redshift cluster replacing both Amazon DynamoDB and Amazon S3. 3) Introduce an Amazon SQS queue to buffer writes to the Amazon DynamoDB table and reduce provisioned write throughput. 4) Introduce Amazon ElastiCache to cache reads from the Amazon DynamoDB table and reduce provisioned read throughput. Create a new Amazon DynamoDB table each day and drop the one for the previous day after its data is on Amazon S3.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Only 1 and 4"
+      },
+      {
+        "id": "B",
+        "text": "Only 3"
+      },
+      {
+        "id": "C",
+        "text": "Only 2 and 3"
+      },
+      {
+        "id": "D",
+        "text": "Only 2, 3 and 4"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "Having the app read DynamoDB directly removes the S3 JSON hop and the associated processing, while ElastiCache in front of DynamoDB reduces the provisioned read capacity that must be paid for — and rotating to a fresh table each day lets the previous day's table be dropped rather than carried. Redshift (item 2) is a data warehouse and a poor fit for high-frequency small writes, and an SQS buffer (item 3) adds a service and cost without reducing the total volume of writes that must eventually land in DynamoDB."
+  },
+  {
+    "id": 56,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "An application is going to be developed using AWS. To store important documents the application needs a storage layer. To fulfill this requirement, select the INCORRECT option of the following.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Amazon EBS"
+      },
+      {
+        "id": "B",
+        "text": "Amazon S3"
+      },
+      {
+        "id": "C",
+        "text": "Amazon EFS"
+      },
+      {
+        "id": "D",
+        "text": "Amazon Storage Gateway VTL"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "The question asks which option is not suited to storing important documents. Storage Gateway VTL is a virtual tape library used to take backups to the cloud for archival, not an active storage layer an application reads and writes documents from. EBS, S3 and EFS are all valid primary storage layers depending on the access pattern required."
+  },
+  {
+    "id": 57,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "Ryan's company is planning on hosting an e-commerce application on the AWS Cloud. There is a requirement for sessions to be always maintained for users. For storing session data which of the following can be used? 1) CloudWatch 2) DynamoDB 3) Elastic Load Balancing 4) ElastiCache",
+    "options": [
+      {
+        "id": "A",
+        "text": "Only 1 and 2"
+      },
+      {
+        "id": "B",
+        "text": "Only 3 and 4"
+      },
+      {
+        "id": "C",
+        "text": "Only 2 and 3"
+      },
+      {
+        "id": "D",
+        "text": "Only 2 and 4"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "DynamoDB and ElastiCache are both well suited to session state. DynamoDB is a fully managed NoSQL store delivering consistent single-digit millisecond latency at any scale with automatic throughput scaling; ElastiCache holds session data in memory for the fastest possible access. CloudWatch is a monitoring service and ELB is a load balancer — neither is a session store."
+  },
+  {
+    "id": 58,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A company named 'XPN' needs to have its object-based data stored on AWS. The initial size of data would be around 500 GB, with overall growth expected to go into 80 TB over the next couple of months. The solution must also be durable. Suggest an ideal storage option to use for such a requirement.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Amazon Aurora"
+      },
+      {
+        "id": "B",
+        "text": "Amazon S3"
+      },
+      {
+        "id": "C",
+        "text": "DynamoDB"
+      },
+      {
+        "id": "D",
+        "text": "Amazon Redshift"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "The requirement explicitly states object-based data with growth into tens of terabytes and a durability requirement. Amazon S3 is object storage designed for 99.999999999% durability with effectively unlimited capacity. Aurora and Redshift are relational and analytical databases respectively, and DynamoDB is a key-value and document store, not object storage."
+  },
+  {
+    "id": 59,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "A company 'XNP' has decided to host a MongoDB database on an EC2 instance. There is an expectancy of a large number of reads and writes on the database. Suggest the ideal EBS storage type to implement for the database.",
+    "options": [
+      {
+        "id": "A",
+        "text": "EBS General Purpose SSD"
+      },
+      {
+        "id": "B",
+        "text": "EBS Throughput Optimized HDD"
+      },
+      {
+        "id": "C",
+        "text": "EBS Provisioned IOPS SSD"
+      },
+      {
+        "id": "D",
+        "text": "EBS Cold HDD"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Provisioned IOPS SSD is designed for I/O-intensive workloads — particularly large database workloads — where you need to specify and sustain a consistent IOPS rate. General Purpose SSD relies on burst credits that a heavy read/write database would exhaust, and the HDD types are optimised for sequential throughput or infrequent access, not transactional database I/O."
+  },
+  {
+    "id": 60,
+    "type": "single",
+    "domain": "Design for New Solutions",
+    "difficulty": "Professional",
+    "question": "'PNX' is a company who is planning to use AWS Simple Storage Service for hosting their project documents. At the end of the project, the documents need to be moved to archival storage. Out of the following, suggest the implementation step that would ensure the documents are managed accordingly.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Creating an IAM policy for the S3 bucket"
+      },
+      {
+        "id": "B",
+        "text": "Configuring lifecycle configuration rules on the S3 bucket"
+      },
+      {
+        "id": "C",
+        "text": "Adding a bucket policy on the S3 bucket"
+      },
+      {
+        "id": "D",
+        "text": "Enabling CORS on the S3 bucket"
+      },
+      {
+        "id": "E",
+        "text": "Enabling versioning on the S3 bucket"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Lifecycle configuration lets you define rules that act on groups of objects in a bucket. Transition actions move objects to another storage class — for example to STANDARD_IA or to Glacier for archival — after a defined period, which automates exactly the end-of-project move described. IAM policies, bucket policies and CORS all govern access, not storage class transitions."
+  }
+]
