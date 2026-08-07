@@ -82,6 +82,72 @@ window.TestMaster.viewHelpers = (function createViewHelpersModule() {
     });
   }
 
+  /**
+   * Builds the post-exam answer breakdown for one result row: every option
+   * of the question, with the candidate's selection and the correct answers
+   * marked. Colour coding matches the practice-mode highlights — green for a
+   * correct pick, orange for a correct option that was missed, red for a
+   * wrong pick — so the candidate can see how the options they did not pick
+   * compare with the one they did.
+   */
+  function buildAnswerBreakdown(row) {
+    const list = document.createElement("ul");
+    list.className = "result-options";
+
+    const options = Array.isArray(row.options) ? row.options : [];
+    const selectedAnswers = Array.isArray(row.selectedAnswers) ? row.selectedAnswers : [];
+    const correctAnswers = Array.isArray(row.correctAnswers) ? row.correctAnswers : [];
+
+    options.forEach((option) => {
+      const isSelected = selectedAnswers.includes(option.id);
+      const isCorrect = correctAnswers.includes(option.id);
+
+      const item = document.createElement("li");
+      item.className = "result-option";
+
+      if (isCorrect && isSelected) {
+        item.classList.add("correct");
+      } else if (isCorrect && !isSelected) {
+        item.classList.add("missed");
+      } else if (!isCorrect && isSelected) {
+        item.classList.add("wrong");
+      }
+
+      const optionId = document.createElement("span");
+      optionId.className = "result-option-id";
+      optionId.textContent = option.id;
+
+      const optionText = document.createElement("span");
+      optionText.className = "result-option-text";
+      optionText.textContent = option.text;
+
+      const tags = document.createElement("span");
+      tags.className = "result-option-tags";
+
+      if (isSelected) {
+        tags.appendChild(buildOptionTag("Your answer", "selected"));
+      }
+
+      if (isCorrect) {
+        tags.appendChild(buildOptionTag("Correct answer", "correct"));
+      }
+
+      item.appendChild(optionId);
+      item.appendChild(optionText);
+      item.appendChild(tags);
+      list.appendChild(item);
+    });
+
+    return list;
+  }
+
+  function buildOptionTag(text, variant) {
+    const tag = document.createElement("span");
+    tag.className = `result-option-tag ${variant}`;
+    tag.textContent = text;
+    return tag;
+  }
+
   function isAnswerCorrect(correctAnswers, selectedAnswers) {
     if (!Array.isArray(correctAnswers) || !Array.isArray(selectedAnswers)) {
       return false;
@@ -198,6 +264,7 @@ window.TestMaster.viewHelpers = (function createViewHelpersModule() {
     renderQuestion,
     renderMeta,
     applyAnswerHighlights,
+    buildAnswerBreakdown,
     isAnswerCorrect,
     clearElement,
     getAvailableQuestionSets,

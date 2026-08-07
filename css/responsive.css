@@ -176,6 +176,15 @@
     grid-template-columns: 1fr;
   }
 
+  .result-option {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .result-option-tags {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+
   .instruction-grid {
     grid-template-columns: 1fr;
   }

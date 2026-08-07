@@ -729,6 +729,7 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
     item.appendChild(index);
     item.appendChild(prompt);
     item.appendChild(badge);
+    item.appendChild(viewHelpers.buildAnswerBreakdown(row));
     return item;
   }
 
@@ -769,32 +770,24 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
     item.appendChild(header);
     item.appendChild(prompt);
     item.appendChild(yourAnswer);
+    item.appendChild(viewHelpers.buildAnswerBreakdown(row));
 
-    if (!row.correct) {
+    if (!row.correct && row.explanation) {
       const toggle = document.createElement("button");
       toggle.type = "button";
       toggle.className = "secondary-action explanation-toggle";
-      toggle.textContent = "Show correct answer & explanation";
+      toggle.textContent = "Explanation";
 
       const explanationBox = document.createElement("div");
       explanationBox.className = "result-explanation hidden";
 
-      const correctAnswerLine = document.createElement("p");
-      const correctLabel = document.createElement("strong");
-      correctLabel.textContent = "Correct answer: ";
-      correctAnswerLine.appendChild(correctLabel);
-      correctAnswerLine.append(formatAnswerText(row.correctAnswers, row.options));
-      explanationBox.appendChild(correctAnswerLine);
-
-      if (row.explanation) {
-        const explanationText = document.createElement("p");
-        explanationText.textContent = row.explanation;
-        explanationBox.appendChild(explanationText);
-      }
+      const explanationText = document.createElement("p");
+      explanationText.textContent = row.explanation;
+      explanationBox.appendChild(explanationText);
 
       toggle.addEventListener("click", () => {
         const isHidden = explanationBox.classList.toggle("hidden");
-        toggle.textContent = isHidden ? "Show correct answer & explanation" : "Hide correct answer & explanation";
+        toggle.textContent = isHidden ? "Explanation" : "Hide Explanation";
       });
 
       item.appendChild(toggle);
