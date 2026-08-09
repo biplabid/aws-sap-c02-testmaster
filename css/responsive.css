@@ -189,6 +189,10 @@
     grid-template-columns: 1fr;
   }
 
+  .mock-set-picker {
+    padding-left: 0;
+  }
+
   .exam-palette {
     grid-template-columns: repeat(5, 1fr);
   }

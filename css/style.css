@@ -1251,6 +1251,80 @@ input:disabled {
   gap: 12px;
 }
 
+.mock-source {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 16px 18px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.mock-source legend {
+  padding: 0 6px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.mock-source-option {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  cursor: pointer;
+}
+
+.mock-source-option input {
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+}
+
+.mock-source-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.mock-source-copy strong {
+  color: var(--text);
+}
+
+.mock-source-copy small {
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.mock-set-picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding-left: 30px;
+}
+
+.mock-set-picker label {
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.mock-set-picker select {
+  flex: 1;
+  min-width: 220px;
+  min-height: 38px;
+  padding: 0 10px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
 .mock-prepare {
   grid-column: 1 / -1;
   display: grid;

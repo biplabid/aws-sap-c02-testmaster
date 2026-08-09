@@ -371,8 +371,29 @@
               <span>3 hour timer</span>
               <span>Review before submit</span>
             </div>
+            <fieldset class="mock-source" id="mockSource">
+              <legend>Question Paper Source</legend>
+              <label class="mock-source-option">
+                <input type="radio" name="mockSource" value="all" id="mockSourceAll" checked>
+                <span class="mock-source-copy">
+                  <strong>All question banks</strong>
+                  <small>Combines every bank in <code>data/</code> and draws 75 questions that follow the official SAP-C02 domain weighting (26% / 29% / 25% / 20%) as closely as the pool allows.</small>
+                </span>
+              </label>
+              <label class="mock-source-option">
+                <input type="radio" name="mockSource" value="single" id="mockSourceSingle">
+                <span class="mock-source-copy">
+                  <strong>A single question bank</strong>
+                  <small>Only banks holding at least 75 questions can produce a full paper, so only those are listed.</small>
+                </span>
+              </label>
+              <div class="mock-set-picker hidden" id="mockSetPicker">
+                <label for="mockSetSelector">Question bank:</label>
+                <select id="mockSetSelector"></select>
+              </div>
+            </fieldset>
             <div class="mock-prepare" id="mockPrepare">
-              <p class="mock-prepare-note" id="mockPrepareNote">Each attempt combines every question bank in <code>data/</code> and draws a fresh, randomized set of 75 questions on the fly.</p>
+              <p class="mock-prepare-note" id="mockPrepareNote">Each attempt draws a fresh, randomized set of 75 questions on the fly from the source you pick above.</p>
               <div class="progress-track hidden" id="mockPrepareTrack" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                 <div class="progress-fill" id="mockPrepareFill"></div>
               </div>
@@ -671,6 +692,14 @@ Explanation: [Detailed explanation text...]
               <section class="doc-section" id="guide-mock">
                 <h2>Mock Exam</h2>
                 <p>A full-length, 75-question simulation with a 3-hour timer &mdash; the closest thing to sitting the real SAP-C02 exam.</p>
+                <h3>Choosing your question paper</h3>
+                <p>Before you begin, pick where the paper is drawn from:</p>
+                <ul>
+                  <li><strong>All question banks</strong> &mdash; every bank in <code>data/</code> is combined into one pool and 75 questions are drawn from it following the official SAP-C02 domain weighting: 26% Design Solutions for Organizational Complexity, 29% Design for New Solutions, 25% Continuous Improvement for Existing Solutions, 20% Accelerate Workload Migration and Modernization (19 / 22 / 19 / 15 questions). If a domain is thin in the pool, the shortfall is topped up from the remaining questions so you always get a full paper.</li>
+                  <li><strong>A single question bank</strong> &mdash; the paper comes from one bank only. Because a full paper needs 75 questions, the dropdown lists only banks that hold at least that many; the same domain weighting is applied within the bank as far as its own mix allows.</li>
+                </ul>
+                <p>Either way, the paper is drawn fresh each attempt, and the status line under the button reports the domain mix you actually got before you start.</p>
+                <h3>During the exam</h3>
                 <ul>
                   <li><strong>Question palette</strong> &mdash; jump to any question directly; answered questions and questions marked for review are color-coded.</li>
                   <li><strong>Mark for Review</strong> &mdash; flag a question to revisit later without losing your place.</li>
@@ -905,7 +934,7 @@ Explanation: [Detailed explanation text...]
                 <div class="doc-card-grid">
                   <div class="doc-card"><h4><code>random.js</code></h4><p>Random Test: untimed, one question at a time, immediate feedback, and per-question "Mark as Done" tracking keyed by question set.</p></div>
                   <div class="doc-card"><h4><code>quiz.js</code></h4><p>Timed Quiz: 20 questions, 40-minute timer, question palette, filterable Correct/Incorrect results with per-question answer reveal.</p></div>
-                  <div class="doc-card"><h4><code>mock.js</code></h4><p>Mock Exam: 75 questions randomly drawn from every bundled question bank combined, 3-hour timer, mark-for-review, a pre-submission review screen, and the same filterable results view as Timed Quiz. The combined pool is rebuilt on the fly (with a progress bar) each time a new attempt starts.</p></div>
+                  <div class="doc-card"><h4><code>mock.js</code></h4><p>Mock Exam: a 75-question paper drawn either from every question bank combined or from one bank you select (only banks with 75+ questions qualify), weighted to the official SAP-C02 domain split; 3-hour timer, mark-for-review, a pre-submission review screen, and the same filterable results view as Timed Quiz. The banks are re-read on the fly (with a progress bar) each time a new attempt starts.</p></div>
                   <div class="doc-card"><h4><code>analytics.js</code></h4><p>Statistics dashboard: renders summary cards and two Chart.js visualizations (domain radar, recent-attempts bar) from attempt history.</p></div>
                   <div class="doc-card"><h4><code>upload.js</code></h4><p>Parses a <code>.docx</code> file (via Mammoth.js) into the canonical question shape and hands it to <code>file-sets.js</code> to persist.</p></div>
                   <div class="doc-card"><h4><code>ai-coach.js</code></h4><p>Backs every "Ask AI Coach" button &mdash; live in <code>random.js</code>, and only in <code>quiz.js</code>/<code>mock.js</code>'s post-submission result rows. Opens a right-side panel, submits the question to Groq's OpenAI-compatible chat completions API (open-weight <code>llama-3.3-70b-versatile</code>) with a system prompt recreating the shared Gem's persona, and renders the Markdown answer in-app. Manages the user-supplied API key in <code>LocalStorage</code>.</p></div>

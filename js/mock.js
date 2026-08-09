@@ -5,6 +5,21 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
   const DURATION_SECONDS = 3 * 60 * 60;
   const SESSION_ID = "mock-exam";
 
+  // Official SAP-C02 domain weighting (exam guide v1.2, exam code SAP-C02).
+  // A generated paper matches these proportions as closely as the available
+  // pool allows; short domains are topped up from whatever else is on hand.
+  const DOMAIN_WEIGHTS = [
+    { domain: "Design Solutions for Organizational Complexity", weight: 26 },
+    { domain: "Design for New Solutions", weight: 29 },
+    { domain: "Continuous Improvement for Existing Solutions", weight: 25 },
+    { domain: "Accelerate Workload Migration and Modernization", weight: 20 }
+  ];
+
+  // Question banks keyed by set, loaded once per intro visit and reused by
+  // both the bank picker and the paper generator. Cleared when the candidate
+  // returns to the intro so a newly uploaded set is picked up.
+  let bankCache = null;
+
   function initMockShell(appState) {
     const elements = getMockElements();
 
@@ -31,6 +46,20 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
     elements.start.addEventListener("click", () => {
       handleStartClick(appState, elements);
     });
+
+    if (elements.sourceAll && elements.sourceSingle) {
+      [elements.sourceAll, elements.sourceSingle].forEach((radio) => {
+        radio.addEventListener("change", () => {
+          handleSourceChange(appState, elements);
+        });
+      });
+    }
+
+    if (elements.setSelector) {
+      elements.setSelector.addEventListener("change", () => {
+        discardPreparedPaper(appState, elements);
+      });
+    }
 
     elements.form.addEventListener("change", () => {
       saveCurrentAnswer(appState, elements);
@@ -106,12 +135,26 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
 
     if (storage.loadExamSession(SESSION_ID)) {
       elements.start.textContent = "Resume Mock Exam";
+      // A resumed attempt keeps the paper it was started with, so offering a
+      // source to draw from would be misleading.
+      setSourcePickerVisible(elements, false);
+    }
+  }
+
+  function setSourcePickerVisible(elements, visible) {
+    const source = document.querySelector("#mockSource");
+    if (source) {
+      source.classList.toggle("hidden", !visible);
     }
   }
 
   function getMockElements() {
     return {
       intro: document.querySelector("#mockIntro"),
+      sourceAll: document.querySelector("#mockSourceAll"),
+      sourceSingle: document.querySelector("#mockSourceSingle"),
+      setPicker: document.querySelector("#mockSetPicker"),
+      setSelector: document.querySelector("#mockSetSelector"),
       prepareNote: document.querySelector("#mockPrepareNote"),
       prepareTrack: document.querySelector("#mockPrepareTrack"),
       prepareFill: document.querySelector("#mockPrepareFill"),
@@ -177,10 +220,182 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
     await prepareQuestionSet(appState, elements);
   }
 
+  async function handleSourceChange(appState, elements) {
+    discardPreparedPaper(appState, elements);
+
+    const useSingleBank = getSelectedSource(elements) === "single";
+    elements.setPicker.classList.toggle("hidden", !useSingleBank);
+
+    if (!useSingleBank) {
+      return;
+    }
+
+    elements.start.disabled = true;
+    const eligible = await populateBankPicker(elements);
+    elements.prepareTrack.classList.add("hidden");
+    elements.start.disabled = false;
+
+    if (eligible.length === 0) {
+      elements.prepareStatus.classList.remove("hidden");
+      elements.prepareStatus.textContent = "No single question bank holds 75 questions yet. Use all question banks, or upload a larger bank.";
+    } else {
+      elements.prepareStatus.classList.add("hidden");
+      elements.prepareStatus.textContent = "";
+    }
+  }
+
   /**
-   * Combines every bundled/uploaded question bank into one pool and draws a
-   * fresh, randomized 75-question set from it, reporting progress as each
-   * bank is fetched.
+   * Throws away a paper that was already drawn when the candidate changes the
+   * source, so Start Test can never launch a paper from the previous choice.
+   */
+  function discardPreparedPaper(appState, elements) {
+    if (storage.loadExamSession(SESSION_ID) || appState.mockExam.phase !== "ready") {
+      return;
+    }
+
+    appState.mockExam.phase = "intro";
+    appState.mockExam.preparedQuestions = null;
+    elements.start.textContent = "Begin Mock Exam";
+    elements.prepareStatus.classList.remove("hidden");
+    elements.prepareStatus.textContent = "Question paper source changed. Click \"Begin Mock Exam\" to draw a new paper.";
+  }
+
+  /**
+   * Fetches every bundled/uploaded question bank once and caches them, so
+   * the bank picker and the paper generator share a single pass. Progress is
+   * reported bank by bank because a dozen fetches is not instant.
+   */
+  async function loadBanks(elements) {
+    if (bankCache) {
+      return bankCache;
+    }
+
+    setPrepareProgress(elements, 0, "Discovering question banks...");
+
+    const sets = await viewHelpers.getAvailableQuestionSets();
+    const banks = [];
+
+    for (let index = 0; index < sets.length; index += 1) {
+      const set = sets[index];
+      const source = viewHelpers.resolveQuestionSetSource(set.key);
+
+      await questionEngine.loadQuestions(source);
+      // A bank whose entries all fail validation makes the engine hand back
+      // its built-in fallback questions; those are not exam content, so the
+      // bank is treated as empty rather than polluting the pool.
+      const questions = questionEngine.getQuestions()
+        .filter((question) => !String(question.id).startsWith("fallback-"))
+        .map((question) => ({ ...question, id: `${set.key}:${question.id}` }));
+
+      banks.push({ key: set.key, name: set.name, questions });
+
+      const percent = Math.round(((index + 1) / sets.length) * 100);
+      setPrepareProgress(elements, percent, `Reading ${set.name} (${index + 1} of ${sets.length})...`);
+    }
+
+    bankCache = banks;
+    return banks;
+  }
+
+  function getSelectedSource(elements) {
+    return elements.sourceSingle && elements.sourceSingle.checked ? "single" : "all";
+  }
+
+  /**
+   * Fills the single-bank dropdown with the banks big enough to yield a full
+   * 75-question paper. Returns the eligible banks so callers can react when
+   * there are none.
+   */
+  async function populateBankPicker(elements) {
+    const banks = await loadBanks(elements);
+    const eligible = banks.filter((bank) => bank.questions.length >= QUESTION_COUNT);
+    const previousValue = elements.setSelector.value;
+
+    viewHelpers.clearElement(elements.setSelector);
+
+    eligible.forEach((bank) => {
+      const option = document.createElement("option");
+      option.value = bank.key;
+      option.textContent = `${bank.name} (${bank.questions.length} questions)`;
+      elements.setSelector.appendChild(option);
+    });
+
+    if (previousValue && eligible.some((bank) => bank.key === previousValue)) {
+      elements.setSelector.value = previousValue;
+    }
+
+    elements.setSelector.disabled = eligible.length === 0;
+    return eligible;
+  }
+
+  /**
+   * Splits QUESTION_COUNT across the four exam domains by weight, handing the
+   * rounding remainder to the domains that lost the most to rounding so the
+   * targets always add up to exactly QUESTION_COUNT.
+   */
+  function allocateDomainTargets() {
+    const exact = DOMAIN_WEIGHTS.map((entry) => ({
+      domain: entry.domain,
+      exact: (entry.weight / 100) * QUESTION_COUNT
+    }));
+
+    const targets = exact.map((entry) => ({
+      domain: entry.domain,
+      target: Math.floor(entry.exact),
+      remainder: entry.exact - Math.floor(entry.exact)
+    }));
+
+    let allocated = targets.reduce((total, entry) => total + entry.target, 0);
+    const byRemainder = [...targets].sort((a, b) => b.remainder - a.remainder);
+
+    for (let index = 0; allocated < QUESTION_COUNT; index += 1) {
+      byRemainder[index % byRemainder.length].target += 1;
+      allocated += 1;
+    }
+
+    return targets;
+  }
+
+  /**
+   * Draws a QUESTION_COUNT-question paper from `pool`, honouring the official
+   * domain weighting as far as the pool allows: each domain is filled to its
+   * target, and any shortfall (a domain the pool is thin on) is topped up
+   * from the remaining in-scope questions first, then from anything else.
+   */
+  function buildWeightedPaper(pool) {
+    const targets = allocateDomainTargets();
+    const weightedDomains = new Set(DOMAIN_WEIGHTS.map((entry) => entry.domain));
+
+    const picked = [];
+    const inScopeLeftovers = [];
+    const outOfScope = pool.filter((question) => !weightedDomains.has(question.domain));
+
+    targets.forEach((entry) => {
+      const available = questionEngine.shuffle(pool.filter((question) => question.domain === entry.domain));
+      picked.push(...available.slice(0, entry.target));
+      inScopeLeftovers.push(...available.slice(entry.target));
+    });
+
+    const fillers = questionEngine.shuffle(inScopeLeftovers).concat(questionEngine.shuffle(outOfScope));
+    while (picked.length < QUESTION_COUNT && fillers.length > 0) {
+      picked.push(fillers.shift());
+    }
+
+    return questionEngine.shuffle(picked).slice(0, QUESTION_COUNT);
+  }
+
+  function describeDomainMix(questions) {
+    return DOMAIN_WEIGHTS
+      .map((entry, index) => {
+        const count = questions.filter((question) => question.domain === entry.domain).length;
+        return `D${index + 1} ${count}`;
+      })
+      .join(" / ");
+  }
+
+  /**
+   * Draws a fresh, randomized 75-question paper from the source the candidate
+   * chose on the intro screen: every bank combined, or one selected bank.
    */
   async function prepareQuestionSet(appState, elements) {
     appState.mockExam.phase = "preparing";
@@ -189,30 +404,43 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
     elements.start.disabled = true;
     elements.start.textContent = "Preparing Question Paper...";
     if (elements.prepareNote) elements.prepareNote.classList.add("hidden");
-    setPrepareProgress(elements, 0, "Discovering question banks...");
+    // loadBanks() only reveals the status line when it actually fetches, so
+    // unhide it here for the cached path too.
+    elements.prepareStatus.classList.remove("hidden");
 
-    const sets = await viewHelpers.getAvailableQuestionSets();
-    const combined = [];
+    const banks = await loadBanks(elements);
+    const useSingleBank = getSelectedSource(elements) === "single";
+    let pool;
+    let sourceLabel;
 
-    for (let index = 0; index < sets.length; index += 1) {
-      const set = sets[index];
-      const source = viewHelpers.resolveQuestionSetSource(set.key);
+    if (useSingleBank) {
+      const bank = banks.find((entry) => entry.key === elements.setSelector.value);
 
-      await questionEngine.loadQuestions(source);
-      questionEngine.getQuestions().forEach((question) => {
-        combined.push({ ...question, id: `${set.key}:${question.id}` });
-      });
+      if (!bank || bank.questions.length < QUESTION_COUNT) {
+        appState.mockExam.phase = "intro";
+        elements.prepareTrack.classList.add("hidden");
+        elements.prepareStatus.textContent = "Pick a question bank with at least 75 questions, or switch to all question banks.";
+        elements.start.disabled = false;
+        elements.start.textContent = "Begin Mock Exam";
+        return;
+      }
 
-      const percent = Math.round(((index + 1) / sets.length) * 100);
-      setPrepareProgress(elements, percent, `Combining ${set.name} (${index + 1} of ${sets.length})...`);
+      pool = bank.questions;
+      sourceLabel = bank.name;
+    } else {
+      pool = banks.reduce((combined, bank) => combined.concat(bank.questions), []);
+      sourceLabel = `${banks.length} question bank${banks.length === 1 ? "" : "s"}`;
     }
 
-    let pool = questionEngine.shuffle(combined);
-    while (pool.length < QUESTION_COUNT && combined.length > 0) {
-      pool = pool.concat(questionEngine.shuffle(combined));
+    let paper = buildWeightedPaper(pool);
+
+    // Only reachable when the whole pool is smaller than a full paper; repeat
+    // questions rather than hand back a short exam.
+    while (paper.length < QUESTION_COUNT && pool.length > 0) {
+      paper = paper.concat(questionEngine.shuffle(pool)).slice(0, QUESTION_COUNT);
     }
 
-    appState.mockExam.preparedQuestions = pool.slice(0, QUESTION_COUNT).map((question, index) => ({
+    appState.mockExam.preparedQuestions = paper.map((question, index) => ({
       ...question,
       examId: `${question.id}-mock-${index + 1}`,
       examNumber: index + 1
@@ -220,7 +448,7 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
 
     appState.mockExam.phase = "ready";
     elements.prepareTrack.classList.add("hidden");
-    elements.prepareStatus.textContent = `Ready! ${QUESTION_COUNT} questions randomly selected from ${combined.length} across ${sets.length} question bank${sets.length === 1 ? "" : "s"}. Click "Start Test" to begin.`;
+    elements.prepareStatus.textContent = `Ready! ${paper.length} questions drawn from ${sourceLabel} (${pool.length} available). Domain mix: ${describeDomainMix(paper)}. Click "Start Test" to begin.`;
 
     elements.start.disabled = false;
     elements.start.textContent = "Start Test";
@@ -247,6 +475,9 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
     appState.mockExam.completed = false;
     appState.mockExam.phase = "intro";
     appState.mockExam.preparedQuestions = null;
+    // Re-read the banks next time, so a set uploaded mid-session shows up.
+    bankCache = null;
+    setSourcePickerVisible(elements, true);
 
     elements.result.classList.add("hidden");
     elements.workspace.classList.add("hidden");
