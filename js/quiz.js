@@ -146,7 +146,8 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
     } else {
       const setKey = elements.setSelector ? elements.setSelector.value : "set1";
       const source = viewHelpers.resolveQuestionSetSource(setKey);
-      appState.quiz.questions = await buildQuestionSet(appState, QUESTION_COUNT, source);
+      const setName = viewHelpers.getSelectedSetName(elements.setSelector);
+      appState.quiz.questions = await buildQuestionSet(appState, QUESTION_COUNT, source, setName);
       appState.quiz.answers = {};
       appState.quiz.currentIndex = 0;
       storage.clearExamSession(SESSION_ID);
@@ -177,7 +178,7 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
     updateProgress(appState, elements);
   }
 
-  async function buildQuestionSet(appState, count, source = "data/set1.json") {
+  async function buildQuestionSet(appState, count, source = "data/set1.json", setName = "") {
     const engine = appState.questionEngine;
     await questionEngine.loadQuestions(source);
 
@@ -195,6 +196,7 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
 
     return selectedQuestions.slice(0, count).map((question, index) => ({
       ...question,
+      setName,
       quizId: `${question.id}-quiz-${index + 1}`,
       quizNumber: index + 1
     }));

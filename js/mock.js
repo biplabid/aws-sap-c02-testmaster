@@ -285,7 +285,7 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
       // bank is treated as empty rather than polluting the pool.
       const questions = questionEngine.getQuestions()
         .filter((question) => !String(question.id).startsWith("fallback-"))
-        .map((question) => ({ ...question, id: `${set.key}:${question.id}` }));
+        .map((question) => ({ ...question, id: `${set.key}:${question.id}`, setName: set.name }));
 
       banks.push({ key: set.key, name: set.name, questions });
 

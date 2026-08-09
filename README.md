@@ -16,6 +16,8 @@ The platform is organized into several practice modes, each tailored for a diffe
 -   **Statistics**: A dashboard with a radar chart of your score by domain, a bar chart of your most recent attempts, summary cards (attempts, average score, best score, study time), and a full attempt history table.
 -   **Upload**: Import a custom question bank from a formatted `.docx` file. The file is parsed in the browser and written directly into the project's `data/` folder as a new `setN.json` file, which then appears as a selectable question set in Random Test and Timed Quiz, and is automatically folded into Mock Exam's combined pool.
 
+-   **Question details**: in every mode, the chip row above a question names the question bank it came from (highlighted), alongside the question number, SAP-C02 domain, difficulty, and single/multiple answer type. In a Mock Exam drawn from all banks, the bank chip tracks each question's own source.
+
 ### AI Study Coach
 
 -   **Ask AI Coach button**: available in Random Test (next to every question, since it's untimed) and, for Timed Quiz and Mock Exam, only on the results screen's Correct/Incorrect revision list after you submit — never during a timed attempt itself. Clicking it docks a panel to the right, below the header — the page reflows to make room rather than covering the header or question, and clicking outside the panel (or Esc) closes it. It automatically submits the question and its answer options and shows the answer right there — no copying, no tab switching.

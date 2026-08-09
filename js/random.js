@@ -146,8 +146,11 @@ window.TestMaster.random = (function createRandomModule(viewHelpers, questionEng
     const source = viewHelpers.resolveQuestionSetSource(setKey);
     await questionEngine.loadQuestions(source);
 
+    const setName = viewHelpers.getSelectedSetName(elements.setSelector);
     const doneIds = new Set(storage.loadDoneQuestions(setKey));
-    const remaining = questionEngine.getQuestions().filter((question) => !doneIds.has(question.id));
+    const remaining = questionEngine.getQuestions()
+      .filter((question) => !doneIds.has(question.id))
+      .map((question) => ({ ...question, setName }));
 
     if (!questionEngine.getQuestions().length) {
       alert("This question set is empty or could not be loaded.");

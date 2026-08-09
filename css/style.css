@@ -690,6 +690,14 @@ input:disabled {
   border-radius: 999px;
 }
 
+/* The question bank the current question came from, called out among the
+   plainer domain/difficulty/type chips. */
+.meta-chip.set-chip {
+  color: #ffffff;
+  background: var(--aws-blue);
+  border-color: var(--aws-blue);
+}
+
 .question-card {
   padding: 28px;
   background: var(--surface);

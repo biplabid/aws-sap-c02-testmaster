@@ -46,20 +46,37 @@ window.TestMaster.viewHelpers = (function createViewHelpersModule() {
   }
 
   function renderMeta(question, container, prefix) {
+    // The question bank leads the chip row and is highlighted: in Mock Exam a
+    // paper can mix banks, so it tells the candidate where each question came
+    // from rather than just which set they picked.
     const chips = [
-      prefix,
-      question.domain,
-      question.difficulty,
-      question.type === "multiple" ? "Multiple answer" : "Single answer",
-      ...(question.tags || [])
+      { text: question.setName, variant: "set-chip" },
+      { text: prefix },
+      { text: question.domain },
+      { text: question.difficulty },
+      { text: question.type === "multiple" ? "Multiple answer" : "Single answer" },
+      ...(question.tags || []).map((tag) => ({ text: tag }))
     ];
 
-    chips.filter(Boolean).forEach((value) => {
-      const chip = document.createElement("span");
-      chip.className = "meta-chip";
-      chip.textContent = value;
-      container.appendChild(chip);
+    chips.filter((chip) => chip.text).forEach((chip) => {
+      const element = document.createElement("span");
+      element.className = chip.variant ? `meta-chip ${chip.variant}` : "meta-chip";
+      element.textContent = chip.text;
+      container.appendChild(element);
     });
+  }
+
+  /**
+   * Reads the human-readable name of the currently selected question set, for
+   * stamping onto the questions drawn from it.
+   */
+  function getSelectedSetName(selectElement) {
+    if (!selectElement || selectElement.selectedIndex < 0) {
+      return "";
+    }
+
+    const option = selectElement.options[selectElement.selectedIndex];
+    return option ? option.textContent.trim() : "";
   }
 
   function applyAnswerHighlights(question, selectedAnswers, formElement) {
@@ -279,6 +296,7 @@ window.TestMaster.viewHelpers = (function createViewHelpersModule() {
     isAnswerCorrect,
     clearElement,
     getAvailableQuestionSets,
+    getSelectedSetName,
     populateSetSelector,
     resolveQuestionSetSource
   };
