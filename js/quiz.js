@@ -511,16 +511,8 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
     prompt.className = "result-row-prompt";
     prompt.textContent = row.prompt;
 
-    const yourAnswer = document.createElement("p");
-    yourAnswer.className = "result-row-answer";
-    const answerLabel = document.createElement("strong");
-    answerLabel.textContent = "Your answer: ";
-    yourAnswer.appendChild(answerLabel);
-    yourAnswer.append(formatAnswerText(row.selectedAnswers, row.options) || "Not answered");
-
     item.appendChild(header);
     item.appendChild(prompt);
-    item.appendChild(yourAnswer);
     item.appendChild(viewHelpers.buildAnswerBreakdown(row));
 
     if (!row.correct && row.explanation) {
@@ -546,19 +538,6 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
     }
 
     return item;
-  }
-
-  function formatAnswerText(answerIds, options) {
-    if (!Array.isArray(answerIds) || answerIds.length === 0) {
-      return "";
-    }
-
-    return answerIds
-      .map((id) => {
-        const option = Array.isArray(options) ? options.find((opt) => opt.id === id) : null;
-        return option ? `${id}) ${option.text}` : id;
-      })
-      .join("; ");
   }
 
   function renderUnavailable(elements) {

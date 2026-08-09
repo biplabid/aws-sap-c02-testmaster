@@ -88,15 +88,25 @@ window.TestMaster.viewHelpers = (function createViewHelpersModule() {
    * marked. Colour coding matches the practice-mode highlights — green for a
    * correct pick, orange for a correct option that was missed, red for a
    * wrong pick — so the candidate can see how the options they did not pick
-   * compare with the one they did.
+   * compare with the one they did. Returns a fragment: the option list, led
+   * by a note when the question was left unanswered and no option therefore
+   * carries the "Your answer" tag.
    */
   function buildAnswerBreakdown(row) {
+    const fragment = document.createDocumentFragment();
     const list = document.createElement("ul");
     list.className = "result-options";
 
     const options = Array.isArray(row.options) ? row.options : [];
     const selectedAnswers = Array.isArray(row.selectedAnswers) ? row.selectedAnswers : [];
     const correctAnswers = Array.isArray(row.correctAnswers) ? row.correctAnswers : [];
+
+    if (selectedAnswers.length === 0) {
+      const note = document.createElement("p");
+      note.className = "result-options-note";
+      note.textContent = "You did not answer this question.";
+      fragment.appendChild(note);
+    }
 
     options.forEach((option) => {
       const isSelected = selectedAnswers.includes(option.id);
@@ -138,7 +148,8 @@ window.TestMaster.viewHelpers = (function createViewHelpersModule() {
       list.appendChild(item);
     });
 
-    return list;
+    fragment.appendChild(list);
+    return fragment;
   }
 
   function buildOptionTag(text, variant) {
