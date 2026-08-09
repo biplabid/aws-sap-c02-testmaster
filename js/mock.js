@@ -450,6 +450,7 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
     elements.workspace.classList.remove("hidden");
 
     renderQuestion(appState, elements);
+    renderPalette(appState, elements);
   }
 
   function updateStatus(appState, elements) {

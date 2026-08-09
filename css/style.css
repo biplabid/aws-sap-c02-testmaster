@@ -917,7 +917,10 @@ input:disabled {
   border-color: var(--aws-green);
 }
 
-.palette-button.current.answered {
+/* Answered (green) and marked (orange) win the background, so the current
+   question keeps a blue ring to stay identifiable in the palette. */
+.palette-button.current.answered,
+.palette-button.current.marked {
   box-shadow: 0 0 0 3px rgba(9, 114, 211, 0.22);
 }
 

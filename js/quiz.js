@@ -287,6 +287,7 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
     saveCurrentAnswer(appState, elements);
     appState.quiz.currentIndex = index;
     renderQuestion(appState, elements);
+    renderPalette(appState, elements);
   }
 
   function updateProgress(appState, elements) {
