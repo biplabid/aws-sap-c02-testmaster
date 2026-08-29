@@ -8,10 +8,10 @@ window.TestMaster = window.TestMaster || {};
 window.TestMaster.config = {
   GOOGLE_CLIENT_ID: "266127504874-1g1j2vt580aoq3907rgsgnprrne76pkc.apps.googleusercontent.com",
   // Open-weight model the "Ask AI Coach" panel calls via Groq's free API
-  // (https://console.groq.com/keys) — no cost, no credit card. 70B gives
-  // more reliable structured-format output than Groq's smaller free models;
-  // see https://console.groq.com/docs/models for the current model list.
-  AI_COACH_MODEL: "llama-3.3-70b-versatile",
+  // (https://console.groq.com/keys) — no cost, no credit card.
+  // See https://console.groq.com/docs/models for the current model list.
+  AI_COACH_MODEL: "openai/gpt-oss-120b",
+  AI_COACH_FALLBACK_MODELS: ["openai/gpt-oss-20b", "llama-3.1-8b-instant"],
   // Recreates the "AWS SAP-C02 Coach" Gem's persona as a system prompt,
   // transcribed verbatim from the Gem's own instructions (Gems have no
   // public API, so this is what actually drives the AI Coach panel).
