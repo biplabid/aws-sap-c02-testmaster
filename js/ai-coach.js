@@ -314,45 +314,64 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
     showOnly("loading");
 
     const config = getConfig();
-    const model = config.AI_COACH_MODEL || "llama-3.3-70b-versatile";
+    const primaryModel = config.AI_COACH_MODEL || "openai/gpt-oss-120b";
+    const fallbackModels = config.AI_COACH_FALLBACK_MODELS || ["openai/gpt-oss-20b", "llama-3.1-8b-instant"];
+    const candidateModels = Array.from(new Set([primaryModel, ...fallbackModels]));
 
-    try {
-      const response = await fetch(GROQ_CHAT_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-          model,
-          messages: [
-            { role: "system", content: config.AI_COACH_SYSTEM_PROMPT || "" },
-            { role: "user", content: formatQuestionText(currentQuestion) }
-          ]
-        })
-      });
+    let lastError = null;
 
-      const data = await response.json();
+    for (let index = 0; index < candidateModels.length; index += 1) {
+      const model = candidateModels[index];
+      try {
+        const response = await fetch(GROQ_CHAT_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model,
+            messages: [
+              { role: "system", content: config.AI_COACH_SYSTEM_PROMPT || "" },
+              { role: "user", content: formatQuestionText(currentQuestion) }
+            ]
+          })
+        });
 
-      if (!response.ok) {
-        throw new Error((data.error && data.error.message) || `Request failed (${response.status}).`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          const errorMessage = (data.error && data.error.message) || `Request failed (${response.status}).`;
+          const isModelError = response.status === 404 || /does not exist|not found|do not have access/i.test(errorMessage);
+          
+          if (isModelError && index < candidateModels.length - 1) {
+            console.warn(`Groq model ${model} failed (${errorMessage}), retrying with fallback model...`);
+            continue;
+          }
+          throw new Error(errorMessage);
+        }
+
+        const text = data.choices && data.choices[0] && data.choices[0].message
+          ? data.choices[0].message.content || ""
+          : "";
+
+        if (!text) {
+          throw new Error("AI Coach didn't return an answer for this question.");
+        }
+
+        elements.answer.innerHTML = renderMarkdown(text);
+        showOnly("answer");
+        return;
+      } catch (error) {
+        lastError = error;
       }
+    }
 
-      const text = data.choices && data.choices[0] && data.choices[0].message
-        ? data.choices[0].message.content || ""
-        : "";
-
-      if (!text) {
-        throw new Error("AI Coach didn't return an answer for this question.");
-      }
-
-      elements.answer.innerHTML = renderMarkdown(text);
-      showOnly("answer");
-    } catch (error) {
-      console.error(error);
-      elements.error.textContent = /api key/i.test(error.message)
-        ? `${error.message} Check the key and try again.`
-        : error.message;
+    if (lastError) {
+      console.error(lastError);
+      elements.error.textContent = /api key/i.test(lastError.message)
+        ? `${lastError.message} Check the key and try again.`
+        : lastError.message;
       showOnly("error");
     }
   }
