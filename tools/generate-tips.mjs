@@ -40,9 +40,30 @@ const flag = (name) => argv.includes(`--${name}`);
 const API_KEY = process.env.ANTHROPIC_API_KEY;
 if (!API_KEY) {
   console.error("ANTHROPIC_API_KEY is not set.\n" +
-    '  PowerShell:  $env:ANTHROPIC_API_KEY = "sk-ant-..."\n' +
-    "  bash:        export ANTHROPIC_API_KEY=sk-ant-...");
+    "  PowerShell:  $env:ANTHROPIC_API_KEY = '<your real key>'\n" +
+    "  bash:        export ANTHROPIC_API_KEY='<your real key>'");
   process.exit(2);
+}
+
+// Catch the obvious shapes up front rather than spending 15 identical 401s on
+// them. Never print the key itself - only what is wrong with it.
+{
+  const problems = [];
+  if (API_KEY.includes("...")) problems.push('contains "..." - looks like a pasted placeholder, not a real key');
+  if (/^["'].*["']$/.test(API_KEY)) problems.push("is wrapped in quotes - PowerShell kept them as part of the value");
+  if (!API_KEY.startsWith("sk-ant-")) problems.push('does not start with "sk-ant-"');
+  if (API_KEY.trim() !== API_KEY) problems.push("has leading or trailing whitespace");
+  if (API_KEY.length < 40) problems.push(`is only ${API_KEY.length} characters, which is too short`);
+
+  if (problems.length) {
+    console.error("ANTHROPIC_API_KEY looks wrong before we even call the API:");
+    for (const p of problems) console.error(`  - it ${p}`);
+    console.error("\nCreate a key at https://console.anthropic.com/settings/keys and set it with:");
+    console.error("  $env:ANTHROPIC_API_KEY = '<paste the key here>'");
+    console.error("\nSet it in the SAME terminal you run this script from - $env: vars do not");
+    console.error("cross terminal windows, and they are lost when the window closes.");
+    process.exit(2);
+  }
 }
 
 // ------------------------------------------------- config + validator ----
