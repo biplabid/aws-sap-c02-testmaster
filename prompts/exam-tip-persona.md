@@ -78,22 +78,36 @@ Return **only** this JSON object. No prose before or after, no code fences.
 
 ### 4.1 JSON Schema (for `output_config.format`)
 
+Sent as:
+
 ```json
-{
-  "type": "object",
-  "properties": {
-    "id":          { "type": "string" },
-    "trigger":     { "type": "string", "minLength": 8,  "maxLength": 200 },
-    "answer":      { "type": "string", "minLength": 4,  "maxLength": 200 },
-    "trap":        { "type": "string", "minLength": 8,  "maxLength": 220 },
-    "memory_hook": { "type": "string", "maxLength": 90 },
-    "confidence":  { "type": "string", "enum": ["high", "medium", "low"] },
-    "needsReview": { "type": "boolean" }
-  },
-  "required": ["id", "trigger", "answer", "trap", "memory_hook", "confidence", "needsReview"],
-  "additionalProperties": false
+"output_config": {
+  "effort": "low",
+  "format": {
+    "type": "json_schema",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "id":          { "type": "string" },
+        "trigger":     { "type": "string" },
+        "answer":      { "type": "string" },
+        "trap":        { "type": "string" },
+        "memory_hook": { "type": "string" },
+        "confidence":  { "type": "string", "enum": ["high", "medium", "low"] },
+        "needsReview": { "type": "boolean" }
+      },
+      "required": ["id", "trigger", "answer", "trap", "memory_hook", "confidence", "needsReview"],
+      "additionalProperties": false
+    }
+  }
 }
 ```
+
+**Why there are no length constraints in the schema:** Anthropic's structured outputs do not support `minLength`, `maxLength`, `minimum`, `maximum`, or complex array constraints, and `additionalProperties` must be `false`. The SDKs strip unsupported keywords and re-check them client-side, but this workflow calls the API over raw HTTP from n8n, where nothing strips them — so sending them risks a 400.
+
+Length limits are therefore enforced **after** the call, by the validator (§5, rule 1), which is the right place for them anyway: a violation triggers a regeneration rather than a hard failure.
+
+Structured outputs guarantee the response's first content block is text containing valid JSON against this schema.
 
 ---
 
@@ -101,7 +115,7 @@ Return **only** this JSON object. No prose before or after, no code fences.
 
 These are enforced by a validator after you answer. A violation is regenerated, so meeting them first time is cheaper for everyone.
 
-1. **≤ 60 words total** across `trigger` + `answer` + `trap` + `memory_hook`. Aim for 35-45.
+1. **≤ 75 words total** across `trigger` + `answer` + `trap` + `memory_hook`. **Aim for 35-45.** The cap is a guard against essays, not the target — the reference corpus runs to ~70 words only on multi-part tips like exemplar 26, and most are far shorter.
 2. **Name at least one real AWS service or feature** in `answer`, spelled as AWS spells it (`S3 Transfer Acceleration`, not `transfer accel`).
 3. **`trigger` must come from the stem** — quote the actual words where you can. Do not invent a scenario the question does not contain.
 4. **`trap` must refer to one of the question's own listed options** — the specific distractor a candidate would plausibly choose. Not a generic warning.
