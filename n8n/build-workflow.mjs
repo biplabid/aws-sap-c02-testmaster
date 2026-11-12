@@ -510,6 +510,24 @@ const numeric = (v) => {
 
 const tips = [...merged.values()].sort((a, b) => numeric(a.id) - numeric(b.id));
 
+// Fail loudly rather than writing a file that is worse than the one already
+// there. A chunk where every tip failed (an auth error, say) would otherwise
+// commit an empty array over good tips and report tipCount: 0 in a log nobody
+// reads - silent data loss on a re-run of an already-generated set.
+if (incoming.length === 0) {
+  throw new Error(
+    'No tips survived validation for ' + cfg.setFile + ' [' + cfg.offset + '-' +
+    (cfg.offset + cfg.size - 1) + ']. Refusing to commit. Check the ' +
+    'Anthropic Generate Tip node output for the API error.'
+  );
+}
+if (tips.length < (meta.existingTips || []).length) {
+  throw new Error(
+    'Refusing to commit: result has ' + tips.length + ' tips but the existing ' +
+    'file had ' + meta.existingTips.length + '. This would lose tips.'
+  );
+}
+
 const fileText = JSON.stringify(tips, null, 2) + '\\n';
 const path = 'data/tips/' + cfg.setFile;
 
