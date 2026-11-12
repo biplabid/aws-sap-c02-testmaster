@@ -187,3 +187,24 @@ the one gold-standard check that must never be relaxed.
 Run `set1.json` chunk `0-14`, then grade the output against
 `prompts/gold-standard-tips.md` §7 and record the result in its table. The pass
 bar is there. Do not walk the remaining ~109 chunks until it is met.
+
+---
+
+## Running it locally instead
+
+`tools/generate-tips.mjs` runs the same pipeline without n8n. It reads the Job
+Config **and the validator source** out of `exam-tip-agent.workflow.json`, so
+the local run and the n8n run apply identical rules by construction — change
+the rules in `build-workflow.mjs`, re-run it, and both follow.
+
+```powershell
+$env:ANTHROPIC_API_KEY = "sk-ant-..."
+& "C:\Program Files\nodejs\node.exe" tools/generate-tips.mjs --set set1.json --offset 0 --size 15 --dry
+```
+
+Drop `--dry` to write `data/tips/<set>.json`. It refuses to write a partial
+chunk, reports the API error for every failed question, and prints measured
+token usage and cost.
+
+Use whichever fits: n8n for the visual, scheduled or shared run; the script for
+fast iteration and for the bulk pass.
