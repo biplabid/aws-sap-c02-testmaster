@@ -61,7 +61,6 @@
       ],
       "credentials": {
         "httpHeaderAuth": {
-          "id": "REPLACE_WITH_GITHUB_CRED_ID",
           "name": "GitHub PAT (Authorization)"
         }
       }
@@ -101,7 +100,6 @@
       ],
       "credentials": {
         "httpHeaderAuth": {
-          "id": "REPLACE_WITH_GITHUB_CRED_ID",
           "name": "GitHub PAT (Authorization)"
         }
       }
@@ -141,7 +139,6 @@
       ],
       "credentials": {
         "httpHeaderAuth": {
-          "id": "REPLACE_WITH_GITHUB_CRED_ID",
           "name": "GitHub PAT (Authorization)"
         }
       },
@@ -231,7 +228,6 @@
       ],
       "credentials": {
         "httpHeaderAuth": {
-          "id": "REPLACE_WITH_ANTHROPIC_CRED_ID",
           "name": "Anthropic API (x-api-key)"
         }
       }
@@ -339,7 +335,6 @@
       ],
       "credentials": {
         "httpHeaderAuth": {
-          "id": "REPLACE_WITH_ANTHROPIC_CRED_ID",
           "name": "Anthropic API (x-api-key)"
         }
       }
@@ -374,6 +369,40 @@
     },
     {
       "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "commit-gate",
+              "leftValue": "={{ $json.skipCommit }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-16",
+      "name": "Commit Enabled?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1080,
+        140
+      ]
+    },
+    {
+      "parameters": {
         "method": "PUT",
         "url": "={{ $json.commitUrl }}",
         "authentication": "genericCredentialType",
@@ -400,17 +429,16 @@
         "jsonBody": "={{ JSON.stringify($json.commitBody) }}",
         "options": {}
       },
-      "id": "node-16",
+      "id": "node-17",
       "name": "Commit Tips File",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1180,
+        1300,
         140
       ],
       "credentials": {
         "httpHeaderAuth": {
-          "id": "REPLACE_WITH_GITHUB_CRED_ID",
           "name": "GitHub PAT (Authorization)"
         }
       }
@@ -420,12 +448,12 @@
         "mode": "runOnceForAllItems",
         "jsCode": "// Read this in n8n's execution log — it is the run's report card.\nconst cfg = $('Job Config').first().json;\nconst merge = $('Merge Tips').first().json;\n\nconst results = [];\nfor (const name of ['Validate Tip', 'Validate Retry']) {\n  try {\n    for (const it of $(name).all()) results.push(it.json);\n  } catch (e) { /* retry lane may not have run */ }\n}\n\nconst firstPass = results.filter(r => r.attempt === 1 && r._valid).length;\nconst retried   = results.filter(r => r.attempt === 2).length;\nconst retryOk   = results.filter(r => r.attempt === 2 && r._valid).length;\nconst flagged   = results.filter(r => r._tip && r._tip.needsReview).length;\n\nconst violationTally = {};\nfor (const r of results) {\n  for (const v of (r._violations || [])) {\n    const key = v.split(':')[0];\n    violationTally[key] = (violationTally[key] || 0) + 1;\n  }\n}\n\nreturn [{\n  json: {\n    set: cfg.setFile,\n    chunk: cfg.offset + '-' + (cfg.offset + cfg.size - 1),\n    model: cfg.model,\n    generated: merge.incomingCount,\n    tipsInFileNow: merge.tipCount,\n    passedFirstAttempt: firstPass,\n    neededRetry: retried,\n    retrySucceeded: retryOk,\n    flaggedForReview: flagged,\n    violationsByKind: violationTally,\n    committed: !merge.skipCommit,\n    nextChunkOffset: cfg.offset + cfg.size,\n  },\n}];"
       },
-      "id": "node-17",
+      "id": "node-18",
       "name": "Run Summary",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1400,
+        1520,
         140
       ]
     }
@@ -603,7 +631,25 @@
       "main": [
         [
           {
+            "node": "Commit Enabled?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Commit Enabled?": {
+      "main": [
+        [
+          {
             "node": "Commit Tips File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Run Summary",
             "type": "main",
             "index": 0
           }

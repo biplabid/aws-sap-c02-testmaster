@@ -614,7 +614,7 @@ const httpGet = (name, url, [x, y], { continueOnFail = false } = {}) => {
     type: "n8n-nodes-base.httpRequest",
     typeVersion: 4.2,
     position: [x, y],
-    credentials: { httpHeaderAuth: { id: "REPLACE_WITH_GITHUB_CRED_ID", name: GITHUB_CRED } },
+    credentials: { httpHeaderAuth: { name: GITHUB_CRED } },
   };
   if (continueOnFail) {
     // data/tips/<set>.json legitimately does not exist before the first run.
@@ -647,7 +647,7 @@ const anthropic = (name, [x, y]) => ({
   type: "n8n-nodes-base.httpRequest",
   typeVersion: 4.2,
   position: [x, y],
-  credentials: { httpHeaderAuth: { id: "REPLACE_WITH_ANTHROPIC_CRED_ID", name: ANTHROPIC_CRED } },
+  credentials: { httpHeaderAuth: { name: ANTHROPIC_CRED } },
 });
 
 const ghContentsUrl = (pathExpr) =>
@@ -713,6 +713,31 @@ const nodes = [
 
   code("Merge Tips", MERGE_TIPS, [960, 140]),
 
+  // Gate for the dry run. Without this, Job Config's commit:false computes a
+  // skipCommit flag that nothing ever reads, and the run commits anyway.
+  {
+    parameters: {
+      conditions: {
+        options: { caseSensitive: true, leftValue: "", typeValidation: "strict", version: 2 },
+        conditions: [
+          {
+            id: "commit-gate",
+            leftValue: "={{ $json.skipCommit }}",
+            rightValue: false,
+            operator: { type: "boolean", operation: "false", singleValue: true },
+          },
+        ],
+        combinator: "and",
+      },
+      options: {},
+    },
+    id: uid(),
+    name: "Commit Enabled?",
+    type: "n8n-nodes-base.if",
+    typeVersion: 2.2,
+    position: [1080, 140],
+  },
+
   {
     parameters: {
       method: "PUT",
@@ -736,11 +761,11 @@ const nodes = [
     name: "Commit Tips File",
     type: "n8n-nodes-base.httpRequest",
     typeVersion: 4.2,
-    position: [1180, 140],
-    credentials: { httpHeaderAuth: { id: "REPLACE_WITH_GITHUB_CRED_ID", name: GITHUB_CRED } },
+    position: [1300, 140],
+    credentials: { httpHeaderAuth: { name: GITHUB_CRED } },
   },
 
-  code("Run Summary", RUN_SUMMARY, [1400, 140]),
+  code("Run Summary", RUN_SUMMARY, [1520, 140]),
 ];
 
 const one = (node, index = 0) => [{ node, type: "main", index }];
@@ -771,7 +796,9 @@ const connections = {
   "Anthropic Retry Tip": { main: [one("Validate Retry")] },
   "Validate Retry": { main: [one("Loop Questions")] },
 
-  "Merge Tips": { main: [one("Commit Tips File")] },
+  "Merge Tips": { main: [one("Commit Enabled?")] },
+  // true = commit:true -> write the file; false = dry run -> straight to summary.
+  "Commit Enabled?": { main: [one("Commit Tips File"), one("Run Summary")] },
   "Commit Tips File": { main: [one("Run Summary")] },
 };
 

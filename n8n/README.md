@@ -39,12 +39,38 @@ Credentials live only in n8n. Nothing in this repo contains a key.
 
 ## 2. Import
 
-n8n → **Workflows** → **Import from File** → `n8n/exam-tip-agent.workflow.json`.
+Any one of these:
 
-The JSON carries `REPLACE_WITH_*_CRED_ID` placeholders for credential ids. n8n
-matches on credential *name*, so after import just open each HTTP node once and
-confirm the credential dropdown resolved. There are five: three GitHub fetches,
-one commit, and two Anthropic calls.
+- **Import from URL** (easiest on Cloud) — n8n → new workflow → `⋯` menu →
+  *Import from URL…* and paste:
+  ```
+  https://raw.githubusercontent.com/biplabid/aws-sap-c02-testmaster/fix-aws-updates/n8n/exam-tip-agent.workflow.json
+  ```
+  Works because this repo is public. Re-importing after a regenerate picks up
+  changes, as long as they are pushed.
+- **Import from File** — `⋯` menu → *Import from File…* →
+  `n8n/exam-tip-agent.workflow.json`.
+- **Paste** — open the raw JSON, copy all of it, and paste onto an empty n8n
+  canvas. n8n turns pasted workflow JSON into nodes.
+
+### Bind the credentials after importing — this does not happen automatically
+
+The JSON names the credentials but cannot carry their ids, because ids are
+generated per n8n instance. Depending on the n8n build, imported HTTP nodes
+come in **unbound**: the node shows "Add connection" and the run fails at
+`Fetch Question Set` with an auth error.
+
+Open each of these six nodes once and pick the credential from the
+**Credential to connect with** dropdown:
+
+| Node | Credential |
+|---|---|
+| Fetch Question Set | `GitHub PAT (Authorization)` |
+| Fetch Persona | `GitHub PAT (Authorization)` |
+| Fetch Existing Tips | `GitHub PAT (Authorization)` |
+| Commit Tips File | `GitHub PAT (Authorization)` |
+| Anthropic Generate Tip | `Anthropic API (x-api-key)` |
+| Anthropic Retry Tip | `Anthropic API (x-api-key)` |
 
 ## 3. Configure the run
 
@@ -58,7 +84,10 @@ commit:  true,          // false = dry run: generate and report, commit nothing
 ```
 
 **Do a dry run first** (`commit: false`) to confirm the fetches and the model
-call work before anything is written to the repo.
+call work before anything is written to the repo. The `Commit Enabled?` node
+gates this: on a dry run the flow skips `Commit Tips File` and goes straight to
+`Run Summary`, so you still get the full report and the generated tips in the
+`Merge Tips` node's output, with nothing written to GitHub.
 
 ## 4. Run, then walk the chunks
 
