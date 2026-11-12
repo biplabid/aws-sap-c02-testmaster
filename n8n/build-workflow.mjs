@@ -43,7 +43,7 @@ const config = {
   offset:  0,             // first question index in this chunk
   size:    15,            // how many questions this run handles
 
-  model:   'claude-opus-5-5',
+  model:   'claude-haiku-5-5',
   effort:  'low',         // low is right: the task is compression, not reasoning
   // Hard cap across trigger+answer+trap+memory_hook. 75, not 60: the reference
   // corpus itself runs to ~70 words on multi-part tips (CertTip #26), so a

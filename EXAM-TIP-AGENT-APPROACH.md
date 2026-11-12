@@ -323,18 +323,34 @@ Reuses `#aiPanel` and its open/close/escape behaviour, but renders a structured 
 
 ## 10. Cost
 
-Model: `claude-opus-5-5` ($4.00 / MTok input, $20.00 / MTok output, $0.20 / MTok cache reads).
+Generation model: **`claude-haiku-5-5`** ($0.10 / MTok input, $0.50 / MTok output, ~$0.01 / MTok cache reads).
 
 | Component | Tokens | Cost |
 |---|---|---|
-| Cached system prefix (reads) | 5.7M | $1.14 |
-| Per-question input (measured) | 1.3M | $5.20 |
-| Output (~150 tok × 1,627) | 0.24M | $4.88 |
-| **Total, one time** | | **~$11** |
+| Cached system prefix (reads) | 6.2M | $0.06 |
+| Per-question input (measured) | 1.38M | $0.14 |
+| Output (~175 tok × 1,627) | 0.29M | $0.14 |
+| **Total, one time** | | **~$0.34** |
 
 Runtime cost after generation: **$0**.
 
-The Message Batches API would halve this to ~$5.50, but it needs submit-and-poll logic in n8n for a ~$5 saving. Not worth the complexity at this scale; noted in case you disagree.
+### Why Haiku rather than Opus
+
+The original plan specified `claude-opus-5-5` at ~$11. Haiku was chosen instead because of §4.1: for 1,460 of 1,627 questions the agent is **compressing an explanation that already names why each distractor fails**, not reasoning from scratch. That is well within a small model's range, and §11's gold-standard gate tests the assumption empirically before any bulk run. If Haiku fails the gate, the model is one line in the workflow's `Job Config` node.
+
+### Why not Groq, given the app already uses it
+
+Groq was evaluated for generation, since the app's existing AI Coach uses it and the runtime fallback will too. It does not work for the batch job. Free-tier limits for `openai/gpt-oss-120b` are 30 RPM / 1K RPD / **8K TPM / 200K TPD**, and the daily *token* cap binds long before the request cap:
+
+- ~4,800 tokens per tip → **~41 questions/day** → ~40 days for the corpus
+- 8K TPM → ~1.6 requests/minute, so concurrent batching 429s immediately
+- Even with a compacted persona and truncated explanations (~1,450 tokens/tip) it is ~12 days of uninterrupted daily running, outliving the n8n trial, with a degraded prompt and no retry headroom
+
+There is also a design conflict: the stable full-persona prefix exists to exploit Anthropic's cached-prefix pricing ($0.20/MTok). Groq has no such discount and bills every token against a daily quota, so the optimization that makes this cheap on Anthropic makes it unusable on Groq.
+
+**Groq remains the runtime fallback** (§11 Phase 4) for uploaded or custom sets, where volume is a handful of requests per click rather than 1,627 in a batch. That is the right place for it.
+
+The Message Batches API would halve the Anthropic cost, but it needs submit-and-poll logic in n8n — irrelevant at $0.34.
 
 ---
 
