@@ -288,6 +288,65 @@ window.TestMaster.viewHelpers = (function createViewHelpersModule() {
     return setKey === "set1" ? "data/set1.json" : `data/${setKey}.json`;
   }
 
+  /**
+   * The Exam Tip + Ask AI Coach pair shown on a result row.
+   *
+   * quiz.js and mock.js each had their own line-for-line copy of the AI Coach
+   * button; this is that code, once, with the Exam Tip button alongside it.
+   *
+   * @param {object} row       a result row: { prompt, options, id }
+   * @param {string|null} setKey the set the question came from. Mock Exam
+   *        namespaces ids as "set1:14" and passes null here.
+   */
+  function buildQuestionAiActions(row, setKey) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "question-ai-actions";
+
+    if (window.TestMaster.examTip && row && row.id !== undefined && row.id !== null) {
+      const tipButton = document.createElement("button");
+      tipButton.type = "button";
+      tipButton.className = "exam-tip-button";
+      tipButton.title = "Show the exam pattern tip for this question";
+
+      const tipIcon = document.createElement("span");
+      tipIcon.className = "exam-tip-icon";
+      tipIcon.setAttribute("aria-hidden", "true");
+      tipIcon.textContent = "⚡";
+
+      tipButton.appendChild(tipIcon);
+      tipButton.append(" Exam Tip");
+
+      tipButton.addEventListener("click", () => {
+        window.TestMaster.examTip.showTipFor(setKey || null, row.id);
+      });
+
+      wrapper.appendChild(tipButton);
+    }
+
+    if (window.TestMaster.aiCoach) {
+      const coachButton = document.createElement("button");
+      coachButton.type = "button";
+      coachButton.className = "ai-coach-button";
+      coachButton.title = "Ask the AWS SAP-C02 Coach about this question";
+
+      const coachIcon = document.createElement("span");
+      coachIcon.className = "ai-coach-icon";
+      coachIcon.setAttribute("aria-hidden", "true");
+      coachIcon.textContent = "AI";
+
+      coachButton.appendChild(coachIcon);
+      coachButton.append(" Ask AI Coach");
+
+      coachButton.addEventListener("click", () => {
+        window.TestMaster.aiCoach.askAboutQuestion({ prompt: row.prompt, options: row.options });
+      });
+
+      wrapper.appendChild(coachButton);
+    }
+
+    return wrapper;
+  }
+
   return {
     renderQuestion,
     renderMeta,
@@ -298,6 +357,7 @@ window.TestMaster.viewHelpers = (function createViewHelpersModule() {
     getAvailableQuestionSets,
     getSelectedSetName,
     populateSetSelector,
-    resolveQuestionSetSource
+    resolveQuestionSetSource,
+    buildQuestionAiActions
   };
 })();

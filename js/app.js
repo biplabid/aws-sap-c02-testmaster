@@ -27,6 +27,10 @@
     window.TestMaster.aiCoach.initAiCoach();
   }
 
+  if (window.TestMaster.examTip) {
+    window.TestMaster.examTip.initExamTip();
+  }
+
   if (window.TestMaster.ui) {
     window.TestMaster.ui.initNavigation();
     window.TestMaster.ui.initTheme({ storage: window.TestMaster.storage });

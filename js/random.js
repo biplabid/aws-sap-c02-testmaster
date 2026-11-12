@@ -48,6 +48,15 @@ window.TestMaster.random = (function createRandomModule(viewHelpers, questionEng
       });
     }
 
+    if (elements.tipButton && window.TestMaster.examTip) {
+      elements.tipButton.addEventListener("click", () => {
+        const question = appState.random.pool[appState.random.currentIndex];
+        if (question) {
+          window.TestMaster.examTip.showTipFor(appState.random.setKey, question.id);
+        }
+      });
+    }
+
     if (elements.setSelector) {
       elements.setSelector.addEventListener("change", () => {
         updateDoneStatus(elements);
@@ -83,6 +92,7 @@ window.TestMaster.random = (function createRandomModule(viewHelpers, questionEng
       meta: document.querySelector("#randomQuestionMeta"),
       type: document.querySelector("#randomQuestionType"),
       prompt: document.querySelector("#randomQuestionPrompt"),
+      tipButton: document.querySelector("#randomTipButton"),
       form: document.querySelector("#randomAnswerForm"),
       feedback: document.querySelector("#randomFeedback"),
       submit: document.querySelector("#randomSubmit"),

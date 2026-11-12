@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="css/account.css">
   <link rel="stylesheet" href="css/auth-gate.css">
   <link rel="stylesheet" href="css/ai-panel.css">
+  <link rel="stylesheet" href="css/exam-tip.css">
   <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
@@ -254,9 +255,14 @@
             <div class="question-card">
               <div class="question-type-row">
                 <div class="question-type" id="randomQuestionType"></div>
-                <button class="ai-coach-button" type="button" id="randomAiButton" title="Ask the AWS SAP-C02 Coach about this question">
-                  <span class="ai-coach-icon" aria-hidden="true">AI</span> Ask AI Coach
-                </button>
+                <div class="question-ai-actions">
+                  <button class="exam-tip-button" type="button" id="randomTipButton" title="Show the exam pattern tip for this question">
+                    <span class="exam-tip-icon" aria-hidden="true">⚡</span> Exam Tip
+                  </button>
+                  <button class="ai-coach-button" type="button" id="randomAiButton" title="Ask the AWS SAP-C02 Coach about this question">
+                    <span class="ai-coach-icon" aria-hidden="true">AI</span> Ask AI Coach
+                  </button>
+                </div>
               </div>
               <h2 class="question-prompt" id="randomQuestionPrompt">Loading question...</h2>
               <form class="answer-list" id="randomAnswerForm" aria-labelledby="randomQuestionPrompt"></form>
@@ -1128,6 +1134,7 @@ Explanation: [Detailed explanation text...]
         <div class="ai-panel-error hidden" id="aiPanelError"></div>
 
         <div class="ai-panel-answer hidden" id="aiPanelAnswer"></div>
+        <div class="exam-tip-section hidden" id="aiPanelTip"></div>
       </div>
     </aside>
   </div>
@@ -1147,6 +1154,8 @@ Explanation: [Detailed explanation text...]
   <script src="js/ui.js"></script>
   <script src="js/view-helpers.js"></script>
   <script src="js/ai-coach.js"></script>
+  <script src="js/tip-loader.js"></script>
+  <script src="js/exam-tip.js"></script>
   <script src="js/exam.js"></script>
   <script src="js/timer.js"></script>
   <script src="js/analytics.js"></script>

@@ -32,6 +32,8 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
       loading: document.querySelector("#aiPanelLoading"),
       error: document.querySelector("#aiPanelError"),
       answer: document.querySelector("#aiPanelAnswer"),
+      tip: document.querySelector("#aiPanelTip"),
+      title: document.querySelector(".ai-panel-title"),
       sidebarKeyLink: document.querySelector("#aiCoachKeyLink")
     };
   }
@@ -252,13 +254,20 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
   }
 
   function showOnly(section) {
-    const sections = ["keySetup", "loading", "error", "answer"];
+    // "tip" belongs to exam-tip.js but shares this panel body, so it is hidden
+    // here too - otherwise a tip stays on screen underneath a Coach answer.
+    const sections = ["keySetup", "loading", "error", "answer", "tip"];
     sections.forEach((name) => {
-      elements[name].classList.toggle("hidden", name !== section);
+      if (elements[name]) {
+        elements[name].classList.toggle("hidden", name !== section);
+      }
     });
   }
 
   function openPanel() {
+    if (elements.title) {
+      elements.title.textContent = "AWS SAP-C02 Coach";
+    }
     elements.panel.classList.remove("hidden");
     elements.backdrop.classList.remove("hidden");
     document.body.classList.add("ai-panel-open");
