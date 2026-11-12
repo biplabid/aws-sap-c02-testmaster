@@ -1,10 +1,10 @@
 [
   {
     "id": "1",
-    "trigger": "\"archival solution based on Amazon S3 Glacier to enforce regulatory and compliance controls on the archived data\"",
-    "answer": "S3 Glacier vault with a Vault Lock policy (WORM, locked from future edits)",
-    "trap": "An S3 lifecycle policy only transitions or expires objects and cannot enforce compliance; the S3 Access Control List option (A/D) controls access, not immutability.",
-    "memory_hook": "compliance controls on Glacier = Vault Lock (WORM)",
+    "trigger": "\"archival solution based on Amazon S3 Glacier to enforce regulatory and compliance controls\"",
+    "answer": "S3 Glacier vault with a Vault Lock policy (WORM controls, locked from future edits)",
+    "trap": "The S3 Access Control List option fails because ACLs manage access only and cannot enforce compliance; the lifecycle policy option fails because lifecycle rules transition or expire objects but cannot enforce compliance.",
+    "memory_hook": "Compliance locks = Vault Lock, not ACLs or lifecycles",
     "confidence": "high",
     "needsReview": false
   },
@@ -12,17 +12,17 @@
     "id": "2",
     "trigger": "\"all changes to the items stored in the DynamoDB tables must be logged in near real-time\"",
     "answer": "DynamoDB Streams → Lambda → Kinesis Data Streams → Kinesis Data Analytics → SNS",
-    "trap": "Option C's CloudTrail logs control-plane API calls, not item-level data changes; option B feeds KDA directly from Lambda, but KDA only accepts KDS or Firehose as input.",
-    "memory_hook": "item changes = Streams, API calls = CloudTrail; KDA needs KDS in front",
+    "trap": "The CloudTrail option captures API calls, not item-level changes; and the direct Lambda-to-KDA option fails because KDA only accepts KDS or Firehose sources.",
+    "memory_hook": "item changes = Streams, KDA needs KDS",
     "confidence": "high",
     "needsReview": false
   },
   {
     "id": "3",
-    "trigger": "\"many files are processed twice\" with uploads up to 1 GB on a shared EFS scan loop",
-    "answer": "Upload directly to S3, S3 trigger → Lambda → SQS queue, Auto Scaling on backlog per instance",
-    "trap": "Option B routes S3 events through EventBridge then Lambda, a roundabout path; option A's API Gateway fails at its 10 MB payload limit for 1 GB files",
-    "memory_hook": "S3 event → SQS = decouple, dedupe, scale on backlog",
+    "trigger": "\"many files are processed twice\" while adding instances; raw uploads sit on shared EFS scanned by polling",
+    "answer": "Upload to S3, S3 event triggers Lambda that enqueues to SQS, workers read SQS and scale on queue depth per instance",
+    "trap": "The API Gateway option fails because its 10 MB payload limit cannot carry 1 GB uploads; the EventBridge-to-Lambda option is a roundabout route to the same queue.",
+    "memory_hook": "1 GB upload → direct S3, not API Gateway",
     "confidence": "high",
     "needsReview": false
   },
@@ -47,9 +47,9 @@
   {
     "id": "6",
     "trigger": "\"only the most frequently accessed results are available as cached data locally while backing up all results on Amazon S3\"",
-    "answer": "Volume Gateway in Cached Volume mode: full volume in S3, hot data cached locally",
-    "trap": "Option D (Stored Volume) keeps the entire data set on-premises and only asynchronously copies to S3, failing the cache-only-hot-data requirement.",
-    "memory_hook": "Cached = hot data local, full set in S3",
+    "answer": "AWS Storage Gateway Volume Gateway in cached volume mode: hot data local, full volume in S3",
+    "trap": "The Stored Volume option keeps the entire data set on-premises; that fails because only frequently accessed results should be cached locally.",
+    "memory_hook": "Cached = hot local, full copy in S3",
     "confidence": "high",
     "needsReview": false
   },
@@ -64,10 +64,10 @@
   },
   {
     "id": "8",
-    "trigger": "\"without moving away from the underlying relational database schema\" plus \"work on a global scale\" with RDS for MySQL Read Replicas struggling",
-    "answer": "Amazon Aurora Global Database: one relational database spanning regions with fast local reads",
-    "trap": "DynamoDB Global Tables is NoSQL, breaking the relational schema requirement; Redshift is a data warehouse, not transactional; self-managed MySQL on EC2 is an operational burden",
-    "memory_hook": "Global + relational + MySQL-compatible = Aurora Global Database",
+    "trigger": "\"without moving away from the underlying relational database schema\" plus \"work on a global scale\"",
+    "answer": "Amazon Aurora Global Database: one relational MySQL-compatible database spanning regions with fast local reads",
+    "trap": "DynamoDB Global Tables gives multi-region read and write, but it is NoSQL and breaks the existing relational schema requirement.",
+    "memory_hook": "Relational + global = Aurora Global Database",
     "confidence": "high",
     "needsReview": false
   },
@@ -82,39 +82,39 @@
   },
   {
     "id": "10",
-    "trigger": "\"S3TA did not result in an accelerated transfer\" with uploads from the internet",
-    "answer": "No transfer charges: S3TA bills only accelerated transfers, and S3 charges nothing for data ingress from the internet",
-    "trap": "Option D (\"only S3TA transfer charges\") fails because the transfer was not accelerated, so no S3TA fee applies; option C fails because inbound internet data to S3 is free",
-    "memory_hook": "Not accelerated = not billed; inbound to S3 = free",
+    "trigger": "S3TA \"did not result in an accelerated transfer\" with uploads from the internet",
+    "answer": "No transfer charges: S3 bills no data transfer-in, and S3 Transfer Acceleration bills only for accelerated transfers",
+    "trap": "The S3TA-charges option fails because nothing was accelerated, and the both-charges option fails because uploads into S3 from the internet carry no S3 transfer fee.",
+    "memory_hook": "Uploads in are free; S3TA bills only accelerated bytes",
     "confidence": "high",
     "needsReview": false
   },
   {
     "id": "11",
-    "trigger": "\"shared and centrally-managed VPCs\" for business units needing high interconnectivity within the same organization",
-    "answer": "VPC sharing (Resource Access Manager) to share one or more subnets with other accounts in the same AWS Organization",
-    "trap": "Option C shares the whole VPC, but only subnets can be shared; the owner account cannot share the VPC itself. Options A and B use VPC peering, which is not centrally managed.",
-    "memory_hook": "Centralised VPC = share subnets via RAM, not peer VPCs",
+    "trigger": "\"shared and centrally-managed VPCs\" for business units needing high interconnectivity within one organization",
+    "answer": "VPC sharing via Resource Access Manager: share one or more subnets with accounts in the same AWS Organization",
+    "trap": "The VPC peering option sharing subnets fails because peering links two VPCs and cannot share subnets or centrally manage a VPC; sharing the whole VPC fails because only subnets can be shared.",
+    "memory_hook": "Share subnets, not VPCs; peering is not central",
     "confidence": "high",
     "needsReview": false
   },
   {
     "id": "12",
-    "trigger": "\"huge delays in uploading large video files\" to S3 from overseas research facilities",
-    "answer": "S3 Transfer Acceleration (edge upload over CloudFront) plus S3 multipart uploads for large objects",
-    "trap": "Multiple Direct Connect connections take months to provision and are overkill; multiple site-to-site VPNs over the internet add no upload acceleration, and Global Accelerator targets ALB/NLB/EC2 endpoints, not S3 buckets.",
-    "memory_hook": "Long-distance upload = Transfer Acceleration; big object = multipart",
+    "trigger": "\"huge delays in uploading large video files\" from overseas facilities to an S3 bucket",
+    "answer": "S3 Transfer Acceleration plus S3 multipart uploads: edge routing over CloudFront for distance, parallel parts for large objects",
+    "trap": "Direct Connect takes months to provision and is overkill; the Site-to-Site VPN option runs over the same internet path and gives no upload speedup; Global Accelerator targets application endpoints, not S3 uploads.",
+    "memory_hook": "Long distance = Transfer Acceleration; big files = multipart",
     "confidence": "high",
     "needsReview": false
   },
   {
     "id": "13",
-    "trigger": "\"200 TB\" to S3 \"in the shortest possible time\" with only a 500 Mbps Direct Connect and 1 Gbps VPN",
-    "answer": "Snowball Edge: order three devices (about 80 TB each), load them, ship to AWS for import into S3",
-    "trap": "Direct Connect at 500 Mbps needs about 40 days for 200 TB and the 1 Gbps VPN about 20 days, so the network options cannot win on time.",
-    "memory_hook": "200 TB over the wire = weeks; bulk and urgent = Snowball",
-    "confidence": "low",
-    "needsReview": true
+    "trigger": "200 TB to S3 \"in the shortest possible time\" over Direct Connect and VPN bandwidth",
+    "answer": "AWS Snowball Edge appliances: split the data across three devices (about 80 TB each) and ship them to AWS for import into S3",
+    "trap": "The 500 Mbps Direct Connect and 1 Gbps VPN options look fast but need roughly 40 and 20 days for 200 TB, while Snowball ships in 5-7 days.",
+    "memory_hook": "Huge data + tight deadline = ship the disks",
+    "confidence": "high",
+    "needsReview": false
   },
   {
     "id": "14",
@@ -127,10 +127,10 @@
   },
   {
     "id": "15",
-    "trigger": "\"finetune the disaster recovery strategy for its database tier\" across all RDS databases",
-    "answer": "RTO = hours to return to working state; manual DB snapshots copy and share across Regions and accounts; backups, snapshots and Read Replicas support cross-Region",
-    "trap": "Option C swaps RTO for RPO; option B wrongly makes Read Replica failover automated like Multi-AZ; option A fails because only manual snapshots can be shared",
-    "memory_hook": "RTO = time back, RPO = data lost",
+    "trigger": "\"disaster recovery strategy for all the Amazon RDS databases\" with options on snapshot sharing, RTO, and Read Replica failover",
+    "answer": "Manual DB snapshots copied and shared across Regions and accounts; RTO as hours to restore; Read Replicas and backups cross-Region",
+    "trap": "Read Replica failover is manual, unlike Multi-AZ; automated snapshots cannot be shared, only manual snapshots (up to 20 accounts); RPO, not RTO, measures data loss.",
+    "memory_hook": "RTO = hours back up; RPO = data lost",
     "confidence": "high",
     "needsReview": false
   }

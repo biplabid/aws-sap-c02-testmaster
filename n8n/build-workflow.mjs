@@ -537,6 +537,20 @@ if (incoming.length === 0) {
     'Anthropic Generate Tip node output for the API error.'
   );
 }
+
+// A tip that merely fails validation still arrives here, flagged - so a short
+// count means hard errors, not bad tips. Without this check the merge quietly
+// backfills the gaps from the previous version of the file and the run looks
+// complete: a chunk of 15 reporting 15 tips when only 10 were generated.
+const expected = $('Prepare Chunk').all().length;
+if (incoming.length < expected) {
+  throw new Error(
+    'Only ' + incoming.length + ' of ' + expected + ' questions produced a tip for ' +
+    cfg.setFile + ' [' + cfg.offset + '-' + (cfg.offset + cfg.size - 1) + ']. ' +
+    'Refusing to commit a partial chunk that would look complete. ' +
+    'Check Validate Tip / Validate Retry for the failures, then re-run this chunk.'
+  );
+}
 if (tips.length < (meta.existingTips || []).length) {
   throw new Error(
     'Refusing to commit: result has ' + tips.length + ' tips but the existing ' +
