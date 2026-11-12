@@ -45,11 +45,13 @@ const config = {
 
   model:   'claude-haiku-5-5',
   effort:  'low',         // low is right: the task is compression, not reasoning
-  // Hard cap across trigger+answer+trap+memory_hook. 75, not 60: the reference
-  // corpus itself runs to ~70 words on multi-part tips (CertTip #26), so a
-  // tighter cap would reject the very style being copied. This is a guard
-  // against essays, not a style constraint — the persona asks for 35-45.
-  maxWords: 75,
+  // Length caps. Grounded in the reference corpus, not guessed: the 26 tips in
+  // CertTip.txt average 36 words and the longest is 57. An earlier 75 was set
+  // to accommodate over-long hand-written samples, and the model promptly wrote
+  // to that cap - 71 words average, twice the corpus. Per-field caps matter as
+  // much as the total, because inflation showed up in every field at once.
+  maxWords: 60,
+  fieldCaps: { trigger: 15, answer: 16, trap: 25, memory_hook: 10 },
   maxTokens: 1500,
 
   commit:  true,          // false = dry run, generate and report but do not commit
@@ -234,7 +236,10 @@ const SERVICE_RE = new RegExp(
   ].join('|') + ')s?\\\\b', 'i'
 );
 
-const META_RE = /correct answer is|this question (tests|is about)|the options (suggest|show)|option [A-E] is (wrong|incorrect)/i;
+// Any reference to an option letter counts as meta-language: the letters are
+// meaningless when the tip is re-read on its own. "(option C)" leaked through
+// an earlier version that only looked for "option X is wrong".
+const META_RE = /correct answer is|this question (tests|is about)|the options (suggest|show)|\\boptions? [A-E]\\b|\\([A-E]\\/[A-E]\\)/i;
 const HEDGE_RE = /\\b(it depends|may vary|typically you|you might want|possibly|perhaps)\\b/i;
 
 const words = (s) => String(s || '').trim().split(/\\s+/).filter(Boolean).length;
@@ -287,6 +292,17 @@ function validate(tip, q) {
 
   const total = words(tip.trigger) + words(tip.answer) + words(tip.trap) + words(tip.memory_hook);
   if (total > cfg.maxWords) v.push('too long: ' + total + ' words > ' + cfg.maxWords);
+
+  // Per-field caps: the total alone let every field inflate together.
+  const caps = cfg.fieldCaps || {};
+  for (const f of Object.keys(caps)) {
+    const n = words(tip[f]);
+    if (n > caps[f]) v.push(f + ' too long: ' + n + ' words > ' + caps[f]);
+  }
+
+  // The trigger must be the giveaway phrase, not a precis of the stem.
+  const longQuote = String(tip.trigger || '').match(/"([^"]{60,})"/);
+  if (longQuote) v.push('trigger quotes too much of the stem');
 
   if (!SERVICE_RE.test(String(tip.answer || ''))) {
     v.push('answer names no recognised AWS service');

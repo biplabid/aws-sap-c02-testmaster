@@ -1,0 +1,137 @@
+[
+  {
+    "id": "1",
+    "trigger": "\"archival solution based on Amazon S3 Glacier to enforce regulatory and compliance controls on the archived data\"",
+    "answer": "S3 Glacier vault with a Vault Lock policy (WORM, locked from future edits)",
+    "trap": "An S3 lifecycle policy only transitions or expires objects and cannot enforce compliance; the S3 Access Control List option (A/D) controls access, not immutability.",
+    "memory_hook": "compliance controls on Glacier = Vault Lock (WORM)",
+    "confidence": "high",
+    "needsReview": false
+  },
+  {
+    "id": "2",
+    "trigger": "\"all changes to the items stored in the DynamoDB tables must be logged in near real-time\"",
+    "answer": "DynamoDB Streams → Lambda → Kinesis Data Streams → Kinesis Data Analytics → SNS",
+    "trap": "Option C's CloudTrail logs control-plane API calls, not item-level data changes; option B feeds KDA directly from Lambda, but KDA only accepts KDS or Firehose as input.",
+    "memory_hook": "item changes = Streams, API calls = CloudTrail; KDA needs KDS in front",
+    "confidence": "high",
+    "needsReview": false
+  },
+  {
+    "id": "3",
+    "trigger": "\"many files are processed twice\" with uploads up to 1 GB on a shared EFS scan loop",
+    "answer": "Upload directly to S3, S3 trigger → Lambda → SQS queue, Auto Scaling on backlog per instance",
+    "trap": "Option B routes S3 events through EventBridge then Lambda, a roundabout path; option A's API Gateway fails at its 10 MB payload limit for 1 GB files",
+    "memory_hook": "S3 event → SQS = decouple, dedupe, scale on backlog",
+    "confidence": "high",
+    "needsReview": false
+  },
+  {
+    "id": "4",
+    "trigger": "\"both stateful and stateless client-server communications\" via API Gateway APIs",
+    "answer": "Amazon API Gateway REST APIs for stateless client-server communication and WebSocket APIs for stateful, full-duplex communication (option C)",
+    "trap": "Option D makes REST stateful, but REST APIs are HTTP-based and stateless; option B reverses the pairing by making WebSocket stateless, which ignores its persistent full-duplex connection.",
+    "memory_hook": "REST = stateless, WebSocket = stateful",
+    "confidence": "high",
+    "needsReview": false
+  },
+  {
+    "id": "5",
+    "trigger": "\"429 Too Many Requests\" at peak with Lambda never invoked, plus \"separate quota\" for premium customers",
+    "answer": "API Gateway account-level throttle, fixed with API keys as client identifiers in usage plans for per-client limits",
+    "trap": "Option C blames a per-method limit, but 429s hit multiple methods, so the limit is account-level; Option A's Lambda-level throttling in usage plans isn't a real feature.",
+    "memory_hook": "Lambda not invoked = API Gateway throttled; premium quota = usage plan + API key",
+    "confidence": "high",
+    "needsReview": false
+  },
+  {
+    "id": "6",
+    "trigger": "\"only the most frequently accessed results are available as cached data locally while backing up all results on Amazon S3\"",
+    "answer": "Volume Gateway in Cached Volume mode: full volume in S3, hot data cached locally",
+    "trap": "Option D (Stored Volume) keeps the entire data set on-premises and only asynchronously copies to S3, failing the cache-only-hot-data requirement.",
+    "memory_hook": "Cached = hot data local, full set in S3",
+    "confidence": "high",
+    "needsReview": false
+  },
+  {
+    "id": "7",
+    "trigger": "\"140 TB\" archive due in S3 by Monday over a \"10-Gbps Direct Connect connection\" with a private VIF in place",
+    "answer": "Public virtual interface on the existing Direct Connect connection, then copy to S3 over it",
+    "trap": "Option B's private VIF reaches only VPC private IPs, not S3. Option C (Snowball Edge) takes about a week end to end, missing the deadline.",
+    "memory_hook": "S3 is public = public VIF; Snowball is for weeks, DX is for days",
+    "confidence": "high",
+    "needsReview": false
+  },
+  {
+    "id": "8",
+    "trigger": "\"without moving away from the underlying relational database schema\" plus \"work on a global scale\" with RDS for MySQL Read Replicas struggling",
+    "answer": "Amazon Aurora Global Database: one relational database spanning regions with fast local reads",
+    "trap": "DynamoDB Global Tables is NoSQL, breaking the relational schema requirement; Redshift is a data warehouse, not transactional; self-managed MySQL on EC2 is an operational burden",
+    "memory_hook": "Global + relational + MySQL-compatible = Aurora Global Database",
+    "confidence": "high",
+    "needsReview": false
+  },
+  {
+    "id": "9",
+    "trigger": "\"improve the reliability and availability\" for disaster recovery, restore \"within five hours\", \"most cost-effective way\"",
+    "answer": "Automated cross-region snapshot copy for Redshift, then restore the cluster in the other Region from that Region's snapshot, with a CloudFormation StackSet to launch it",
+    "trap": "Option A and option B both keep a second live Redshift cluster running, which is not cost-effective; option D's Auto Scaling groups for Redshift nodes is not a Redshift feature.",
+    "memory_hook": "Cheap Redshift DR = copy snapshots cross-region, not a second live cluster",
+    "confidence": "low",
+    "needsReview": true
+  },
+  {
+    "id": "10",
+    "trigger": "\"S3TA did not result in an accelerated transfer\" with uploads from the internet",
+    "answer": "No transfer charges: S3TA bills only accelerated transfers, and S3 charges nothing for data ingress from the internet",
+    "trap": "Option D (\"only S3TA transfer charges\") fails because the transfer was not accelerated, so no S3TA fee applies; option C fails because inbound internet data to S3 is free",
+    "memory_hook": "Not accelerated = not billed; inbound to S3 = free",
+    "confidence": "high",
+    "needsReview": false
+  },
+  {
+    "id": "11",
+    "trigger": "\"shared and centrally-managed VPCs\" for business units needing high interconnectivity within the same organization",
+    "answer": "VPC sharing (Resource Access Manager) to share one or more subnets with other accounts in the same AWS Organization",
+    "trap": "Option C shares the whole VPC, but only subnets can be shared; the owner account cannot share the VPC itself. Options A and B use VPC peering, which is not centrally managed.",
+    "memory_hook": "Centralised VPC = share subnets via RAM, not peer VPCs",
+    "confidence": "high",
+    "needsReview": false
+  },
+  {
+    "id": "12",
+    "trigger": "\"huge delays in uploading large video files\" to S3 from overseas research facilities",
+    "answer": "S3 Transfer Acceleration (edge upload over CloudFront) plus S3 multipart uploads for large objects",
+    "trap": "Multiple Direct Connect connections take months to provision and are overkill; multiple site-to-site VPNs over the internet add no upload acceleration, and Global Accelerator targets ALB/NLB/EC2 endpoints, not S3 buckets.",
+    "memory_hook": "Long-distance upload = Transfer Acceleration; big object = multipart",
+    "confidence": "high",
+    "needsReview": false
+  },
+  {
+    "id": "13",
+    "trigger": "\"200 TB\" to S3 \"in the shortest possible time\" with only a 500 Mbps Direct Connect and 1 Gbps VPN",
+    "answer": "Snowball Edge: order three devices (about 80 TB each), load them, ship to AWS for import into S3",
+    "trap": "Direct Connect at 500 Mbps needs about 40 days for 200 TB and the 1 Gbps VPN about 20 days, so the network options cannot win on time.",
+    "memory_hook": "200 TB over the wire = weeks; bulk and urgent = Snowball",
+    "confidence": "low",
+    "needsReview": true
+  },
+  {
+    "id": "14",
+    "trigger": "\"I/O intensive\" workload \"constrained on the IOPS\" needing +3,000 IOPS per instance, \"MOST cost-efficient\"",
+    "answer": "Resize the EBS gp2 volume from 3 TB to 4 TB: gp2 baseline is 3 IOPS per GiB, so +1,000 GiB adds 3,000 IOPS",
+    "trap": "Option C, io1 at 12,000 IOPS, works but costs more per GB-month; option B (EFS) costs about 3x gp2 per GB, and option A (S3) cannot serve frequent random updates",
+    "memory_hook": "gp2 = 3 IOPS per GiB, so add GiB to add IOPS",
+    "confidence": "low",
+    "needsReview": true
+  },
+  {
+    "id": "15",
+    "trigger": "\"finetune the disaster recovery strategy for its database tier\" across all RDS databases",
+    "answer": "RTO = hours to return to working state; manual DB snapshots copy and share across Regions and accounts; backups, snapshots and Read Replicas support cross-Region",
+    "trap": "Option C swaps RTO for RPO; option B wrongly makes Read Replica failover automated like Multi-AZ; option A fails because only manual snapshots can be shared",
+    "memory_hook": "RTO = time back, RPO = data lost",
+    "confidence": "high",
+    "needsReview": false
+  }
+]

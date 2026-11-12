@@ -1,6 +1,6 @@
 # Gold-Standard Tips — the Phase 1 grading gate
 
-**Version:** 1.0.0
+**Version:** 1.1.0
 **Purpose:** five tips written by hand from real questions in `data/`. The agent must match the *substance* of these before any bulk generation runs.
 
 **Contamination rule:** none of these five questions appear as worked examples in `prompts/exam-tip-persona.md`. The persona uses `set1.json#2`, `set20.json#3` and `set10.json#6`; this file deliberately uses five different questions. **If you add a question here, remove it from the persona, and vice versa** — otherwise the gate is measuring recall, not generalisation.
@@ -22,7 +22,7 @@ Mobile video-upload app, S3 bucket in us-east-1, 10 GB files. Users in Melbourne
   "id": "4",
   "trigger": "slow uploads and timeouts from users far from the bucket's Region",
   "answer": "Multipart upload plus S3 Transfer Acceleration endpoints",
-  "trap": "CloudFront is the reflex pick for latency, but it accelerates downloads from an origin — it does not speed uploads to a bucket.",
+  "trap": "CloudFront is the reflex pick for latency, but it accelerates downloads from an origin, not uploads to a bucket.",
   "memory_hook": "downloads = CloudFront, uploads = Transfer Acceleration",
   "confidence": "high",
   "needsReview": false
@@ -44,10 +44,10 @@ S3 upload → SNS → several Lambdas → RDS MySQL. Metadata updates slow durin
 ```json
 {
   "id": "5",
-  "trigger": "SNS fanning out to many Lambdas that all write to one RDS instance, slow at peak",
-  "answer": "RDS Proxy to pool connections AND an SQS queue per Lambda to absorb the burst",
-  "trap": "Read replicas don't help — the bottleneck is write connections, not read load. Fixing only one of the two leaves the other bottleneck in place.",
-  "memory_hook": "Lambda + RDS = Proxy; burst + RDS = queue first",
+  "trigger": "SNS fanning out to many Lambdas that all write one RDS instance",
+  "answer": "RDS Proxy pools connections AND an SQS queue per Lambda absorbs the burst",
+  "trap": "Read replicas miss it: the bottleneck is write connections, not read load. Fixing one alone leaves the other.",
+  "memory_hook": "Lambda + RDS = Proxy; burst = queue first",
   "confidence": "high",
   "needsReview": false
 }
@@ -94,7 +94,7 @@ One EC2 instance, no ELB, needs two separate SSL certificates for two components
   "id": "10",
   "trigger": "two SSL certificates on a single EC2 instance with no load balancer",
   "answer": "Multiple ENIs, each with its own Elastic IP — one certificate bound per IP",
-  "trap": "Security group and NACL rules are about who may connect, not which certificate is served; and an instance cannot attach multiple subnets.",
+  "trap": "Security group and NACL rules govern who may connect, not which certificate is served.",
   "memory_hook": "one cert per IP, one IP per ENI",
   "confidence": "high",
   "needsReview": false
@@ -117,8 +117,8 @@ API Gateway + Lambda + Aurora Serverless v1, deployed with SAM, multi-AZ but no 
 {
   "id": "5",
   "trigger": "Aurora Serverless v1 needing cross-Region DR at a 2-minute RPO",
-  "answer": "Convert to multi-Region Aurora MySQL for continuous replication, with SAM redeploying the app in the standby Region",
-  "trap": "Snapshot replication and a 2-minute custom Lambda copy are both batch jobs — their RPO is the interval, so they can't beat 2 minutes. Only continuous replication can.",
+  "answer": "Convert to multi-Region Aurora MySQL for continuous replication; SAM redeploys the app",
+  "trap": "Snapshot copy and a scheduled Lambda copy are batch jobs: their RPO is the interval, so neither beats 2 minutes.",
   "memory_hook": "RPO in minutes = continuous replication, never snapshots",
   "confidence": "high",
   "needsReview": false
@@ -166,4 +166,5 @@ Append each attempt below, so prompt changes can be traced to score changes.
 
 | Date | Persona version | Score | Failures | Change made |
 |---|---|---|---|---|
-| _(pending Phase 1)_ | 1.0.0 | — | — | — |
+| 2026-11-12 | 1.0.0 | 12/15 validator, 0/15 on style | avg 71 words vs corpus mean 36; triggers over-quote the stem; option-letter meta-language leaked | Measured CertTip.txt: mean 36, max 57. Cap 75 -> 60, added per-field caps, banned option letters, capped stem quoting. Gold tips themselves tightened from mean 56 -> 48. |
+| _(pending re-run)_ | 1.1.0 | — | — | — |

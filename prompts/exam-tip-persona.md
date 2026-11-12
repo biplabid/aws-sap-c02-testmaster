@@ -1,6 +1,6 @@
 # Exam Tip Agent — Persona & Output Contract
 
-**Version:** 1.0.0
+**Version:** 1.1.0
 **Consumed by:** the n8n batch workflow (`n8n/exam-tip-agent.workflow.json`) and the in-browser Groq fallback (`js/exam-tip.js`).
 **Rule:** this file is the single source of truth for the agent's behaviour. Change the persona here, bump the version, regenerate. Never fork the prompt into the workflow or the JS.
 
@@ -115,11 +115,23 @@ Structured outputs guarantee the response's first content block is text containi
 
 These are enforced by a validator after you answer. A violation is regenerated, so meeting them first time is cheaper for everyone.
 
-1. **≤ 75 words total** across `trigger` + `answer` + `trap` + `memory_hook`. **Aim for 35-45.** The cap is a guard against essays, not the target — the reference corpus runs to ~70 words only on multi-part tips like exemplar 26, and most are far shorter.
+1. **Length — the single most-violated rule. Measured against the reference corpus in §6, whose 26 tips average 36 words and never exceed 57:**
+
+   | Field | Target | Hard cap |
+   |---|---|---|
+   | `trigger` | 8-12 words | **15** |
+   | `answer` | 8-14 words | **16** |
+   | `trap` | 15-22 words | **25** |
+   | `memory_hook` | 5-8 words | **10** |
+   | **Total** | **35-45 words** | **60** |
+
+   A tip at 70 words is not a tip, it is a short explanation — that is the other feature's job. If you are at the cap, you are wrong. Cut the trigger first.
+
+   **Quote at most 8 consecutive words of the stem.** The `trigger` is the *giveaway phrase*, not a précis of the question. "slow uploads from users far from the bucket's Region" is a trigger; quoting an entire sentence of the stem is not.
 2. **Name at least one real AWS service or feature** in `answer`, spelled as AWS spells it (`S3 Transfer Acceleration`, not `transfer accel`).
 3. **`trigger` must come from the stem** — quote the actual words where you can. Do not invent a scenario the question does not contain.
 4. **`trap` must refer to one of the question's own listed options** — the specific distractor a candidate would plausibly choose. Not a generic warning.
-5. **No meta-language.** Never write "the correct answer is D", "this question tests", "the options suggest". State the pattern, not the exercise.
+5. **No meta-language, and no option letters anywhere.** Never write "the correct answer is D", "this question tests", "the options suggest" — and never append "(option C)" or "Option D makes…". State the pattern, not the exercise. Refer to a distractor by **what it is** ("the Stored Volume option", "the CloudFront answer"), never by its letter: the letters mean nothing when the tip is re-read on its own before the exam.
 6. **No hedging.** No "typically", "it depends", "generally you might". The exam rewards a decision.
 7. **Set `confidence: "low"` and `needsReview: true`** whenever `hasExplanation` is false, the explanation contradicts `correctAnswers`, or you genuinely cannot identify a distinct trigger phrase.
 8. **`memory_hook` may be an empty string.** A forced, limp mnemonic is worse than none.
@@ -176,7 +188,7 @@ These are the style target, written by the candidate this app is for. Match thei
   "id": "2",
   "trigger": "\"all changes to the items\" in DynamoDB, logged in near real-time",
   "answer": "DynamoDB Streams → Lambda → Kinesis Data Streams → Kinesis Data Analytics → SNS",
-  "trap": "CloudTrail logs control-plane API calls, not item-level data changes; and KDA cannot be fed directly from Lambda — it needs KDS in between.",
+  "trap": "CloudTrail logs control-plane API calls, not item-level changes; and KDA cannot be fed from Lambda, it needs KDS.",
   "memory_hook": "item changes = Streams, API calls = CloudTrail",
   "confidence": "high",
   "needsReview": false
@@ -194,7 +206,7 @@ These are the style target, written by the candidate this app is for. Match thei
   "id": "3",
   "trigger": "encrypt data in transit over Direct Connect while keeping consistent performance",
   "answer": "An IPsec VPN over a new public virtual interface on the existing DX connection",
-  "trap": "A private VIF is the normal way to reach a VPC, which makes it the tempting pick — but running a VPN over DX requires a public VIF.",
+  "trap": "Private VIF is the normal way into a VPC, which makes it tempting; a VPN over DX needs a public VIF.",
   "memory_hook": "VPN over DX = public VIF",
   "confidence": "high",
   "needsReview": false

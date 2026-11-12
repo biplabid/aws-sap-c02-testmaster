@@ -49,49 +49,27 @@ for (const [file, id] of pick) {
   questions[`${file}#${id}`] = normalize(q);
 }
 
-// --- the five gold tips, copied verbatim from prompts/gold-standard-tips.md -
-const gold = {
-  "set5.json#4": {
-    id: "4",
-    trigger: 'slow uploads and timeouts from users far from the bucket\u2019s Region',
-    answer: "Multipart upload plus S3 Transfer Acceleration endpoints",
-    trap: "CloudFront is the reflex pick for latency, but it accelerates downloads from an origin \u2014 it does not speed uploads to a bucket.",
-    memory_hook: "downloads = CloudFront, uploads = Transfer Acceleration",
-    confidence: "high", needsReview: false,
-  },
-  "set17.json#5": {
-    id: "5",
-    trigger: "SNS fanning out to many Lambdas that all write to one RDS instance, slow at peak",
-    answer: "RDS Proxy to pool connections AND an SQS queue per Lambda to absorb the burst",
-    trap: "Read replicas don't help \u2014 the bottleneck is write connections, not read load. Fixing only one of the two leaves the other bottleneck in place.",
-    memory_hook: "Lambda + RDS = Proxy; burst + RDS = queue first",
-    confidence: "high", needsReview: false,
-  },
-  "set2.json#8": {
-    id: "8",
-    trigger: 'repeatedly querying the same DynamoDB data, read-heavy, "least application code change"',
-    answer: "DynamoDB Accelerator (DAX) \u2014 swap in the DAX client",
-    trap: "ElastiCache caches too, but you must write the cache-check logic yourself; On-Demand just pays more for the same repeated reads.",
-    memory_hook: "DynamoDB's own cache = DAX",
-    confidence: "low", needsReview: true,
-  },
-  "set13.json#10": {
-    id: "10",
-    trigger: "two SSL certificates on a single EC2 instance with no load balancer",
-    answer: "Multiple ENIs, each with its own Elastic IP \u2014 one certificate bound per IP",
-    trap: "Security group and NACL rules are about who may connect, not which certificate is served; and an instance cannot attach multiple subnets.",
-    memory_hook: "one cert per IP, one IP per ENI",
-    confidence: "high", needsReview: false,
-  },
-  "set26.json#5": {
-    id: "5",
-    trigger: "Aurora Serverless v1 needing cross-Region DR at a 2-minute RPO",
-    answer: "Convert to multi-Region Aurora MySQL for continuous replication, with SAM redeploying the app in the standby Region",
-    trap: "Snapshot replication and a 2-minute custom Lambda copy are both batch jobs \u2014 their RPO is the interval, so they can't beat 2 minutes. Only continuous replication can.",
-    memory_hook: "RPO in minutes = continuous replication, never snapshots",
-    confidence: "high", needsReview: false,
-  },
-};
+// --- the five gold tips, PARSED from prompts/gold-standard-tips.md ----------
+// Parsed, not copied: an earlier version embedded copies here, they drifted
+// from the markdown the moment it was edited, and this test then graded text
+// that no longer existed anywhere else.
+const goldMd = readFileSync(`${REPO}/prompts/gold-standard-tips.md`, "utf8");
+const parsedGold = {};
+{
+  // Each section is "## N. `setX.json` #id — title" followed by a ```json block.
+  const re = /##\s*\d+\.\s*`(set\d+\.json)`\s*#(\d+)[\s\S]*?```json\n([\s\S]*?)```/g;
+  let m;
+  while ((m = re.exec(goldMd)) !== null) {
+    parsedGold[`${m[1]}#${m[2]}`] = JSON.parse(m[3]);
+  }
+}
+if (Object.keys(parsedGold).length !== 5) {
+  throw new Error(`expected 5 gold tips in the markdown, parsed ${Object.keys(parsedGold).length}`);
+}
+
+// --- superseded inline copies (kept only to document what changed) ----------
+// eslint-disable-next-line no-unused-vars
+const gold = parsedGold;
 
 // --- deliberately bad tips, each targeting one validator rule ---------------
 const badCases = [
