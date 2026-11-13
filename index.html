@@ -719,7 +719,7 @@ Explanation: [Detailed explanation text...]
                 </ul>
                 <p>Clicking it opens a panel docked to the right, below the header, automatically submits the question and its answer options, and shows the AI's explanation right there &mdash; no copying, no switching tabs. The rest of the page reflows to make room rather than being covered, so the question and header stay fully visible and usable. Click anywhere outside the panel (or press <kbd>Esc</kbd>) to close it.</p>
                 <h3>First-time setup: a free Groq API key</h3>
-                <p>Gemini Gems (the persona you configure at gemini.google.com) don't have a public API, so this panel instead calls <a href="https://groq.com/" target="_blank" rel="noopener noreferrer">Groq's</a> free API, running the open-weight <strong>Llama 3.3 70B</strong> model with a system prompt written to match the <strong>AWS SAP-C02 Coach</strong> Gem's persona. The first time you click Ask AI Coach, you'll be asked to paste a Groq API key:</p>
+                <p>This panel calls <a href="https://groq.com/" target="_blank" rel="noopener noreferrer">Groq's</a> free API, running the open-weight <strong>openai/gpt-oss-120b</strong> model driven by the <strong>Exam Tip Engine</strong> prompt in <code>config.js</code>. The first time you click Ask AI Coach, you'll be asked to paste a Groq API key:</p>
                 <ol>
                   <li>Get a free key at <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer">console.groq.com/keys</a> &mdash; no credit card required.</li>
                   <li>Paste it into the panel and click <strong>Save Key &amp; Ask</strong>.</li>
@@ -730,7 +730,7 @@ Explanation: [Detailed explanation text...]
                 </div>
                 <div class="doc-callout">
                   <span class="doc-callout-icon" aria-hidden="true">&#9432;</span>
-                  <p>Llama 3.3 70B is a smaller, open-weight model rather than a proprietary flagship one &mdash; answers may occasionally be less precise or skip part of the requested structure (a table, an ASCII diagram) compared to a larger closed model. This is a deliberate cost/accuracy tradeoff, not a bug.</p>
+                  <p><code>openai/gpt-oss-120b</code> is a smaller, open-weight model rather than a proprietary flagship one &mdash; answers may occasionally be less precise, or skip one of the seven required sections, compared to a larger closed model. This is a deliberate cost/accuracy tradeoff, not a bug.</p>
                 </div>
               </section>
 
@@ -939,12 +939,12 @@ Explanation: [Detailed explanation text...]
                   <div class="doc-card"><h4><code>mock.js</code></h4><p>Mock Exam: a 75-question paper drawn either from every question bank combined or from one bank you select (only banks with 75+ questions qualify), weighted to the official SAP-C02 domain split; 3-hour timer, mark-for-review, a pre-submission review screen, and the same filterable results view as Timed Quiz. The banks are re-read on the fly (with a progress bar) each time a new attempt starts.</p></div>
                   <div class="doc-card"><h4><code>analytics.js</code></h4><p>Statistics dashboard: renders summary cards and two Chart.js visualizations (domain radar, recent-attempts bar) from attempt history.</p></div>
                   <div class="doc-card"><h4><code>upload.js</code></h4><p>Parses a <code>.docx</code> file (via Mammoth.js) into the canonical question shape and hands it to <code>file-sets.js</code> to persist.</p></div>
-                  <div class="doc-card"><h4><code>ai-coach.js</code></h4><p>Backs every "Ask AI Coach" button &mdash; live in <code>random.js</code>, and only in <code>quiz.js</code>/<code>mock.js</code>'s post-submission result rows. Opens a right-side panel, submits the question to Groq's OpenAI-compatible chat completions API (open-weight <code>llama-3.3-70b-versatile</code>) with a system prompt recreating the shared Gem's persona, and renders the Markdown answer in-app. Manages the user-supplied API key in <code>LocalStorage</code>.</p></div>
+                  <div class="doc-card"><h4><code>ai-coach.js</code></h4><p>Backs every "Ask AI Coach" button &mdash; live in <code>random.js</code>, and only in <code>quiz.js</code>/<code>mock.js</code>'s post-submission result rows. Opens a right-side panel, submits the question to Groq's OpenAI-compatible chat completions API (open-weight <code>openai/gpt-oss-120b</code> with automatic fallback) with the Exam Tip Engine system prompt, and renders the Markdown answer in-app. The question's recorded answer and explanation are sent alongside the stem and options, because the prompt is told to validate that answer rather than trust it. Manages the user-supplied API key in <code>LocalStorage</code>.</p></div>
                 </div>
 
                 <h3>Auth Modules</h3>
                 <div class="doc-card-grid">
-                  <div class="doc-card"><h4><code>config.js</code></h4><p>Holds the public Google OAuth Client ID and the AI Coach Gem URL &mdash; both safe to commit, unlike a client secret.</p></div>
+                  <div class="doc-card"><h4><code>config.js</code></h4><p>Holds the public Google OAuth Client ID, the Groq model list, the Exam Pattern catalogue, and the Exam Tip Engine system prompt, which is composed from that catalogue so the pattern table has a single source.</p></div>
                   <div class="doc-card"><h4><code>auth.js</code></h4><p>Google Identity Services sign-in/out, access-token lifecycle, and the <code>testmaster:auth-change</code> event other modules react to.</p></div>
                   <div class="doc-card"><h4><code>auth-gate.js</code></h4><p>Full-screen welcome/sign-in overlay that hides the entire app shell until <code>auth.js</code> reports a signed-in user.</p></div>
                   <div class="doc-card"><h4><code>account-ui.js</code></h4><p>The header sign-in control and account popover: renders identity and the sign-out action.</p></div>
@@ -1080,7 +1080,7 @@ Explanation: [Detailed explanation text...]
                 </div>
                 <div class="doc-callout limitation">
                   <span class="doc-callout-icon" aria-hidden="true">&#9888;</span>
-                  <p><strong>Ask AI Coach's system prompt is a re-implementation, not the literal Gem, running on a different (smaller, open-weight) model.</strong> Gemini Gems have no public API, so <code>config.js</code>'s <code>AI_COACH_SYSTEM_PROMPT</code> approximates the shared Gem's persona rather than calling it directly, and it's answered by Groq's free <code>llama-3.3-70b-versatile</code> rather than Gemini. Answers may drift from what the Gem itself would say, and may less consistently include every requested section (table, ASCII diagram) than a larger model would &mdash; an accepted cost/accuracy tradeoff. Keep the prompt in sync manually if the Gem's instructions change.</p>
+                  <p><strong>Ask AI Coach runs the Exam Tip Engine prompt on a small open-weight model.</strong> <code>config.js</code>'s <code>AI_COACH_SYSTEM_PROMPT</code> asks for a fixed seven-section answer &mdash; trigger words, the examiner's intent, the reasoning chain, why each distractor fails, the reusable pattern, a memory hook, and a 10-15 second decision rule &mdash; plus a classification against the Exam Pattern catalogue. A smaller model will sometimes drop a section, or file a question under a loose pattern. The prompt also tells the model <em>not</em> to trust the recorded answer and to flag it when it looks wrong, so a disagreement between the tip and the answer key is intended behaviour rather than a bug.</p>
                 </div>
                 <div class="doc-callout limitation">
                   <span class="doc-callout-icon" aria-hidden="true">&#9888;</span>
@@ -1109,6 +1109,17 @@ Explanation: [Detailed explanation text...]
     <aside class="ai-panel hidden" id="aiPanel" aria-label="AWS SAP-C02 Coach" role="dialog" aria-modal="true">
       <div class="ai-panel-header">
         <span class="ai-panel-title">AWS SAP-C02 Coach</span>
+        <div class="ai-panel-tools hidden" id="aiPanelTools">
+          <button class="icon-button ai-panel-tool" type="button" id="aiPanelDetach" title="Open this answer in a separate tab" aria-label="Open in a separate tab">
+            <span aria-hidden="true">&#x2197;</span>
+          </button>
+          <button class="icon-button ai-panel-tool" type="button" id="aiPanelPrint" title="Print, or choose Save as PDF in the print dialog" aria-label="Print or save as PDF">
+            <span aria-hidden="true">&#x1F5A8;</span>
+          </button>
+          <button class="icon-button ai-panel-tool" type="button" id="aiPanelDrive" title="Save a copy to your Google Drive as a Doc" aria-label="Save to Google Drive">
+            <span aria-hidden="true">&#x25B2;</span>
+          </button>
+        </div>
         <button class="icon-button ai-panel-close" type="button" id="aiPanelClose" aria-label="Close AI Coach">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -1127,6 +1138,7 @@ Explanation: [Detailed explanation text...]
 
         <div class="ai-panel-error hidden" id="aiPanelError"></div>
 
+        <div class="ai-panel-export-status hidden" id="aiPanelExportStatus" role="status"></div>
         <div class="ai-panel-answer hidden" id="aiPanelAnswer"></div>
       </div>
     </aside>
@@ -1146,6 +1158,8 @@ Explanation: [Detailed explanation text...]
   <script src="js/questions.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/view-helpers.js"></script>
+  <script src="js/ai-panel.js"></script>
+  <script src="js/ai-export.js"></script>
   <script src="js/ai-coach.js"></script>
   <script src="js/exam.js"></script>
   <script src="js/timer.js"></script>

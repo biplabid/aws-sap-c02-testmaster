@@ -48,6 +48,7 @@ window.TestMaster.random = (function createRandomModule(viewHelpers, questionEng
       });
     }
 
+
     if (elements.setSelector) {
       elements.setSelector.addEventListener("change", () => {
         updateDoneStatus(elements);

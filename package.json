@@ -8,11 +8,13 @@
   "main": "electron/main.js",
   "scripts": {
     "start": "electron .",
-    "dist": "electron-builder --win"
+    "dist": "electron-builder --win",
+    "test:ui": "node tools/test-ui-panel.mjs"
   },
   "devDependencies": {
     "electron": "^31.3.1",
-    "electron-builder": "^24.13.3"
+    "electron-builder": "^24.13.3",
+    "jsdom": "^25.0.1"
   },
   "dependencies": {
     "serve-handler": "^6.1.5"
@@ -23,6 +25,7 @@
     "asar": true,
     "files": [
       "index.html",
+      "detached.html",
       "css/**/*",
       "js/**/*",
       "data/**/*",
@@ -35,8 +38,18 @@
     },
     "win": {
       "target": [
-        { "target": "nsis", "arch": ["x64"] },
-        { "target": "portable", "arch": ["x64"] }
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
       ],
       "icon": "assets/icon.ico"
     },

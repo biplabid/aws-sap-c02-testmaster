@@ -1,0 +1,680 @@
+{
+  "name": "Exam Tip Agent",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "node-1",
+      "name": "When clicked",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// ============================================================\n//  EDIT THESE PER RUN — this is the whole control surface.\n// ============================================================\nconst config = {\n  owner:   'biplabid',\n  repo:    'aws-sap-c02-testmaster',\n  branch:  'fix-aws-updates',\n\n  setFile: 'set1.json',   // which file in data/\n  offset:  0,             // first question index in this chunk\n  size:    15,            // how many questions this run handles\n\n  model:   'claude-haiku-5-5',\n  effort:  'low',         // low is right: the task is compression, not reasoning\n  // Length caps. Grounded in the reference corpus, not guessed: the 26 tips in\n  // CertTip.txt average 36 words and the longest is 57. An earlier 75 was set\n  // to accommodate over-long hand-written samples, and the model promptly wrote\n  // to that cap - 71 words average, twice the corpus. Per-field caps matter as\n  // much as the total, because inflation showed up in every field at once.\n  maxWords: 60,\n  fieldCaps: { trigger: 15, answer: 16, trap: 25, memory_hook: 10 },\n  maxTokens: 1500,\n\n  commit:  true,          // false = dry run, generate and report but do not commit\n};\n// ============================================================\n\nreturn [{ json: config }];"
+      },
+      "id": "node-2",
+      "name": "Job Config",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.github.com/repos/{{ $('Job Config').first().json.owner }}/{{ $('Job Config').first().json.repo }}/contents/data/{{ $('Job Config').first().json.setFile }}?ref={{ $('Job Config').first().json.branch }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            },
+            {
+              "name": "X-GitHub-Api-Version",
+              "value": "2022-11-28"
+            },
+            {
+              "name": "User-Agent",
+              "value": "exam-tip-agent"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-3",
+      "name": "Fetch Question Set",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        140
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "GitHub PAT (Authorization)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.github.com/repos/{{ $('Job Config').first().json.owner }}/{{ $('Job Config').first().json.repo }}/contents/prompts/exam-tip-persona.md?ref={{ $('Job Config').first().json.branch }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            },
+            {
+              "name": "X-GitHub-Api-Version",
+              "value": "2022-11-28"
+            },
+            {
+              "name": "User-Agent",
+              "value": "exam-tip-agent"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-4",
+      "name": "Fetch Persona",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        300
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "GitHub PAT (Authorization)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.github.com/repos/{{ $('Job Config').first().json.owner }}/{{ $('Job Config').first().json.repo }}/contents/data/tips/{{ $('Job Config').first().json.setFile }}?ref={{ $('Job Config').first().json.branch }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            },
+            {
+              "name": "X-GitHub-Api-Version",
+              "value": "2022-11-28"
+            },
+            {
+              "name": "User-Agent",
+              "value": "exam-tip-agent"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-5",
+      "name": "Fetch Existing Tips",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        460
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "GitHub PAT (Authorization)"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Decode the three GitHub fetches, slice the chunk, and normalize each\n// question into the shape the persona's section 3 documents.\nconst cfg = $('Job Config').first().json;\n\nconst decode = (nodeName) => {\n  const r = $(nodeName).first().json;\n  if (!r || !r.content) return null;\n  return Buffer.from(r.content, 'base64').toString('utf8');\n};\n\nconst personaText = decode('Fetch Persona');\nif (!personaText) {\n  throw new Error('Could not read prompts/exam-tip-persona.md from ' + cfg.branch);\n}\n\nconst setText = decode('Fetch Question Set');\nif (!setText) {\n  throw new Error('Could not read data/' + cfg.setFile + ' from ' + cfg.branch);\n}\n\n// data/tips/<set>.json may legitimately not exist yet — a 404 is expected on\n// the first run for a set, so the fetch node is set to continue on error.\nlet existingTips = [];\nlet existingSha = null;\ntry {\n  const prev = $('Fetch Existing Tips').first().json;\n  if (prev && prev.content) {\n    existingSha = prev.sha;\n    const parsed = JSON.parse(Buffer.from(prev.content, 'base64').toString('utf8'));\n    if (Array.isArray(parsed)) existingTips = parsed;\n    else if (parsed && Array.isArray(parsed.tips)) existingTips = parsed.tips;\n  }\n} catch (e) {\n  existingTips = [];\n  existingSha = null;\n}\n\nconst raw = JSON.parse(setText);\nconst all = Array.isArray(raw) ? raw : (raw.questions || []);\n\nconst slice = all.slice(cfg.offset, cfg.offset + cfg.size);\nif (slice.length === 0) {\n  throw new Error('Empty chunk: offset ' + cfg.offset + ' is past the end of ' +\n                  cfg.setFile + ' (' + all.length + ' questions)');\n}\n\n// Mirrors js/question-engine.js so tips key off the same ids the app uses.\nconst normalize = (q, i) => {\n  const options = (q.options || []).map((o, oi) =>\n    typeof o === 'string'\n      ? { id: String.fromCharCode(65 + oi), text: o }\n      : { id: o.id || o.letter || String.fromCharCode(65 + oi), text: o.text || '' }\n  );\n\n  let correct = q.correctAnswers || q.answer || q.answers || [];\n  if (!Array.isArray(correct)) correct = String(correct).split(',');\n  correct = correct.map(v => String(v).trim().toUpperCase()).filter(Boolean);\n\n  const explanation = String(q.explanation || '').trim();\n\n  return {\n    id: q.id !== undefined && q.id !== null ? String(q.id) : 'q-' + (cfg.offset + i + 1),\n    type: q.type || (correct.length > 1 ? 'multiple' : 'single'),\n    domain: q.domain || 'General',\n    prompt: q.question || q.prompt || '',\n    options,\n    correctAnswers: correct,\n    explanation,\n    hasExplanation: explanation.length > 0,\n  };\n};\n\nconst meta = {\n  owner: cfg.owner,\n  repo: cfg.repo,\n  branch: cfg.branch,\n  setFile: cfg.setFile,\n  existingSha,\n  existingTips,\n  totalInFile: all.length,\n};\n\nreturn slice.map((q, i) => ({\n  json: {\n    question: normalize(q, i),\n    persona: personaText,\n    meta,\n  },\n}));"
+      },
+      "id": "node-6",
+      "name": "Prepare Chunk",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 3,
+        "options": {}
+      },
+      "id": "node-7",
+      "name": "Loop Questions",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Assemble the Anthropic request. The system prefix is the FULL persona and is\n// byte-identical on every call, so it caches; only the user message varies.\n// Selecting exemplars per question would vary the prefix and defeat caching.\nconst cfg = $('Job Config').first().json;\n\nconst SCHEMA = {\n  type: 'object',\n  properties: {\n    id:          { type: 'string' },\n    trigger:     { type: 'string' },\n    answer:      { type: 'string' },\n    trap:        { type: 'string' },\n    memory_hook: { type: 'string' },\n    confidence:  { type: 'string', enum: ['high', 'medium', 'low'] },\n    needsReview: { type: 'boolean' },\n  },\n  required: ['id', 'trigger', 'answer', 'trap', 'memory_hook', 'confidence', 'needsReview'],\n  additionalProperties: false,\n};\n\nreturn $input.all().map(item => {\n  const q = item.json.question;\n\n  const body = {\n    model: cfg.model,\n    max_tokens: cfg.maxTokens,\n    output_config: {\n      effort: cfg.effort,\n      format: { type: 'json_schema', schema: SCHEMA },\n    },\n    system: [\n      {\n        type: 'text',\n        text: item.json.persona,\n        cache_control: { type: 'ephemeral' },\n      },\n    ],\n    messages: [\n      { role: 'user', content: JSON.stringify(q, null, 2) },\n    ],\n  };\n\n  return { json: { ...item.json, requestBody: body, attempt: 1 } };\n});"
+      },
+      "id": "node-8",
+      "name": "Build Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.requestBody) }}",
+        "options": {
+          "timeout": 180000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "node-9",
+      "name": "Anthropic Generate Tip",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1180,
+        420
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "Anthropic API (x-api-key)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const cfg = $('Job Config').first().json;\n\n// Questions are looked up by the id the model echoes back, rather than by item\n// position, so a reordered or dropped response can never silently attach a tip\n// to the wrong question.\nconst byId = {};\nfor (const it of $('Prepare Chunk').all()) {\n  byId[it.json.question.id] = it.json.question;\n}\n\n// Terms are matched with an optional trailing 's', because answers naturally\n// pluralise (\"multiple ENIs\", \"read replicas\") and a bare \\b would miss them.\nconst SERVICE_RE = new RegExp(\n  '\\\\b(' + [\n    'S3','EC2','RDS','VPC','IAM','SNS','SQS','EBS','EFS','ELB','ALB','NLB','KMS','DNS',\n    'DAX','DMS','MGN','ECS','EKS','EMR','SES','WAF','CDN','API Gateway','CloudFront',\n    'CloudTrail','CloudWatch','CloudFormation','Direct Connect','DynamoDB','Aurora',\n    'Lambda','Glacier','Route 53','Shield','Macie','GuardDuty','Cognito','Kinesis',\n    'Redshift','Athena','Glue','Step Functions','Systems Manager','Parameter Store',\n    'Service Catalog','Storage Gateway','Transfer Acceleration','Transit Gateway',\n    'Snowball','Outposts','Greengrass','SageMaker','Rekognition','FSx','Lustre',\n    'ElastiCache','Redis','Memcached','Organizations','Control Tower','Config',\n    'Trusted Advisor','Secrets Manager','ACM','STS','SAML','OIDC','NAT Gateway',\n    'Auto Scaling','Elastic Beanstalk','AppSync','Device Farm','Ground Truth',\n    'Identity Center','WorkDocs','Object Lock','ENI','VIF','awsvpc','RDS Proxy',\n    'Global Accelerator','Backup','DataSync','EventBridge','Inspector',\n    // forms that show up in answers but are not standalone product names\n    'Elastic IP','read replica','Multi-AZ','vault lock','multipart upload',\n    'Client VPN','Site-to-Site','Cached Volume','Stored Volume','File Gateway',\n    'Glacier Instant Retrieval','launch constraint','task IAM role','NACL',\n    'security group','hosted zone','Serverless','SAM','GSI','On-Demand',\n  ].join('|') + ')s?\\\\b', 'i'\n);\n\n// Any reference to an option letter counts as meta-language: the letters are\n// meaningless when the tip is re-read on its own. \"(option C)\" leaked through\n// an earlier version that only looked for \"option X is wrong\".\nconst META_RE = /correct answer is|this question (tests|is about)|the options (suggest|show)|\\boptions? [A-E]\\b|\\([A-E]\\/[A-E]\\)/i;\nconst HEDGE_RE = /\\b(it depends|may vary|typically you|you might want|possibly|perhaps)\\b/i;\n\nconst words = (s) => String(s || '').trim().split(/\\s+/).filter(Boolean).length;\n\n// Generic English that would otherwise create false overlap between any two\n// sentences, which is what made the first cut of this check unusable.\nconst STOP = new Set(('the that this these those with have has had been being will would ' +\n  'could should from into onto each other another than then when where which while ' +\n  'your their there they them and for are was were not but all any can its use used ' +\n  'using also more most only over such very must need needs does done make made take ' +\n  'like just even both same some what who whom how why new per via want wants look ' +\n  'looks about after before during between because however therefore within without ' +\n  'under above also able upon once every many much less least next last first second ' +\n  'following given based order while still rather instead').split(' '));\n\n// Crude stemmer: enough to make plural and participle forms of the same word\n// compare equal, without pulling in a stemming library.\nconst stem = (w) => w\n  .replace(/(ies)$/, 'y')\n  .replace(/(sses|shes|ches|xes)$/, '')\n  .replace(/(ing|ed|es|s)$/, '');\n\nconst significant = (s) =>\n  new Set(\n    String(s || '')\n      .toLowerCase()\n      .replace(/[^a-z0-9\\s]/g, ' ')\n      .split(/\\s+/)\n      .filter(w => w.length > 3 && !STOP.has(w))\n      .map(stem)\n      .filter(w => w.length > 2)\n  );\n\nconst overlap = (a, b) => {\n  const A = significant(a), B = significant(b);\n  let n = 0;\n  for (const w of A) if (B.has(w)) n++;\n  return n;\n};\n\nfunction validate(tip, q) {\n  const v = [];\n\n  if (!tip || typeof tip !== 'object') return { violations: ['not an object'] };\n  if (!q) return { violations: ['unknown id \"' + (tip && tip.id) + '\"'] };\n\n  for (const f of ['id','trigger','answer','trap','memory_hook','confidence','needsReview']) {\n    if (!(f in tip)) v.push('missing field: ' + f);\n  }\n\n  const total = words(tip.trigger) + words(tip.answer) + words(tip.trap) + words(tip.memory_hook);\n  if (total > cfg.maxWords) v.push('too long: ' + total + ' words > ' + cfg.maxWords);\n\n  // Per-field caps: the total alone let every field inflate together.\n  const caps = cfg.fieldCaps || {};\n  for (const f of Object.keys(caps)) {\n    const n = words(tip[f]);\n    if (n > caps[f]) v.push(f + ' too long: ' + n + ' words > ' + caps[f]);\n  }\n\n  // The trigger must be the giveaway phrase, not a precis of the stem.\n  const longQuote = String(tip.trigger || '').match(/\"([^\"]{60,})\"/);\n  if (longQuote) v.push('trigger quotes too much of the stem');\n\n  if (!SERVICE_RE.test(String(tip.answer || ''))) {\n    v.push('answer names no recognised AWS service');\n  }\n\n  // The trigger must come from the stem, not be invented.\n  if (overlap(tip.trigger, q.prompt) < 2) {\n    v.push('trigger does not echo the stem');\n  }\n\n  // The trap must point at one of this question's own wrong options.\n  const distractors = (q.options || []).filter(o => !q.correctAnswers.includes(String(o.id).toUpperCase()));\n  const hitsDistractor = distractors.some(o => overlap(tip.trap, o.text) >= 2);\n  if (!hitsDistractor) v.push('trap does not reference a listed distractor');\n\n  const blob = [tip.trigger, tip.answer, tip.trap].join(' ');\n  if (META_RE.test(blob)) v.push('meta-language about the exercise');\n  if (HEDGE_RE.test(blob)) v.push('hedging');\n\n  // Flagging discipline: no explanation means the tip is a reasoned guess.\n  if (!q.hasExplanation && !(tip.confidence === 'low' && tip.needsReview === true)) {\n    v.push('question has no explanation but tip is not flagged low/needsReview');\n  }\n\n  return { violations: v };\n}\n\nfunction extractTip(apiResponse) {\n  if (!apiResponse) return { error: 'empty response' };\n  if (apiResponse.error) {\n    return { error: (apiResponse.error.message || JSON.stringify(apiResponse.error)) };\n  }\n  if (apiResponse.stop_reason === 'refusal') {\n    return { error: 'refusal: ' + JSON.stringify(apiResponse.stop_details || {}) };\n  }\n  const blocks = apiResponse.content || [];\n  const text = (blocks.find(b => b.type === 'text') || {}).text;\n  if (!text) return { error: 'no text block in response' };\n  try {\n    return { tip: JSON.parse(text) };\n  } catch (e) {\n    return { error: 'response was not valid JSON: ' + e.message };\n  }\n}\n\nreturn $input.all().map(item => {\n  const { tip, error } = extractTip(item.json);\n  const usage = item.json.usage || {};\n\n  if (error) {\n    return { json: { _valid: false, _violations: [error], _tip: null, _usage: usage } };\n  }\n\n  const q = byId[String(tip.id)];\n  const { violations } = validate(tip, q);\n\n  return {\n    json: {\n      _valid: violations.length === 0,\n      _violations: violations,\n      _tip: tip,\n      _question: q || null,\n      _usage: usage,\n      attempt: 1,\n    },\n  };\n});"
+      },
+      "id": "node-10",
+      "name": "Validate Tip",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1400,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "valid-check",
+              "leftValue": "={{ $json._valid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-11",
+      "name": "Tip Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1620,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Second and final attempt. The violations are fed back as a correction turn\n// so the model is told exactly what to fix rather than simply re-rolling.\nconst cfg = $('Job Config').first().json;\n\nconst SCHEMA = {\n  type: 'object',\n  properties: {\n    id:          { type: 'string' },\n    trigger:     { type: 'string' },\n    answer:      { type: 'string' },\n    trap:        { type: 'string' },\n    memory_hook: { type: 'string' },\n    confidence:  { type: 'string', enum: ['high', 'medium', 'low'] },\n    needsReview: { type: 'boolean' },\n  },\n  required: ['id', 'trigger', 'answer', 'trap', 'memory_hook', 'confidence', 'needsReview'],\n  additionalProperties: false,\n};\n\nconst persona = $('Prepare Chunk').first().json.persona;\n\nreturn $input.all().map(item => {\n  const q = item.json._question;\n  const prior = item.json._tip;\n  const violations = item.json._violations || [];\n\n  const correction = [\n    'Your previous tip for this question was rejected by the validator.',\n    '',\n    'Previous attempt:',\n    JSON.stringify(prior, null, 2),\n    '',\n    'Validator violations — fix every one:',\n    ...violations.map(v => '- ' + v),\n    '',\n    'Re-read sections 5 and 8 of your instructions. Return only the corrected JSON object.',\n  ].join('\\n');\n\n  const body = {\n    model: cfg.model,\n    max_tokens: cfg.maxTokens,\n    output_config: {\n      effort: cfg.effort,\n      format: { type: 'json_schema', schema: SCHEMA },\n    },\n    system: [\n      { type: 'text', text: persona, cache_control: { type: 'ephemeral' } },\n    ],\n    messages: [\n      { role: 'user', content: JSON.stringify(q, null, 2) },\n      { role: 'assistant', content: JSON.stringify(prior) },\n      { role: 'user', content: correction },\n    ],\n  };\n\n  return { json: { ...item.json, requestBody: body, attempt: 2 } };\n});"
+      },
+      "id": "node-12",
+      "name": "Build Retry Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1840,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.requestBody) }}",
+        "options": {
+          "timeout": 180000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "node-13",
+      "name": "Anthropic Retry Tip",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2060,
+        560
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "Anthropic API (x-api-key)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const cfg = $('Job Config').first().json;\n\n// Questions are looked up by the id the model echoes back, rather than by item\n// position, so a reordered or dropped response can never silently attach a tip\n// to the wrong question.\nconst byId = {};\nfor (const it of $('Prepare Chunk').all()) {\n  byId[it.json.question.id] = it.json.question;\n}\n\n// Terms are matched with an optional trailing 's', because answers naturally\n// pluralise (\"multiple ENIs\", \"read replicas\") and a bare \\b would miss them.\nconst SERVICE_RE = new RegExp(\n  '\\\\b(' + [\n    'S3','EC2','RDS','VPC','IAM','SNS','SQS','EBS','EFS','ELB','ALB','NLB','KMS','DNS',\n    'DAX','DMS','MGN','ECS','EKS','EMR','SES','WAF','CDN','API Gateway','CloudFront',\n    'CloudTrail','CloudWatch','CloudFormation','Direct Connect','DynamoDB','Aurora',\n    'Lambda','Glacier','Route 53','Shield','Macie','GuardDuty','Cognito','Kinesis',\n    'Redshift','Athena','Glue','Step Functions','Systems Manager','Parameter Store',\n    'Service Catalog','Storage Gateway','Transfer Acceleration','Transit Gateway',\n    'Snowball','Outposts','Greengrass','SageMaker','Rekognition','FSx','Lustre',\n    'ElastiCache','Redis','Memcached','Organizations','Control Tower','Config',\n    'Trusted Advisor','Secrets Manager','ACM','STS','SAML','OIDC','NAT Gateway',\n    'Auto Scaling','Elastic Beanstalk','AppSync','Device Farm','Ground Truth',\n    'Identity Center','WorkDocs','Object Lock','ENI','VIF','awsvpc','RDS Proxy',\n    'Global Accelerator','Backup','DataSync','EventBridge','Inspector',\n    // forms that show up in answers but are not standalone product names\n    'Elastic IP','read replica','Multi-AZ','vault lock','multipart upload',\n    'Client VPN','Site-to-Site','Cached Volume','Stored Volume','File Gateway',\n    'Glacier Instant Retrieval','launch constraint','task IAM role','NACL',\n    'security group','hosted zone','Serverless','SAM','GSI','On-Demand',\n  ].join('|') + ')s?\\\\b', 'i'\n);\n\n// Any reference to an option letter counts as meta-language: the letters are\n// meaningless when the tip is re-read on its own. \"(option C)\" leaked through\n// an earlier version that only looked for \"option X is wrong\".\nconst META_RE = /correct answer is|this question (tests|is about)|the options (suggest|show)|\\boptions? [A-E]\\b|\\([A-E]\\/[A-E]\\)/i;\nconst HEDGE_RE = /\\b(it depends|may vary|typically you|you might want|possibly|perhaps)\\b/i;\n\nconst words = (s) => String(s || '').trim().split(/\\s+/).filter(Boolean).length;\n\n// Generic English that would otherwise create false overlap between any two\n// sentences, which is what made the first cut of this check unusable.\nconst STOP = new Set(('the that this these those with have has had been being will would ' +\n  'could should from into onto each other another than then when where which while ' +\n  'your their there they them and for are was were not but all any can its use used ' +\n  'using also more most only over such very must need needs does done make made take ' +\n  'like just even both same some what who whom how why new per via want wants look ' +\n  'looks about after before during between because however therefore within without ' +\n  'under above also able upon once every many much less least next last first second ' +\n  'following given based order while still rather instead').split(' '));\n\n// Crude stemmer: enough to make plural and participle forms of the same word\n// compare equal, without pulling in a stemming library.\nconst stem = (w) => w\n  .replace(/(ies)$/, 'y')\n  .replace(/(sses|shes|ches|xes)$/, '')\n  .replace(/(ing|ed|es|s)$/, '');\n\nconst significant = (s) =>\n  new Set(\n    String(s || '')\n      .toLowerCase()\n      .replace(/[^a-z0-9\\s]/g, ' ')\n      .split(/\\s+/)\n      .filter(w => w.length > 3 && !STOP.has(w))\n      .map(stem)\n      .filter(w => w.length > 2)\n  );\n\nconst overlap = (a, b) => {\n  const A = significant(a), B = significant(b);\n  let n = 0;\n  for (const w of A) if (B.has(w)) n++;\n  return n;\n};\n\nfunction validate(tip, q) {\n  const v = [];\n\n  if (!tip || typeof tip !== 'object') return { violations: ['not an object'] };\n  if (!q) return { violations: ['unknown id \"' + (tip && tip.id) + '\"'] };\n\n  for (const f of ['id','trigger','answer','trap','memory_hook','confidence','needsReview']) {\n    if (!(f in tip)) v.push('missing field: ' + f);\n  }\n\n  const total = words(tip.trigger) + words(tip.answer) + words(tip.trap) + words(tip.memory_hook);\n  if (total > cfg.maxWords) v.push('too long: ' + total + ' words > ' + cfg.maxWords);\n\n  // Per-field caps: the total alone let every field inflate together.\n  const caps = cfg.fieldCaps || {};\n  for (const f of Object.keys(caps)) {\n    const n = words(tip[f]);\n    if (n > caps[f]) v.push(f + ' too long: ' + n + ' words > ' + caps[f]);\n  }\n\n  // The trigger must be the giveaway phrase, not a precis of the stem.\n  const longQuote = String(tip.trigger || '').match(/\"([^\"]{60,})\"/);\n  if (longQuote) v.push('trigger quotes too much of the stem');\n\n  if (!SERVICE_RE.test(String(tip.answer || ''))) {\n    v.push('answer names no recognised AWS service');\n  }\n\n  // The trigger must come from the stem, not be invented.\n  if (overlap(tip.trigger, q.prompt) < 2) {\n    v.push('trigger does not echo the stem');\n  }\n\n  // The trap must point at one of this question's own wrong options.\n  const distractors = (q.options || []).filter(o => !q.correctAnswers.includes(String(o.id).toUpperCase()));\n  const hitsDistractor = distractors.some(o => overlap(tip.trap, o.text) >= 2);\n  if (!hitsDistractor) v.push('trap does not reference a listed distractor');\n\n  const blob = [tip.trigger, tip.answer, tip.trap].join(' ');\n  if (META_RE.test(blob)) v.push('meta-language about the exercise');\n  if (HEDGE_RE.test(blob)) v.push('hedging');\n\n  // Flagging discipline: no explanation means the tip is a reasoned guess.\n  if (!q.hasExplanation && !(tip.confidence === 'low' && tip.needsReview === true)) {\n    v.push('question has no explanation but tip is not flagged low/needsReview');\n  }\n\n  return { violations: v };\n}\n\nfunction extractTip(apiResponse) {\n  if (!apiResponse) return { error: 'empty response' };\n  if (apiResponse.error) {\n    return { error: (apiResponse.error.message || JSON.stringify(apiResponse.error)) };\n  }\n  if (apiResponse.stop_reason === 'refusal') {\n    return { error: 'refusal: ' + JSON.stringify(apiResponse.stop_details || {}) };\n  }\n  const blocks = apiResponse.content || [];\n  const text = (blocks.find(b => b.type === 'text') || {}).text;\n  if (!text) return { error: 'no text block in response' };\n  try {\n    return { tip: JSON.parse(text) };\n  } catch (e) {\n    return { error: 'response was not valid JSON: ' + e.message };\n  }\n}\n\n// Last chance. Anything still failing is kept but forced to low confidence and\n// flagged for human review — a bad tip that is labelled is recoverable, a bad\n// tip that is silently dropped leaves a gap nobody notices.\nreturn $input.all().map(item => {\n  const { tip, error } = extractTip(item.json);\n  const priorQ = $('Build Retry Request').all()\n    .map(i => i.json._question)\n    .filter(Boolean);\n\n  if (error || !tip) {\n    const q = priorQ[0] || null;\n    return {\n      json: {\n        _valid: false,\n        _violations: [error || 'no tip returned on retry'],\n        _tip: q ? {\n          id: q.id,\n          trigger: '',\n          answer: '',\n          trap: '',\n          memory_hook: '',\n          confidence: 'low',\n          needsReview: true,\n        } : null,\n        _question: q,\n        _failed: true,\n        attempt: 2,\n      },\n    };\n  }\n\n  const q = byId[String(tip.id)];\n  const { violations } = validate(tip, q);\n\n  const finalTip = { ...tip };\n  if (violations.length > 0) {\n    finalTip.confidence = 'low';\n    finalTip.needsReview = true;\n  }\n\n  return {\n    json: {\n      _valid: violations.length === 0,\n      _violations: violations,\n      _tip: finalTip,\n      _question: q || null,\n      _failed: violations.length > 0,\n      attempt: 2,\n    },\n  };\n});"
+      },
+      "id": "node-14",
+      "name": "Validate Retry",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2280,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Everything that came back through the loop lands here. Merge over any tips\n// the file already had (so re-running a chunk is idempotent), sort by numeric\n// id, and build the GitHub commit payload.\nconst cfg = $('Job Config').first().json;\nconst meta = $('Prepare Chunk').first().json.meta;\n\nconst incoming = $input.all()\n  .map(i => i.json._tip)\n  .filter(t => t && t.id);\n\nconst merged = new Map();\nfor (const t of (meta.existingTips || [])) {\n  if (t && t.id) merged.set(String(t.id), t);\n}\nfor (const t of incoming) {\n  merged.set(String(t.id), {\n    id: String(t.id),\n    trigger: t.trigger || '',\n    answer: t.answer || '',\n    trap: t.trap || '',\n    memory_hook: t.memory_hook || '',\n    confidence: t.confidence || 'low',\n    needsReview: t.needsReview === true,\n  });\n}\n\nconst numeric = (v) => {\n  const n = parseInt(String(v).replace(/[^0-9]/g, ''), 10);\n  return Number.isNaN(n) ? Number.MAX_SAFE_INTEGER : n;\n};\n\nconst tips = [...merged.values()].sort((a, b) => numeric(a.id) - numeric(b.id));\n\n// Fail loudly rather than writing a file that is worse than the one already\n// there. A chunk where every tip failed (an auth error, say) would otherwise\n// commit an empty array over good tips and report tipCount: 0 in a log nobody\n// reads - silent data loss on a re-run of an already-generated set.\nif (incoming.length === 0) {\n  throw new Error(\n    'No tips survived validation for ' + cfg.setFile + ' [' + cfg.offset + '-' +\n    (cfg.offset + cfg.size - 1) + ']. Refusing to commit. Check the ' +\n    'Anthropic Generate Tip node output for the API error.'\n  );\n}\n\n// A tip that merely fails validation still arrives here, flagged - so a short\n// count means hard errors, not bad tips. Without this check the merge quietly\n// backfills the gaps from the previous version of the file and the run looks\n// complete: a chunk of 15 reporting 15 tips when only 10 were generated.\nconst expected = $('Prepare Chunk').all().length;\nif (incoming.length < expected) {\n  throw new Error(\n    'Only ' + incoming.length + ' of ' + expected + ' questions produced a tip for ' +\n    cfg.setFile + ' [' + cfg.offset + '-' + (cfg.offset + cfg.size - 1) + ']. ' +\n    'Refusing to commit a partial chunk that would look complete. ' +\n    'Check Validate Tip / Validate Retry for the failures, then re-run this chunk.'\n  );\n}\nif (tips.length < (meta.existingTips || []).length) {\n  throw new Error(\n    'Refusing to commit: result has ' + tips.length + ' tips but the existing ' +\n    'file had ' + meta.existingTips.length + '. This would lose tips.'\n  );\n}\n\nconst fileText = JSON.stringify(tips, null, 2) + '\\n';\nconst path = 'data/tips/' + cfg.setFile;\n\nconst commitBody = {\n  message: 'Generate exam tips for ' + cfg.setFile +\n           ' [' + cfg.offset + '-' + (cfg.offset + cfg.size - 1) + ']',\n  content: Buffer.from(fileText, 'utf8').toString('base64'),\n  branch: cfg.branch,\n};\nif (meta.existingSha) commitBody.sha = meta.existingSha;\n\nreturn [{\n  json: {\n    path,\n    commitBody,\n    commitUrl: 'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + path,\n    tipCount: tips.length,\n    incomingCount: incoming.length,\n    skipCommit: cfg.commit !== true,\n  },\n}];"
+      },
+      "id": "node-15",
+      "name": "Merge Tips",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "commit-gate",
+              "leftValue": "={{ $json.skipCommit }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-16",
+      "name": "Commit Enabled?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1080,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ $json.commitUrl }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            },
+            {
+              "name": "X-GitHub-Api-Version",
+              "value": "2022-11-28"
+            },
+            {
+              "name": "User-Agent",
+              "value": "exam-tip-agent"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.commitBody) }}",
+        "options": {}
+      },
+      "id": "node-17",
+      "name": "Commit Tips File",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1300,
+        140
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "GitHub PAT (Authorization)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Read this in n8n's execution log — it is the run's report card.\nconst cfg = $('Job Config').first().json;\nconst merge = $('Merge Tips').first().json;\n\nconst results = [];\nfor (const name of ['Validate Tip', 'Validate Retry']) {\n  try {\n    for (const it of $(name).all()) results.push(it.json);\n  } catch (e) { /* retry lane may not have run */ }\n}\n\nconst firstPass = results.filter(r => r.attempt === 1 && r._valid).length;\nconst retried   = results.filter(r => r.attempt === 2).length;\nconst retryOk   = results.filter(r => r.attempt === 2 && r._valid).length;\nconst flagged   = results.filter(r => r._tip && r._tip.needsReview).length;\n\nconst violationTally = {};\nfor (const r of results) {\n  for (const v of (r._violations || [])) {\n    const key = v.split(':')[0];\n    violationTally[key] = (violationTally[key] || 0) + 1;\n  }\n}\n\nreturn [{\n  json: {\n    set: cfg.setFile,\n    chunk: cfg.offset + '-' + (cfg.offset + cfg.size - 1),\n    model: cfg.model,\n    generated: merge.incomingCount,\n    tipsInFileNow: merge.tipCount,\n    passedFirstAttempt: firstPass,\n    neededRetry: retried,\n    retrySucceeded: retryOk,\n    flaggedForReview: flagged,\n    violationsByKind: violationTally,\n    committed: !merge.skipCommit,\n    nextChunkOffset: cfg.offset + cfg.size,\n  },\n}];"
+      },
+      "id": "node-18",
+      "name": "Run Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1520,
+        140
+      ]
+    }
+  ],
+  "connections": {
+    "When clicked": {
+      "main": [
+        [
+          {
+            "node": "Job Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Job Config": {
+      "main": [
+        [
+          {
+            "node": "Fetch Question Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Question Set": {
+      "main": [
+        [
+          {
+            "node": "Fetch Persona",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Persona": {
+      "main": [
+        [
+          {
+            "node": "Fetch Existing Tips",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Existing Tips": {
+      "main": [
+        [
+          {
+            "node": "Prepare Chunk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Chunk": {
+      "main": [
+        [
+          {
+            "node": "Loop Questions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Questions": {
+      "main": [
+        [
+          {
+            "node": "Merge Tips",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Request": {
+      "main": [
+        [
+          {
+            "node": "Anthropic Generate Tip",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Generate Tip": {
+      "main": [
+        [
+          {
+            "node": "Validate Tip",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Tip": {
+      "main": [
+        [
+          {
+            "node": "Tip Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tip Valid?": {
+      "main": [
+        [
+          {
+            "node": "Loop Questions",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Retry Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Retry Request": {
+      "main": [
+        [
+          {
+            "node": "Anthropic Retry Tip",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Retry Tip": {
+      "main": [
+        [
+          {
+            "node": "Validate Retry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Retry": {
+      "main": [
+        [
+          {
+            "node": "Loop Questions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Tips": {
+      "main": [
+        [
+          {
+            "node": "Commit Enabled?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Commit Enabled?": {
+      "main": [
+        [
+          {
+            "node": "Commit Tips File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Run Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Commit Tips File": {
+      "main": [
+        [
+          {
+            "node": "Run Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "exam-tip-agent",
+    "description": "Batch-generates SAP-C02 exam pattern tips. Reads data/<set>.json and prompts/exam-tip-persona.md from GitHub, calls Claude once per question with a cached persona prefix, validates each tip, retries failures once, then commits data/tips/<set>.json back. Edit the Job Config node per run."
+  }
+}

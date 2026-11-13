@@ -288,6 +288,46 @@ window.TestMaster.viewHelpers = (function createViewHelpersModule() {
     return setKey === "set1" ? "data/set1.json" : `data/${setKey}.json`;
   }
 
+  /**
+   * The Exam Tip + Ask AI Coach pair shown on a result row.
+   *
+   * quiz.js and mock.js each had their own line-for-line copy of the AI Coach
+   * button; this is that code, once.
+   *
+   * The whole row is handed to the Coach, not just the prompt and options, so
+   * the Exam Tip Engine prompt receives the recorded answer and explanation it
+   * is told to validate.
+   *
+   * @param {object} row a result row: { prompt, options, correctAnswers, explanation }
+   */
+  function buildQuestionAiActions(row) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "question-ai-actions";
+
+    if (window.TestMaster.aiCoach) {
+      const coachButton = document.createElement("button");
+      coachButton.type = "button";
+      coachButton.className = "ai-coach-button";
+      coachButton.title = "Ask the AWS SAP-C02 Coach about this question";
+
+      const coachIcon = document.createElement("span");
+      coachIcon.className = "ai-coach-icon";
+      coachIcon.setAttribute("aria-hidden", "true");
+      coachIcon.textContent = "AI";
+
+      coachButton.appendChild(coachIcon);
+      coachButton.append(" Ask AI Coach");
+
+      coachButton.addEventListener("click", () => {
+        window.TestMaster.aiCoach.askAboutQuestion(row);
+      });
+
+      wrapper.appendChild(coachButton);
+    }
+
+    return wrapper;
+  }
+
   return {
     renderQuestion,
     renderMeta,
@@ -298,6 +338,7 @@ window.TestMaster.viewHelpers = (function createViewHelpersModule() {
     getAvailableQuestionSets,
     getSelectedSetName,
     populateSetSelector,
-    resolveQuestionSetSource
+    resolveQuestionSetSource,
+    buildQuestionAiActions
   };
 })();

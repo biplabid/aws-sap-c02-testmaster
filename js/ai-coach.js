@@ -6,8 +6,11 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
 
   let elements = null;
   let currentQuestion = null;
+  // The last rendered answer, kept so the header tools have something to
+  // export. Cleared whenever a new request starts, so the tools can never
+  // act on a stale answer from a previous question.
+  let lastAnswer = null;
   let initialized = false;
-  let justOpened = false;
 
   function getConfig() {
     return window.TestMaster.config || {};
@@ -32,6 +35,12 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
       loading: document.querySelector("#aiPanelLoading"),
       error: document.querySelector("#aiPanelError"),
       answer: document.querySelector("#aiPanelAnswer"),
+      tools: document.querySelector("#aiPanelTools"),
+      detach: document.querySelector("#aiPanelDetach"),
+      print: document.querySelector("#aiPanelPrint"),
+      drive: document.querySelector("#aiPanelDrive"),
+      exportStatus: document.querySelector("#aiPanelExportStatus"),
+      title: document.querySelector(".ai-panel-title"),
       sidebarKeyLink: document.querySelector("#aiCoachKeyLink")
     };
   }
@@ -49,27 +58,7 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
 
     initialized = true;
 
-    elements.close.addEventListener("click", closePanel);
-
-    window.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && !elements.panel.classList.contains("hidden")) {
-        closePanel();
-      }
-    });
-
-    // The panel reserves its own space rather than covering the page, so
-    // there's no full-screen overlay element to catch "click outside" —
-    // detect it directly. justOpened skips the very click that opened the
-    // panel (still bubbling to document at the point this runs); it's
-    // cleared on the next tick, once that bubble phase has finished.
-    document.addEventListener("click", (event) => {
-      if (justOpened || elements.panel.classList.contains("hidden")) {
-        return;
-      }
-      if (!elements.panel.contains(event.target)) {
-        closePanel();
-      }
-    });
+    wireExportTools();
 
     elements.keySave.addEventListener("click", () => {
       const key = elements.keyInput.value.trim();
@@ -241,38 +230,118 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
     return htmlParts.join("");
   }
 
+  // Section 9 of the prompt promises the question, its options, and where
+  // available the recorded answer and explanation - the prompt is told to
+  // validate that answer rather than trust it, so withholding it would lose
+  // the check it is designed to make.
   function formatQuestionText(question) {
     const lines = [question.prompt, ""];
 
-    question.options.forEach((option) => {
+    (question.options || []).forEach((option) => {
       lines.push(`${option.id}. ${option.text}`);
     });
+
+    const answers = question.correctAnswers || [];
+    if (answers.length) {
+      lines.push("", `Recorded answer: ${answers.join(", ")}`);
+    }
+
+    if (question.explanation) {
+      lines.push("", "Recorded explanation:", question.explanation);
+    }
 
     return lines.join("\n");
   }
 
-  function showOnly(section) {
-    const sections = ["keySetup", "loading", "error", "answer"];
-    sections.forEach((name) => {
-      elements[name].classList.toggle("hidden", name !== section);
+  const SECTION_IDS = {
+    keySetup: "aiPanelKeySetup",
+    loading: "aiPanelLoading",
+    error: "aiPanelError",
+    answer: "aiPanelAnswer"
+  };
+
+
+  function setExportStatus(message, kind) {
+    if (!elements.exportStatus) {
+      return;
+    }
+    elements.exportStatus.textContent = message || "";
+    elements.exportStatus.className =
+      "ai-panel-export-status" + (message ? "" : " hidden") + (kind ? " ai-panel-export-" + kind : "");
+  }
+
+  function showTools(visible) {
+    if (elements.tools) {
+      elements.tools.classList.toggle("hidden", !visible);
+    }
+    if (!visible) {
+      setExportStatus("");
+    }
+  }
+
+  function wireExportTools() {
+    const exporter = window.TestMaster.aiExport;
+
+    if (!exporter || !elements.detach) {
+      return;
+    }
+
+    elements.detach.addEventListener("click", () => {
+      if (!lastAnswer) {
+        return;
+      }
+      // Opening the tab is what the person asked for, so the panel has done
+      // its job - leaving it open would just duplicate what is now in the tab.
+      const opened = exporter.detach(lastAnswer);
+      if (opened) {
+        closePanel();
+      } else {
+        setExportStatus("The new tab was blocked. Allow pop-ups for this site and try again.", "error");
+      }
+    });
+
+    elements.print.addEventListener("click", () => {
+      exporter.print();
+    });
+
+    elements.drive.addEventListener("click", async () => {
+      if (!lastAnswer) {
+        return;
+      }
+
+      elements.drive.disabled = true;
+      setExportStatus("Asking Google for permission to create the file\u2026");
+
+      try {
+        const file = await exporter.saveToDrive(lastAnswer);
+        setExportStatus("Saved to Google Drive as \u201C" + file.name + "\u201D.", "ok");
+        if (file.webViewLink) {
+          const link = document.createElement("a");
+          link.href = file.webViewLink;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.textContent = "Open in Drive";
+          elements.exportStatus.appendChild(document.createTextNode(" "));
+          elements.exportStatus.appendChild(link);
+        }
+      } catch (error) {
+        setExportStatus(error.message || String(error), "error");
+      } finally {
+        elements.drive.disabled = false;
+      }
     });
   }
 
-  function openPanel() {
-    elements.panel.classList.remove("hidden");
-    elements.backdrop.classList.remove("hidden");
-    document.body.classList.add("ai-panel-open");
+  function showOnly(section) {
+    window.TestMaster.aiPanel.showOnly(SECTION_IDS[section]);
+  }
 
-    justOpened = true;
-    window.setTimeout(() => {
-      justOpened = false;
-    }, 0);
+  function openPanel() {
+    window.TestMaster.aiPanel.openPanel("AWS SAP-C02 Coach");
   }
 
   function closePanel() {
-    elements.panel.classList.add("hidden");
-    elements.backdrop.classList.add("hidden");
-    document.body.classList.remove("ai-panel-open");
+    window.TestMaster.aiPanel.closePanel();
   }
 
   async function askAboutQuestion(question) {
@@ -285,6 +354,8 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
 
     if (!getApiKey()) {
       elements.keyInput.value = "";
+      lastAnswer = null;
+      showTools(false);
       showOnly("keySetup");
       return;
     }
@@ -298,6 +369,8 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
     }
 
     currentQuestion = null;
+    lastAnswer = null;
+    showTools(false);
     elements.keyInput.value = getApiKey();
     openPanel();
     showOnly("keySetup");
@@ -311,6 +384,9 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
       return;
     }
 
+    lastAnswer = null;
+    showTools(false);
+    setExportStatus("");
     showOnly("loading");
 
     const config = getConfig();
@@ -360,6 +436,13 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
         }
 
         elements.answer.innerHTML = renderMarkdown(text);
+        lastAnswer = {
+          answerHtml: elements.answer.innerHTML,
+          questionPrompt: currentQuestion ? currentQuestion.prompt : "",
+          questionOptions: currentQuestion ? currentQuestion.options || [] : [],
+          model
+        };
+        showTools(true);
         showOnly("answer");
         return;
       } catch (error) {

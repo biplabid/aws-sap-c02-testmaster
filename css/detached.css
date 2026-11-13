@@ -1,0 +1,206 @@
+/*
+ * The detached AI Coach view (detached.html).
+ *
+ * Standalone rather than reusing the app's stylesheets: this page has no
+ * sidebar, no views and no theme toggle, and it has to print cleanly. It
+ * repeats the answer typography from ai-panel.css deliberately — borrowing
+ * style.css would drag in layout rules that fight a single-column document.
+ */
+
+:root {
+  --d-text: #1f2733;
+  --d-muted: #6b7685;
+  --d-border: #d8dee9;
+  --d-surface: #f6f8fa;
+  --d-bg: #ffffff;
+  --d-accent: #2563eb;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--d-bg);
+  color: var(--d-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.55;
+}
+
+.hidden { display: none !important; }
+
+.detached-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 1.25rem;
+  background: var(--d-bg);
+  border-bottom: 1px solid var(--d-border);
+}
+
+.detached-brand {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--d-muted);
+}
+
+.detached-sep { opacity: 0.5; }
+
+.detached-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.detached-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--d-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--d-text);
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.detached-button:hover:not(:disabled) {
+  background: rgba(37, 99, 235, 0.08);
+  border-color: rgba(37, 99, 235, 0.5);
+}
+
+.detached-button:disabled { opacity: 0.5; cursor: default; }
+
+.detached-main {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 4rem;
+}
+
+.detached-status {
+  margin-bottom: 1rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.86rem;
+  background: var(--d-surface);
+  border: 1px solid var(--d-border);
+}
+
+.detached-status-ok {
+  background: rgba(46, 158, 107, 0.12);
+  border-color: rgba(46, 158, 107, 0.4);
+}
+
+.detached-status-error {
+  background: rgba(209, 84, 79, 0.12);
+  border-color: rgba(209, 84, 79, 0.4);
+}
+
+.detached-status a { color: var(--d-accent); }
+
+.detached-question {
+  background: var(--d-surface);
+  border-left: 3px solid #94a3b8;
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.75rem;
+  font-size: 0.92rem;
+}
+
+.detached-question-prompt { margin: 0 0 0.6rem; font-weight: 600; }
+.detached-question ul { margin: 0; padding-left: 1.1rem; }
+.detached-question li { margin-bottom: 0.25rem; }
+
+/* Answer typography, matching the in-app panel. */
+.detached-answer h1,
+.detached-answer h2,
+.detached-answer h3,
+.detached-answer h4 {
+  margin: 1.6rem 0 0.5rem;
+  line-height: 1.3;
+}
+
+.detached-answer h4 { font-size: 1.02rem; }
+.detached-answer p { margin: 0 0 0.8rem; }
+.detached-answer ul,
+.detached-answer ol { margin: 0 0 0.9rem; padding-left: 1.3rem; }
+.detached-answer li { margin-bottom: 0.3rem; }
+
+.detached-answer table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.8rem 0 1.2rem;
+  font-size: 0.89rem;
+}
+
+.detached-answer th,
+.detached-answer td {
+  border: 1px solid var(--d-border);
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.detached-answer th { background: var(--d-surface); }
+
+.detached-answer pre {
+  background: var(--d-surface);
+  padding: 0.75rem 0.9rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 0.85rem;
+}
+
+.detached-answer code {
+  background: var(--d-surface);
+  padding: 0.1rem 0.3rem;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+.detached-answer pre code { background: none; padding: 0; }
+
+.detached-meta {
+  margin-top: 2.5rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--d-border);
+  color: var(--d-muted);
+  font-size: 0.8rem;
+}
+
+/* The print path doubles as "Save as PDF" via the browser's print dialog, so
+   the toolbar and any transient status must not appear in the output. */
+@media print {
+  .detached-bar,
+  .detached-status { display: none !important; }
+
+  .detached-main { max-width: none; padding: 0; }
+
+  body { font-size: 11pt; }
+
+  .detached-answer table,
+  .detached-answer pre { page-break-inside: avoid; }
+
+  .detached-answer h1,
+  .detached-answer h2,
+  .detached-answer h3,
+  .detached-answer h4 { page-break-after: avoid; }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --d-text: #e6edf6;
+    --d-muted: #9aa7b8;
+    --d-border: #2b3647;
+    --d-surface: #161d29;
+    --d-bg: #0f172a;
+    --d-accent: #7aa2f7;
+  }
+}

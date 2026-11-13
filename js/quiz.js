@@ -143,8 +143,10 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
       appState.quiz.questions = session.questions;
       appState.quiz.answers = storage.loadAnswers(SESSION_ID);
       appState.quiz.currentIndex = session.currentIndex;
+      appState.quiz.setKey = (elements.setSelector && elements.setSelector.value) || appState.quiz.setKey || "set1";
     } else {
       const setKey = elements.setSelector ? elements.setSelector.value : "set1";
+      appState.quiz.setKey = setKey;
       const source = viewHelpers.resolveQuestionSetSource(setKey);
       const setName = viewHelpers.getSelectedSetName(elements.setSelector);
       appState.quiz.questions = await buildQuestionSet(appState, QUESTION_COUNT, source, setName);
@@ -351,6 +353,8 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
 
       return {
         index: index + 1,
+        id: question.id,
+        setKey: appState.quiz.setKey,
         prompt: question.prompt,
         options: question.options,
         selectedAnswers,
@@ -434,26 +438,6 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
     });
   }
 
-  function buildAiCoachButton(row) {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "ai-coach-button";
-    button.title = "Ask the AWS SAP-C02 Coach about this question";
-
-    const icon = document.createElement("span");
-    icon.className = "ai-coach-icon";
-    icon.setAttribute("aria-hidden", "true");
-    icon.textContent = "AI";
-
-    button.appendChild(icon);
-    button.append(" Ask AI Coach");
-
-    button.addEventListener("click", () => {
-      window.TestMaster.aiCoach.askAboutQuestion({ prompt: row.prompt, options: row.options });
-    });
-
-    return button;
-  }
 
   function buildSimpleRow(row) {
     const item = document.createElement("div");
@@ -508,7 +492,7 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
     headerLeft.appendChild(index);
     headerLeft.appendChild(badge);
     header.appendChild(headerLeft);
-    header.appendChild(buildAiCoachButton(row));
+    header.appendChild(viewHelpers.buildQuestionAiActions(row));
 
     const prompt = document.createElement("p");
     prompt.className = "result-row-prompt";
