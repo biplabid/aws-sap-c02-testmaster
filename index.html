@@ -1109,6 +1109,17 @@ Explanation: [Detailed explanation text...]
     <aside class="ai-panel hidden" id="aiPanel" aria-label="AWS SAP-C02 Coach" role="dialog" aria-modal="true">
       <div class="ai-panel-header">
         <span class="ai-panel-title">AWS SAP-C02 Coach</span>
+        <div class="ai-panel-tools hidden" id="aiPanelTools">
+          <button class="icon-button ai-panel-tool" type="button" id="aiPanelDetach" title="Open this answer in a separate tab" aria-label="Open in a separate tab">
+            <span aria-hidden="true">&#x2197;</span>
+          </button>
+          <button class="icon-button ai-panel-tool" type="button" id="aiPanelPrint" title="Print, or choose Save as PDF in the print dialog" aria-label="Print or save as PDF">
+            <span aria-hidden="true">&#x1F5A8;</span>
+          </button>
+          <button class="icon-button ai-panel-tool" type="button" id="aiPanelDrive" title="Save a copy to your Google Drive as a Doc" aria-label="Save to Google Drive">
+            <span aria-hidden="true">&#x25B2;</span>
+          </button>
+        </div>
         <button class="icon-button ai-panel-close" type="button" id="aiPanelClose" aria-label="Close AI Coach">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -1127,6 +1138,7 @@ Explanation: [Detailed explanation text...]
 
         <div class="ai-panel-error hidden" id="aiPanelError"></div>
 
+        <div class="ai-panel-export-status hidden" id="aiPanelExportStatus" role="status"></div>
         <div class="ai-panel-answer hidden" id="aiPanelAnswer"></div>
       </div>
     </aside>
@@ -1147,6 +1159,7 @@ Explanation: [Detailed explanation text...]
   <script src="js/ui.js"></script>
   <script src="js/view-helpers.js"></script>
   <script src="js/ai-panel.js"></script>
+  <script src="js/ai-export.js"></script>
   <script src="js/ai-coach.js"></script>
   <script src="js/exam.js"></script>
   <script src="js/timer.js"></script>

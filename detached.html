@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Exam Tip — AWS SAP-C02 TestMaster</title>
+  <link rel="stylesheet" href="css/detached.css">
+</head>
+<body>
+  <header class="detached-bar">
+    <span class="detached-brand">AWS SAP-C02 TestMaster <span class="detached-sep">·</span> Ask AI Coach</span>
+    <div class="detached-actions">
+      <button class="detached-button" type="button" id="detachedPrint" title="Print, or choose Save as PDF in the print dialog">
+        <span aria-hidden="true">🖨</span> Print / Save as PDF
+      </button>
+      <button class="detached-button" type="button" id="detachedDrive" title="Save a copy to your Google Drive as a Doc">
+        <span aria-hidden="true">▲</span> Save to Drive
+      </button>
+    </div>
+  </header>
+
+  <main class="detached-main">
+    <div class="detached-status hidden" id="detachedStatus" role="status"></div>
+    <div class="detached-question hidden" id="detachedQuestion"></div>
+    <article class="detached-answer ai-panel-answer" id="detachedAnswer"></article>
+    <p class="detached-meta" id="detachedMeta"></p>
+  </main>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="js/config.js"></script>
+  <script src="js/ai-export.js"></script>
+  <script>
+    (function initDetachedView() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+      const payload = id ? window.TestMaster.aiExport.readHandoff(id) : null;
+
+      const answerEl = document.querySelector("#detachedAnswer");
+      const questionEl = document.querySelector("#detachedQuestion");
+      const metaEl = document.querySelector("#detachedMeta");
+      const statusEl = document.querySelector("#detachedStatus");
+
+      function setStatus(message, kind) {
+        statusEl.textContent = message;
+        statusEl.className = "detached-status" + (kind ? " detached-status-" + kind : "");
+      }
+
+      if (!payload) {
+        answerEl.innerHTML =
+          "<p>This answer is no longer available. Detached answers are kept for an hour; " +
+          "ask the Coach again from the app to get a fresh one.</p>";
+        document.querySelector("#detachedPrint").disabled = true;
+        document.querySelector("#detachedDrive").disabled = true;
+        return;
+      }
+
+      document.title = payload.title || document.title;
+
+      if (payload.questionPrompt) {
+        const prompt = document.createElement("p");
+        prompt.className = "detached-question-prompt";
+        prompt.textContent = payload.questionPrompt;
+        questionEl.appendChild(prompt);
+
+        if (payload.questionOptions && payload.questionOptions.length) {
+          const list = document.createElement("ul");
+          payload.questionOptions.forEach((option) => {
+            const item = document.createElement("li");
+            const letter = document.createElement("strong");
+            letter.textContent = option.id + ". ";
+            item.appendChild(letter);
+            item.appendChild(document.createTextNode(option.text));
+            list.appendChild(item);
+          });
+          questionEl.appendChild(list);
+        }
+        questionEl.classList.remove("hidden");
+      }
+
+      // answerHtml was produced by ai-coach.js's renderMarkdown, which escapes
+      // the model's text before building any markup.
+      answerEl.innerHTML = payload.answerHtml || "";
+
+      metaEl.textContent =
+        "Generated " + new Date(payload.savedAt).toLocaleString() +
+        (payload.model ? " · " + payload.model : "");
+
+      document.querySelector("#detachedPrint").addEventListener("click", () => {
+        window.print();
+      });
+
+      document.querySelector("#detachedDrive").addEventListener("click", async (event) => {
+        const button = event.currentTarget;
+        button.disabled = true;
+        setStatus("Asking Google for permission to create the file…");
+
+        try {
+          const file = await window.TestMaster.aiExport.saveToDrive(payload);
+          setStatus("Saved to Google Drive as “" + file.name + "”.", "ok");
+          if (file.webViewLink) {
+            const link = document.createElement("a");
+            link.href = file.webViewLink;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            link.textContent = "Open in Drive";
+            statusEl.appendChild(document.createTextNode(" "));
+            statusEl.appendChild(link);
+          }
+        } catch (error) {
+          setStatus(error.message || String(error), "error");
+        } finally {
+          button.disabled = false;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

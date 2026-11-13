@@ -30,17 +30,45 @@ const { window } = dom;
 
 // Capture what the Coach sends rather than calling Groq for real.
 let lastRequest = null;
+let driveRequest = null;
 window.fetch = async (url, init) => {
-  lastRequest = { url: String(url), body: JSON.parse(init.body) };
+  const href = String(url);
+  if (href.includes("googleapis.com/upload/drive")) {
+    driveRequest = { url: href, headers: init.headers, body: init.body };
+    return { ok: true, json: async () => ({ id: "drive-1", name: "Exam Tip — stub", webViewLink: "https://drive.google.com/x" }) };
+  }
+  lastRequest = { url: href, body: JSON.parse(init.body) };
   return {
     ok: true,
-    json: async () => ({ choices: [{ message: { content: "### 🎯 EXAM TIP\n\nStub answer." } }] }),
+    json: async () => ({ choices: [{ message: { content: "### 🎯 EXAM TIP\n\nStub answer.\n\n| a | b |\n|---|---|\n| 1 | 2 |" } }] }),
   };
+};
+
+// window.open is not implemented in jsdom; record the call instead.
+let openedUrl = null;
+window.open = (url) => {
+  openedUrl = String(url);
+  return { focus() {} };
+};
+
+// Stand in for Google Identity Services, which the Drive token client needs.
+window.google = {
+  accounts: {
+    oauth2: {
+      initTokenClient: (cfg) => ({
+        requestedScope: cfg.scope,
+        callback: null,
+        requestAccessToken() {
+          this.callback({ access_token: "ya29.stub-token" });
+        },
+      }),
+    },
+  },
 };
 // Seed the key through storage.js rather than raw localStorage: it namespaces
 // every key with an app prefix, so a raw write is invisible to the Coach.
 
-for (const s of ["js/storage.js", "js/config.js", "js/ai-panel.js", "js/ai-coach.js"]) {
+for (const s of ["js/storage.js", "js/config.js", "js/ai-panel.js", "js/ai-export.js", "js/ai-coach.js"]) {
   try {
     window.eval(readFileSync(`${REPO}${s}`, "utf8"));
   } catch (e) {
@@ -122,6 +150,55 @@ check("reopens", isOpen(), true);
 window.document.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
 window.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Escape" }));
 check("Escape closes the panel", isOpen(), false);
+
+// --- header tools: detach, print, Save to Drive ---------------------------
+TM.aiCoach.askAboutQuestion(QUESTION);
+await new Promise((r) => setTimeout(r, 20));
+
+const tools = window.document.querySelector("#aiPanelTools");
+check("tools appear once there is an answer", tools.classList.contains("hidden"), false);
+
+// Detach must hand over a same-origin page, not a blob: URL — Electron sends
+// window.open URLs to the system browser, which cannot resolve a blob.
+clickReal(window.document.querySelector("#aiPanelDetach"));
+check("detach opened a tab", Boolean(openedUrl), true);
+check("  to a same-origin page", openedUrl.startsWith("detached.html?id="), true);
+check("  not a blob URL", openedUrl.startsWith("blob:"), false);
+check("detach closes the panel", isOpen(), false);
+
+const handoffId = new URLSearchParams(openedUrl.split("?")[1]).get("id");
+const handoff = TM.aiExport.readHandoff(handoffId);
+check("handoff was stored", Boolean(handoff), true);
+check("  carries the answer", handoff.answerHtml.includes("EXAM TIP"), true);
+check("  carries the question", handoff.questionPrompt.includes("detect public S3 objects"), true);
+
+// Print
+let printed = false;
+window.print = () => { printed = true; };
+TM.aiCoach.askAboutQuestion(QUESTION);
+await new Promise((r) => setTimeout(r, 20));
+clickReal(window.document.querySelector("#aiPanelPrint"));
+check("print button calls window.print", printed, true);
+check("  and leaves the panel open", isOpen(), true);
+
+// Drive
+clickReal(window.document.querySelector("#aiPanelDrive"));
+await new Promise((r) => setTimeout(r, 30));
+check("drive upload was attempted", Boolean(driveRequest), true);
+if (driveRequest) {
+  check("  uses multipart upload", driveRequest.url.includes("uploadType=multipart"), true);
+  check("  sends a bearer token", String(driveRequest.headers.Authorization).startsWith("Bearer "), true);
+  check("  asks Drive to convert to a Doc",
+    driveRequest.body.includes("application/vnd.google-apps.document"), true);
+  check("  sends the answer as HTML", driveRequest.body.includes("Content-Type: text/html"), true);
+  check("  includes the rendered answer", driveRequest.body.includes("EXAM TIP"), true);
+}
+check("drive status is reported", window.document.querySelector("#aiPanelExportStatus").textContent.includes("Saved to Google Drive"), true);
+
+// Asking a new question must invalidate the previous answer's tools
+TM.aiCoach.askAboutQuestion(QUESTION);
+check("a new request hides the tools until it answers", tools.classList.contains("hidden"), true);
+await new Promise((r) => setTimeout(r, 20));
 
 // --- the catalogue is data, not prose --------------------------------------
 check("catalogue is exposed as data", Array.isArray(TM.config.EXAM_PATTERNS), true);

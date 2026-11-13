@@ -25,6 +25,7 @@
     "asar": true,
     "files": [
       "index.html",
+      "detached.html",
       "css/**/*",
       "js/**/*",
       "data/**/*",

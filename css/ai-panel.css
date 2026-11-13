@@ -230,3 +230,89 @@
     background: rgba(15, 23, 42, 0.35);
   }
 }
+
+/* --- Panel header tools: detach, print, Save to Drive -------------------- */
+/* Shown only once an answer exists; there is nothing to export before that. */
+
+.ai-panel-tools {
+  display: flex;
+  gap: 0.15rem;
+  margin-left: auto;
+  margin-right: 0.25rem;
+}
+
+.ai-panel-tools.hidden { display: none; }
+
+.ai-panel-tool {
+  font-size: 0.95rem;
+  line-height: 1;
+  opacity: 0.75;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.ai-panel-tool:hover:not(:disabled) { opacity: 1; }
+.ai-panel-tool:disabled { opacity: 0.35; cursor: default; }
+
+.ai-panel-export-status {
+  margin: 0 0 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  background: rgba(127, 140, 160, 0.1);
+  border: 1px solid rgba(127, 140, 160, 0.25);
+}
+
+.ai-panel-export-ok {
+  background: rgba(46, 158, 107, 0.12);
+  border-color: rgba(46, 158, 107, 0.4);
+}
+
+.ai-panel-export-error {
+  background: rgba(209, 84, 79, 0.12);
+  border-color: rgba(209, 84, 79, 0.4);
+}
+
+/* --- Printing from inside the app ---------------------------------------- */
+/* The print button doubles as "Save as PDF" through the browser's print
+   dialog, so the page must reduce to just the answer. Without this the whole
+   app shell - sidebar, nav, the question behind the panel - prints too. */
+
+@media print {
+  body.ai-panel-open > *:not(.ai-panel) { display: none !important; }
+
+  body.ai-panel-open .ai-panel {
+    position: static !important;
+    display: block !important;
+    width: auto !important;
+    max-width: none !important;
+    height: auto !important;
+    max-height: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+    overflow: visible !important;
+  }
+
+  body.ai-panel-open .ai-panel-header,
+  body.ai-panel-open .ai-panel-tools,
+  body.ai-panel-open .ai-panel-close,
+  body.ai-panel-open .ai-panel-export-status,
+  body.ai-panel-open .ai-panel-key-setup,
+  body.ai-panel-open .ai-panel-loading { display: none !important; }
+
+  body.ai-panel-open .ai-panel-body,
+  body.ai-panel-open .ai-panel-answer {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  .ai-panel-answer table,
+  .ai-panel-answer pre { page-break-inside: avoid; }
+
+  .ai-panel-answer h1,
+  .ai-panel-answer h2,
+  .ai-panel-answer h3,
+  .ai-panel-answer h4 { page-break-after: avoid; }
+}

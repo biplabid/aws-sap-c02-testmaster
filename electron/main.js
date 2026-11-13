@@ -44,7 +44,26 @@ function createWindow() {
 
   mainWindow.loadURL(`http://127.0.0.1:${serverPort}/index.html`);
 
+  const appOrigin = `http://127.0.0.1:${serverPort}`;
+
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    // The AI Coach detach button opens detached.html, which is served by this
+    // app own local server. Handing that to the system browser would send it
+    // a URL only this process can serve, so same-origin pages open as a real
+    // child window and everything else still goes to the default browser.
+    if (url.startsWith(appOrigin)) {
+      return {
+        action: "allow",
+        overrideBrowserWindowOptions: {
+          width: 900,
+          height: 940,
+          autoHideMenuBar: true,
+          backgroundColor: "#ffffff",
+          webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true }
+        }
+      };
+    }
+
     shell.openExternal(url);
     return { action: "deny" };
   });
