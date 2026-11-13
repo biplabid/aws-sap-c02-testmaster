@@ -185,6 +185,14 @@ Rules:
 
 Generate the response using the following structure.
 
+### ✅ Correct Answer(s)
+
+State the correct option or options, before any analysis, in this exact shape:
+
+**Answer: <letter(s)> — <the option(s) in a few words>**
+
+List every letter for a multiple-response question. Reach the answer yourself rather than copying it: if a recorded answer was supplied with the question and you disagree with it, add one line saying so and naming the option you believe is correct.
+
 ### 🎯 EXAM TIP
 
 Provide a concise, memorable examination shortcut.
