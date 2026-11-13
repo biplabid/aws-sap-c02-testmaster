@@ -31,11 +31,7 @@ const { window } = dom;
 // Capture what the Coach sends rather than calling Groq for real.
 // A full answer in the prompt's own shape, so the fold is exercised against
 // what the model is actually told to produce.
-const FULL_ANSWER = "### ✅ Correct Answer(s)
-
-**Answer: B — CloudTrail data events with an EventBridge rule**
-
-### 🎯 EXAM TIP\n\nDetected immediately after upload means CloudTrail data events plus EventBridge.\n\n### 📇 Pattern\n\n**ET-001 — Real-time S3 security** · CloudTrail → EventBridge\n\n### 1. Identify the Trigger Words\n\n| Question phrase | What it signals |\n|---|---|\n| Immediately after upload | Event-driven detection |\n\n### 2. Think Like the Examiner\n\nPolling cannot meet an immediacy requirement.\n\n### 3. Correct Option Identification Logic\n\nRequirement to AWS capability to service.\n\n### 4. Eliminate the Distractors\n\nThe nightly scan is periodic, so it fails the immediacy requirement.\n\n### 5. Remember This AWS Pattern\n\n- EventBridge = react to events.\n\n### 6. One-Line Memory Hook\n\nAPI activity to CloudTrail.\n\n### 7. Exam-Day Decision Rule\n\nImmediate plus object-level means data events.";
+const FULL_ANSWER = "### ✅ Correct Answer(s)\n\n**Answer: B — CloudTrail data events with an EventBridge rule**\n\n### 🎯 EXAM TIP\n\nDetected immediately after upload means CloudTrail data events plus EventBridge.\n\n### 📇 Pattern\n\n**ET-001 — Real-time S3 security** · CloudTrail → EventBridge\n\n### 1. Identify the Trigger Words\n\n| Question phrase | What it signals |\n|---|---|\n| Immediately after upload | Event-driven detection |\n\n### 2. Think Like the Examiner\n\nPolling cannot meet an immediacy requirement.\n\n### 3. Correct Option Identification Logic\n\nRequirement to AWS capability to service.\n\n### 4. Eliminate the Distractors\n\nThe nightly scan is periodic, so it fails the immediacy requirement.\n\n### 5. Remember This AWS Pattern\n\n- EventBridge = react to events.\n\n### 6. One-Line Memory Hook\n\nAPI activity to CloudTrail.\n\n### 7. Exam-Day Decision Rule\n\nImmediate plus object-level means data events.";
 
 let lastRequest = null;
 let driveRequest = null;
