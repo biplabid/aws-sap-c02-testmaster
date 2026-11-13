@@ -967,7 +967,7 @@ window.TestMaster.mock = (function createMockModule(storage, timerFactory, viewH
     headerLeft.appendChild(index);
     headerLeft.appendChild(badge);
     header.appendChild(headerLeft);
-    header.appendChild(viewHelpers.buildQuestionAiActions(row, null));
+    header.appendChild(viewHelpers.buildQuestionAiActions(row));
 
     const prompt = document.createElement("p");
     prompt.className = "result-row-prompt";

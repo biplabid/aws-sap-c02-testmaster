@@ -31,7 +31,6 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
       loading: document.querySelector("#aiPanelLoading"),
       error: document.querySelector("#aiPanelError"),
       answer: document.querySelector("#aiPanelAnswer"),
-      tip: document.querySelector("#aiPanelTip"),
       title: document.querySelector(".ai-panel-title"),
       sidebarKeyLink: document.querySelector("#aiCoachKeyLink")
     };
@@ -220,12 +219,25 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
     return htmlParts.join("");
   }
 
+  // Section 9 of the prompt promises the question, its options, and where
+  // available the recorded answer and explanation - the prompt is told to
+  // validate that answer rather than trust it, so withholding it would lose
+  // the check it is designed to make.
   function formatQuestionText(question) {
     const lines = [question.prompt, ""];
 
-    question.options.forEach((option) => {
+    (question.options || []).forEach((option) => {
       lines.push(`${option.id}. ${option.text}`);
     });
+
+    const answers = question.correctAnswers || [];
+    if (answers.length) {
+      lines.push("", `Recorded answer: ${answers.join(", ")}`);
+    }
+
+    if (question.explanation) {
+      lines.push("", "Recorded explanation:", question.explanation);
+    }
 
     return lines.join("\n");
   }

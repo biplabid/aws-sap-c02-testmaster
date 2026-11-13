@@ -492,7 +492,7 @@ window.TestMaster.quiz = (function createQuizModule(storage, timerFactory, viewH
     headerLeft.appendChild(index);
     headerLeft.appendChild(badge);
     header.appendChild(headerLeft);
-    header.appendChild(viewHelpers.buildQuestionAiActions(row, row.setKey));
+    header.appendChild(viewHelpers.buildQuestionAiActions(row));
 
     const prompt = document.createElement("p");
     prompt.className = "result-row-prompt";

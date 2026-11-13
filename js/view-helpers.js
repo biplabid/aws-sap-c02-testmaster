@@ -292,36 +292,17 @@ window.TestMaster.viewHelpers = (function createViewHelpersModule() {
    * The Exam Tip + Ask AI Coach pair shown on a result row.
    *
    * quiz.js and mock.js each had their own line-for-line copy of the AI Coach
-   * button; this is that code, once, with the Exam Tip button alongside it.
+   * button; this is that code, once.
    *
-   * @param {object} row       a result row: { prompt, options, id }
-   * @param {string|null} setKey the set the question came from. Mock Exam
-   *        namespaces ids as "set1:14" and passes null here.
+   * The whole row is handed to the Coach, not just the prompt and options, so
+   * the Exam Tip Engine prompt receives the recorded answer and explanation it
+   * is told to validate.
+   *
+   * @param {object} row a result row: { prompt, options, correctAnswers, explanation }
    */
-  function buildQuestionAiActions(row, setKey) {
+  function buildQuestionAiActions(row) {
     const wrapper = document.createElement("div");
     wrapper.className = "question-ai-actions";
-
-    if (window.TestMaster.examTip && row && row.id !== undefined && row.id !== null) {
-      const tipButton = document.createElement("button");
-      tipButton.type = "button";
-      tipButton.className = "exam-tip-button";
-      tipButton.title = "Show the exam pattern tip for this question";
-
-      const tipIcon = document.createElement("span");
-      tipIcon.className = "exam-tip-icon";
-      tipIcon.setAttribute("aria-hidden", "true");
-      tipIcon.textContent = "⚡";
-
-      tipButton.appendChild(tipIcon);
-      tipButton.append(" Exam Tip");
-
-      tipButton.addEventListener("click", () => {
-        window.TestMaster.examTip.showTipFor(setKey || null, row.id);
-      });
-
-      wrapper.appendChild(tipButton);
-    }
 
     if (window.TestMaster.aiCoach) {
       const coachButton = document.createElement("button");
@@ -338,7 +319,7 @@ window.TestMaster.viewHelpers = (function createViewHelpersModule() {
       coachButton.append(" Ask AI Coach");
 
       coachButton.addEventListener("click", () => {
-        window.TestMaster.aiCoach.askAboutQuestion({ prompt: row.prompt, options: row.options });
+        window.TestMaster.aiCoach.askAboutQuestion(row);
       });
 
       wrapper.appendChild(coachButton);
