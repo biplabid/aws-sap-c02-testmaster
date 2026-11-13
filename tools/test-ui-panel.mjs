@@ -31,7 +31,11 @@ const { window } = dom;
 // Capture what the Coach sends rather than calling Groq for real.
 // A full answer in the prompt's own shape, so the fold is exercised against
 // what the model is actually told to produce.
-const FULL_ANSWER = "### 🎯 EXAM TIP\n\nDetected immediately after upload means CloudTrail data events plus EventBridge.\n\n### 📇 Pattern\n\n**ET-001 — Real-time S3 security** · CloudTrail → EventBridge\n\n### 1. Identify the Trigger Words\n\n| Question phrase | What it signals |\n|---|---|\n| Immediately after upload | Event-driven detection |\n\n### 2. Think Like the Examiner\n\nPolling cannot meet an immediacy requirement.\n\n### 3. Correct Option Identification Logic\n\nRequirement to AWS capability to service.\n\n### 4. Eliminate the Distractors\n\nThe nightly scan is periodic, so it fails the immediacy requirement.\n\n### 5. Remember This AWS Pattern\n\n- EventBridge = react to events.\n\n### 6. One-Line Memory Hook\n\nAPI activity to CloudTrail.\n\n### 7. Exam-Day Decision Rule\n\nImmediate plus object-level means data events.";
+const FULL_ANSWER = "### ✅ Correct Answer(s)
+
+**Answer: B — CloudTrail data events with an EventBridge rule**
+
+### 🎯 EXAM TIP\n\nDetected immediately after upload means CloudTrail data events plus EventBridge.\n\n### 📇 Pattern\n\n**ET-001 — Real-time S3 security** · CloudTrail → EventBridge\n\n### 1. Identify the Trigger Words\n\n| Question phrase | What it signals |\n|---|---|\n| Immediately after upload | Event-driven detection |\n\n### 2. Think Like the Examiner\n\nPolling cannot meet an immediacy requirement.\n\n### 3. Correct Option Identification Logic\n\nRequirement to AWS capability to service.\n\n### 4. Eliminate the Distractors\n\nThe nightly scan is periodic, so it fails the immediacy requirement.\n\n### 5. Remember This AWS Pattern\n\n- EventBridge = react to events.\n\n### 6. One-Line Memory Hook\n\nAPI activity to CloudTrail.\n\n### 7. Exam-Day Decision Rule\n\nImmediate plus object-level means data events.";
 
 let lastRequest = null;
 let driveRequest = null;
@@ -136,6 +140,7 @@ if (lastRequest) {
   check("  old persona is gone", sys.includes("High-Yield AWS SAP-C02 Exam Coach"), false);
   check("  carries the pattern catalogue", sys.includes("| ET-005 | Asynchronous decoupling | SQS |"), true);
   check("  requires a pattern line", sys.includes("### 📇 Pattern"), true);
+  check("  asks for the answer(s) before the tip", sys.indexOf("### ✅ Correct Answer(s)") < sys.indexOf("### 🎯 EXAM TIP"), true);
   check("  says a tip must transfer", sys.includes("has failed"), true);
 
   check("user message has the question", user.includes("detect public S3 objects"), true);
