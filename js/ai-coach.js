@@ -7,7 +7,6 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
   let elements = null;
   let currentQuestion = null;
   let initialized = false;
-  let justOpened = false;
 
   function getConfig() {
     return window.TestMaster.config || {};
@@ -50,28 +49,6 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
     }
 
     initialized = true;
-
-    elements.close.addEventListener("click", closePanel);
-
-    window.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && !elements.panel.classList.contains("hidden")) {
-        closePanel();
-      }
-    });
-
-    // The panel reserves its own space rather than covering the page, so
-    // there's no full-screen overlay element to catch "click outside" —
-    // detect it directly. justOpened skips the very click that opened the
-    // panel (still bubbling to document at the point this runs); it's
-    // cleared on the next tick, once that bubble phase has finished.
-    document.addEventListener("click", (event) => {
-      if (justOpened || elements.panel.classList.contains("hidden")) {
-        return;
-      }
-      if (!elements.panel.contains(event.target)) {
-        closePanel();
-      }
-    });
 
     elements.keySave.addEventListener("click", () => {
       const key = elements.keyInput.value.trim();
@@ -253,35 +230,23 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
     return lines.join("\n");
   }
 
+  const SECTION_IDS = {
+    keySetup: "aiPanelKeySetup",
+    loading: "aiPanelLoading",
+    error: "aiPanelError",
+    answer: "aiPanelAnswer"
+  };
+
   function showOnly(section) {
-    // "tip" belongs to exam-tip.js but shares this panel body, so it is hidden
-    // here too - otherwise a tip stays on screen underneath a Coach answer.
-    const sections = ["keySetup", "loading", "error", "answer", "tip"];
-    sections.forEach((name) => {
-      if (elements[name]) {
-        elements[name].classList.toggle("hidden", name !== section);
-      }
-    });
+    window.TestMaster.aiPanel.showOnly(SECTION_IDS[section]);
   }
 
   function openPanel() {
-    if (elements.title) {
-      elements.title.textContent = "AWS SAP-C02 Coach";
-    }
-    elements.panel.classList.remove("hidden");
-    elements.backdrop.classList.remove("hidden");
-    document.body.classList.add("ai-panel-open");
-
-    justOpened = true;
-    window.setTimeout(() => {
-      justOpened = false;
-    }, 0);
+    window.TestMaster.aiPanel.openPanel("AWS SAP-C02 Coach");
   }
 
   function closePanel() {
-    elements.panel.classList.add("hidden");
-    elements.backdrop.classList.add("hidden");
-    document.body.classList.remove("ai-panel-open");
+    window.TestMaster.aiPanel.closePanel();
   }
 
   async function askAboutQuestion(question) {

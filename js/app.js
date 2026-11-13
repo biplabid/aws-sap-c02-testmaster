@@ -23,6 +23,10 @@
     window.TestMaster.analytics.initAnalyticsShell(appState);
   }
 
+  if (window.TestMaster.aiPanel) {
+    window.TestMaster.aiPanel.initAiPanel();
+  }
+
   if (window.TestMaster.aiCoach) {
     window.TestMaster.aiCoach.initAiCoach();
   }

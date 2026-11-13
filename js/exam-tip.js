@@ -13,11 +13,8 @@ window.TestMaster = window.TestMaster || {};
  * second overlay.
  */
 window.TestMaster.examTip = (function createExamTipModule(tipLoader) {
-  const DEFAULT_TITLE = "AWS SAP-C02 Coach";
-
   let elements = null;
   let initialized = false;
-  let justOpened = false;
 
   function getElements() {
     return {
@@ -43,57 +40,17 @@ window.TestMaster.examTip = (function createExamTipModule(tipLoader) {
 
     initialized = true;
 
-    // Close behaviour mirrors ai-coach.js so the two feel like one panel.
-    window.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && !elements.panel.classList.contains("hidden")) {
-        closePanel();
-      }
-    });
-
-    document.addEventListener("click", (event) => {
-      if (justOpened || elements.panel.classList.contains("hidden")) {
-        return;
-      }
-      if (!elements.panel.contains(event.target)) {
-        closePanel();
-      }
-    });
   }
 
   function openPanel(title) {
-    elements.panel.classList.remove("hidden");
-    elements.backdrop.classList.remove("hidden");
-    document.body.classList.add("ai-panel-open");
-
-    if (elements.title) {
-      elements.title.textContent = title;
-    }
-
-    justOpened = true;
-    window.setTimeout(() => {
-      justOpened = false;
-    }, 0);
+    window.TestMaster.aiPanel.openPanel(title);
   }
 
-  function closePanel() {
-    elements.panel.classList.add("hidden");
-    elements.backdrop.classList.add("hidden");
-    document.body.classList.remove("ai-panel-open");
-
-    if (elements.title) {
-      elements.title.textContent = DEFAULT_TITLE;
-    }
-  }
 
   /**
    * Hides every section of the shared panel body, so a tip never renders
    * underneath a leftover AI Coach answer and vice versa.
    */
-  function hideAllSections() {
-    Array.prototype.forEach.call(elements.body.children, (child) => {
-      child.classList.add("hidden");
-    });
-  }
 
   function clearElement(node) {
     while (node.firstChild) {
@@ -182,8 +139,7 @@ window.TestMaster.examTip = (function createExamTipModule(tipLoader) {
     }
 
     openPanel("Exam Tip");
-    hideAllSections();
-    elements.tip.classList.remove("hidden");
+    window.TestMaster.aiPanel.showOnly("aiPanelTip");
     renderEmpty("Looking up tip…");
 
     let tip = null;
