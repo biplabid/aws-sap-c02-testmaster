@@ -316,3 +316,59 @@
   .ai-panel-answer h3,
   .ai-panel-answer h4 { page-break-after: avoid; }
 }
+
+/* --- "View more" fold ---------------------------------------------------- */
+/* The panel shows the tip and its pattern; the analysis sections below are a
+   click away so the tip itself stays at the top of a narrow panel. */
+
+.ai-panel-more.hidden { display: none; }
+
+.ai-panel-more {
+  margin-top: 0.4rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(127, 140, 160, 0.25);
+}
+
+.ai-panel-more-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.9rem;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid rgba(127, 140, 160, 0.35);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.ai-panel-more-toggle:hover {
+  background: rgba(9, 114, 211, 0.1);
+  border-color: rgba(9, 114, 211, 0.5);
+}
+
+.ai-panel-more-toggle:focus-visible {
+  outline: 2px solid rgba(9, 114, 211, 0.7);
+  outline-offset: 2px;
+}
+
+.ai-panel-more-toggle::after {
+  content: "▾";
+  font-size: 0.8em;
+  opacity: 0.7;
+}
+
+.ai-panel-more-toggle[aria-expanded="true"]::after { content: "▴"; }
+
+/* Printing is a document, not a glance: show the folded sections and drop the
+   control that would otherwise print as a dead button. */
+@media print {
+  .ai-panel-more,
+  .ai-panel-more.hidden { display: block !important; }
+
+  .ai-panel-more-toggle { display: none !important; }
+}

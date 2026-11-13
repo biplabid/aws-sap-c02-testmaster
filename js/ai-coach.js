@@ -332,6 +332,73 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
     });
   }
 
+  /**
+   * Collapses everything after the Pattern line behind a "View more" toggle.
+   *
+   * The panel is for the bit you read in seconds — the tip and the pattern it
+   * files under. The seven analysis sections that follow are worth having, but
+   * not at the cost of pushing the tip off the top of a narrow panel. The
+   * detached tab, the print output and the Drive copy are unaffected: they get
+   * the full answer, because those are documents rather than a glance.
+   */
+  function applyProgressiveDisclosure(container) {
+    const nodes = Array.prototype.slice.call(container.children);
+    const isHeading = (node) => /^H[1-6]$/.test(node.tagName);
+    const PATTERN_EMOJI = /\u{1F4C7}/u;
+
+    // The pattern line is the intended fold. A small model sometimes drops the
+    // emoji, so fall back to a heading that merely says "Pattern", and then to
+    // the first numbered section — rather than showing the whole wall of text.
+    let patternIndex = nodes.findIndex(
+      (node) => isHeading(node) && PATTERN_EMOJI.test(node.textContent)
+    );
+
+    if (patternIndex === -1) {
+      patternIndex = nodes.findIndex(
+        (node) => isHeading(node) && /^\s*pattern\b/i.test(node.textContent)
+      );
+    }
+
+    let foldIndex;
+    if (patternIndex === -1) {
+      foldIndex = nodes.findIndex(
+        (node) => isHeading(node) && /^\s*\d+\.\s/.test(node.textContent)
+      );
+    } else {
+      foldIndex = nodes.findIndex((node, index) => index > patternIndex && isHeading(node));
+    }
+
+    // Nothing after the fold, or the fold would hide everything: leave as is.
+    if (foldIndex <= 0 || foldIndex >= nodes.length) {
+      return;
+    }
+
+    const rest = document.createElement("div");
+    rest.className = "ai-panel-more hidden";
+    rest.id = "aiPanelMore";
+    nodes.slice(foldIndex).forEach((node) => rest.appendChild(node));
+
+    const sectionCount = rest.querySelectorAll("h1, h2, h3, h4, h5, h6").length;
+    const label = (expanded) =>
+      expanded ? "View less" : `View more${sectionCount ? ` (${sectionCount} sections)` : ""}`;
+
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "ai-panel-more-toggle";
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-controls", "aiPanelMore");
+    toggle.textContent = label(false);
+
+    toggle.addEventListener("click", () => {
+      const expanded = !rest.classList.toggle("hidden");
+      toggle.setAttribute("aria-expanded", String(expanded));
+      toggle.textContent = label(expanded);
+    });
+
+    container.appendChild(toggle);
+    container.appendChild(rest);
+  }
+
   function showOnly(section) {
     window.TestMaster.aiPanel.showOnly(SECTION_IDS[section]);
   }
@@ -435,13 +502,20 @@ window.TestMaster.aiCoach = (function createAiCoachModule(storage) {
           throw new Error("AI Coach didn't return an answer for this question.");
         }
 
-        elements.answer.innerHTML = renderMarkdown(text);
+        const answerHtml = renderMarkdown(text);
+        elements.answer.innerHTML = answerHtml;
+
+        // Captured before the fold is applied, so detaching, printing and the
+        // Drive copy all get the complete answer rather than the panel's
+        // collapsed view.
         lastAnswer = {
-          answerHtml: elements.answer.innerHTML,
+          answerHtml,
           questionPrompt: currentQuestion ? currentQuestion.prompt : "",
           questionOptions: currentQuestion ? currentQuestion.options || [] : [],
           model
         };
+
+        applyProgressiveDisclosure(elements.answer);
         showTools(true);
         showOnly("answer");
         return;
