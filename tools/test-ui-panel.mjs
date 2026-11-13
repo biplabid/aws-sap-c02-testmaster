@@ -29,6 +29,10 @@ const dom = new JSDOM(readFileSync(`${REPO}index.html`, "utf8"), {
 const { window } = dom;
 
 // Capture what the Coach sends rather than calling Groq for real.
+// A full answer in the prompt's own shape, so the fold is exercised against
+// what the model is actually told to produce.
+const FULL_ANSWER = "### 🎯 EXAM TIP\n\nDetected immediately after upload means CloudTrail data events plus EventBridge.\n\n### 📇 Pattern\n\n**ET-001 — Real-time S3 security** · CloudTrail → EventBridge\n\n### 1. Identify the Trigger Words\n\n| Question phrase | What it signals |\n|---|---|\n| Immediately after upload | Event-driven detection |\n\n### 2. Think Like the Examiner\n\nPolling cannot meet an immediacy requirement.\n\n### 3. Correct Option Identification Logic\n\nRequirement to AWS capability to service.\n\n### 4. Eliminate the Distractors\n\nThe nightly scan is periodic, so it fails the immediacy requirement.\n\n### 5. Remember This AWS Pattern\n\n- EventBridge = react to events.\n\n### 6. One-Line Memory Hook\n\nAPI activity to CloudTrail.\n\n### 7. Exam-Day Decision Rule\n\nImmediate plus object-level means data events.";
+
 let lastRequest = null;
 let driveRequest = null;
 window.fetch = async (url, init) => {
@@ -40,7 +44,7 @@ window.fetch = async (url, init) => {
   lastRequest = { url: href, body: JSON.parse(init.body) };
   return {
     ok: true,
-    json: async () => ({ choices: [{ message: { content: "### 🎯 EXAM TIP\n\nStub answer.\n\n| a | b |\n|---|---|\n| 1 | 2 |" } }] }),
+    json: async () => ({ choices: [{ message: { content: FULL_ANSWER } }] }),
   };
 };
 
@@ -151,6 +155,38 @@ window.document.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Escape
 window.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Escape" }));
 check("Escape closes the panel", isOpen(), false);
 
+// --- the "View more" fold -------------------------------------------------
+TM.aiCoach.askAboutQuestion(QUESTION);
+await new Promise((r) => setTimeout(r, 20));
+
+const answerEl = window.document.querySelector("#aiPanelAnswer");
+const more = answerEl.querySelector(".ai-panel-more");
+const moreToggle = answerEl.querySelector(".ai-panel-more-toggle");
+
+check("a View more toggle was added", Boolean(moreToggle), true);
+check("folded content exists", Boolean(more), true);
+check("folded content starts hidden", more.classList.contains("hidden"), true);
+check("toggle reports collapsed", moreToggle.getAttribute("aria-expanded"), "false");
+
+const visibleText = [...answerEl.children]
+  .filter((n) => !n.classList.contains("ai-panel-more") && !n.classList.contains("ai-panel-more-toggle"))
+  .map((n) => n.textContent)
+  .join(" ");
+
+check("tip is visible by default", visibleText.includes("CloudTrail data events plus EventBridge"), true);
+check("pattern line is visible by default", visibleText.includes("ET-001"), true);
+check("section 1 is NOT visible by default", visibleText.includes("Identify the Trigger Words"), false);
+check("section 7 is NOT visible by default", visibleText.includes("Exam-Day Decision Rule"), false);
+check("all 7 sections are in the fold", more.querySelectorAll("h4").length, 7);
+check("toggle names the count", moreToggle.textContent, "View more (7 sections)");
+
+clickReal(moreToggle);
+check("clicking expands it", more.classList.contains("hidden"), false);
+check("  toggle reports expanded", moreToggle.getAttribute("aria-expanded"), "true");
+check("  label flips", moreToggle.textContent, "View less");
+clickReal(moreToggle);
+check("clicking again collapses it", more.classList.contains("hidden"), true);
+
 // --- header tools: detach, print, Save to Drive ---------------------------
 TM.aiCoach.askAboutQuestion(QUESTION);
 await new Promise((r) => setTimeout(r, 20));
@@ -171,6 +207,9 @@ const handoff = TM.aiExport.readHandoff(handoffId);
 check("handoff was stored", Boolean(handoff), true);
 check("  carries the answer", handoff.answerHtml.includes("EXAM TIP"), true);
 check("  carries the question", handoff.questionPrompt.includes("detect public S3 objects"), true);
+check("  exports the FULL answer, not the folded view",
+  handoff.answerHtml.includes("Exam-Day Decision Rule"), true);
+check("  and carries no fold markup", handoff.answerHtml.includes("ai-panel-more"), false);
 
 // Print
 let printed = false;
@@ -192,6 +231,7 @@ if (driveRequest) {
     driveRequest.body.includes("application/vnd.google-apps.document"), true);
   check("  sends the answer as HTML", driveRequest.body.includes("Content-Type: text/html"), true);
   check("  includes the rendered answer", driveRequest.body.includes("EXAM TIP"), true);
+  check("  uploads the full answer", driveRequest.body.includes("Exam-Day Decision Rule"), true);
 }
 check("drive status is reported", window.document.querySelector("#aiPanelExportStatus").textContent.includes("Saved to Google Drive"), true);
 
